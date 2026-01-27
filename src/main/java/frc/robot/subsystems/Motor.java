@@ -11,7 +11,8 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 public class Motor extends SubsystemBase {
   /** Creates a new ExampleSubsystem. */
-  public Motor() {}
+  public Motor() {
+  }
 
   SparkMax m_motor = new SparkMax(4, MotorType.kBrushless);
 
@@ -30,7 +31,8 @@ public class Motor extends SubsystemBase {
   }
 
   /**
-   * An example method querying a boolean state of the subsystem (for example, a digital sensor).
+   * An example method querying a boolean state of the subsystem (for example, a
+   * digital sensor).
    *
    * @return value of some boolean subsystem state, such as a digital sensor.
    */
@@ -41,28 +43,25 @@ public class Motor extends SubsystemBase {
 
   public Command MoveMotor(double speed) {
     return runEnd(
-      () -> 
-      {
-        m_motor.set(1.0);
-      }, 
-      () -> 
-      {
-        m_motor.stopMotor();
-      });
-  }
-// Stops the motor
-  public Command StopMotor(double speed) {
-    return runEnd(
-      () -> 
-      {
-        m_motor.stopMotor();;
-      }, 
-      () -> 
-      {
-        m_motor.stopMotor();
-      });
+        () -> {
+          m_motor.set(1.0);
+        },
+        () -> {
+          m_motor.stopMotor();
+        });
   }
 
+  // Stops the motor
+  public Command StopMotor(double speed) {
+    return runEnd(
+        () -> {
+          m_motor.stopMotor();
+          ;
+        },
+        () -> {
+          m_motor.stopMotor();
+        });
+  }
 
   @Override
   public void periodic() {
