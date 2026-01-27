@@ -9,19 +9,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
   enum Speed {
-
     Stop(0.0),
-
     Half(0.5),
-
-    full(1.0),
+    Full(1.0);
 
     public final double value;
 
-    public speed(double value) {
-      this.value + value;
+    Speed(double value) {
+      this.value = value;
     }
-
   }
 
   private Speed speed;
@@ -41,13 +37,13 @@ public class Shooter extends SubsystemBase {
     return runOnce(
         () -> {
           switch (this.speed) {
-            case Speed.Stop:
+            case Stop:
               this.speed = Speed.Half;
               break;
-            case Speed.Half:
+            case Half:
               this.speed = Speed.Full;
               break;
-            case Speed.Full:
+            case Full:
                default:
               this.speed = Speed.Stop;
               break;
