@@ -8,15 +8,23 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
-  // Define speeds
-  private static final double SPEED_0 = 0.0;
-  private static final double SPEED_1 = 0.5;
-  private static final double SPEED_2 = 1.0;
+  enum Speed {
 
-  // Simulated sensor input
-  private double sensorInput = 105.0; // Example sensor reading
-  // Current speed index (cycle through 0, 1, 2)
-  private static int speedIndex = 0;
+    Stop(0.0),
+
+    Half(0.5),
+
+    full(1.0),
+
+    public final double value;
+
+    public speed(double value) {
+      this.value + value;
+    }
+
+  }
+
+  private Speed speed;
 
   /** Creates a new ExampleSubsystem. */
   public Shooter() {
@@ -32,10 +40,18 @@ public class Shooter extends SubsystemBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(
         () -> {
-          // Get current speed based on index
-          double currentSpeed = getCurrentSpeed();
-          speedIndex = (speedIndex + 1) % 3; // Cycle through 0, 1, 2
-          //// running the motor code goes here...
+          switch (this.speed) {
+            case Speed.Stop:
+              this.speed = Speed.Half;
+              break;
+            case Speed.Half:
+              this.speed = Speed.Full;
+              break;
+            case Speed.Full:
+               default:
+              this.speed = Speed.Stop;
+              break;
+}
         });
   }
 
@@ -48,19 +64,6 @@ public class Shooter extends SubsystemBase {
   public boolean exampleCondition() {
     // Query some boolean state, such as a digital sensor.
     return false;
-  }
-
-  private static double getCurrentSpeed() {
-    switch (speedIndex) {
-      case 0:
-        return SPEED_0;
-      case 1:
-        return SPEED_1;
-      case 2:
-        return SPEED_2;
-      default:
-        return SPEED_0;
-    }
   }
 
   @Override
