@@ -22,14 +22,14 @@ public class Shooter extends SubsystemBase {
 
   private Speed speed;
 
-  /** Creates a new ExampleSubsystem. */
+  
   public Shooter() {
   }
 
   /**
-   * Example command factory method.
+   *  dead ban speed  cycle
    *
-   * @return a command
+   * returns 3 diffrent modes
    */
   public Command cycleSpeedCommand() {
     // Inline construction of command goes here.
