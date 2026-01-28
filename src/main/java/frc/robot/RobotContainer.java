@@ -24,10 +24,11 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Motor;
+import frc.robot.subsystems.Shooter;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 
 public class RobotContainer {
-
+        private final Shooter shooter = new Shooter();
     Motor m_motor = new Motor();
 
     SlewRateLimiter ForwardFilter = new SlewRateLimiter(1.7);
@@ -58,7 +59,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-
+        
         NamedCommands.registerCommand("Move Motor", m_motor.MoveMotor(0.5));
         NamedCommands.registerCommand("Stop Motor", m_motor.MoveMotor(0.0));
 
@@ -119,6 +120,8 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
     }
 
     public Command getAutonomousCommand() {
