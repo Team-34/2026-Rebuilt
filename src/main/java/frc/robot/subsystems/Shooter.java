@@ -35,20 +35,20 @@ public class Shooter extends SubsystemBase {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(
-        () -> {
-          switch (this.speed) {
-            case Stop:
-              this.speed = Speed.Half;
-              break;
-            case Half:
-              this.speed = Speed.Full;
-              break;
-            case Full:
-               default:
-              this.speed = Speed.Stop;
-              break;
-}
-        });
+      () -> {
+        switch (this.speed) {
+          case Stop:
+            this.speed = Speed.Half;
+            break;
+          case Half:
+            this.speed = Speed.Full;
+            break;
+          case Full:
+          default:
+            this.speed = Speed.Stop;
+            break;
+        }
+      });
   }
 
   /**
