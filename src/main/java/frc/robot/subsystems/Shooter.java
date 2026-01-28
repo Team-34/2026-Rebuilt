@@ -27,9 +27,9 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   *  dead ban speed  cycle
+   * Cyles thought 3 diffrent speeds. Stop -> half -> Full -> Stop -> ...
    *
-   * returns 3 diffrent modes
+   * @returns The command that switch the speed two the next in the cycle.
    */
   public Command cycleSpeedCommand() {
     // Inline construction of command goes here.
