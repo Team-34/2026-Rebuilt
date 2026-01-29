@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
 import com.ctre.phoenix6.signals.InvertedValue;
 
 public class Shooter extends SubsystemBase {
@@ -29,10 +28,6 @@ public class Shooter extends SubsystemBase {
   private TalonFXS rightMotor = new TalonFXS(21);
   TalonFXSConfiguration configs = new TalonFXSConfiguration();
 
-
-
-  
-
   public Shooter() {
     this.configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     this.rightMotor.set(this.leftMotor.get());
@@ -45,7 +40,6 @@ public class Shooter extends SubsystemBase {
    * @returns The command that switch the speed two the next in the cycle.
    */
   
-
   public Command cycleSpeedCommand() {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
