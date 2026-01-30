@@ -6,9 +6,6 @@ package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
-//import edu.wpi.first.wpilibj.DoubleSolenoid;
-//import edu.wpi.first.wpilibj.PneumaticsModuleType;
-//import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -52,7 +49,6 @@ public class RobotContainer {
     m_driverController.a().whileTrue(intake.runIn()).onFalse(intake.stop());
     m_driverController.b().whileTrue(intake.runOut()).onFalse(intake.stop());
     m_driverController.x().whileTrue(intake.toggleIntakePneumatics());
-
   }
 
   /**

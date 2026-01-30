@@ -42,8 +42,8 @@ public class Intake extends SubsystemBase {
         });
     }
 
-      private final Solenoid intakeSingle = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
-  private final DoubleSolenoid intakeDouble = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
+    private final Solenoid intakeSingle = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
+    private final DoubleSolenoid intakeDouble = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
 
     public Command toggleIntakePneumatics() {
         intakeSingle.toggle();
