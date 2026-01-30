@@ -35,29 +35,28 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * Cyles thought 3 diffrent speeds. Stop -> half -> Full -> Stop -> ...
+   * Cyles thought 3 different speeds. Stop -> Half -> Full -> Stop -> ...
    *
-   * @returns The command that switch the speed two the next in the cycle.
+   * @returns The command that switches the speed to the next in the cycle.
    */
   
   public Command cycleSpeedCommand() {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
-    return runOnce(
-        () -> {
-          switch (this.speed) {
-            case Stop:
-              this.speed = Speed.Half;
-              break;
-            case Half:
-              this.speed = Speed.Full;
-              break;
-            case Full:
-            default:
-              this.speed = Speed.Stop;
-              break;
-          }
-        });
+    return runOnce(() -> {
+      switch (this.speed) {
+        case Stop:
+          this.speed = Speed.Half;
+          break;
+        case Half:
+          this.speed = Speed.Full;
+          break;
+        case Full:
+        default:
+          this.speed = Speed.Stop;
+          break;
+      }
+    });
   }
 
   /**
