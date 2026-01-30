@@ -10,6 +10,9 @@ import edu.wpi.first.wpilibj.Solenoid;
 
 public class Intake extends SubsystemBase {
   
+    private final Solenoid intakeSingle = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
+    private final DoubleSolenoid intakeDouble = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
+
     public TalonFXS m_minionMotor = new TalonFXS(10);
     public DutyCycleOut m_motorControl = new DutyCycleOut(10);
 
@@ -41,9 +44,6 @@ public class Intake extends SubsystemBase {
             m_minionMotor.setControl(m_motorControl.withOutput(0));
         });
     }
-
-    private final Solenoid intakeSingle = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
-    private final DoubleSolenoid intakeDouble = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
 
     public Command toggleIntakePneumatics() {
         intakeSingle.toggle();
