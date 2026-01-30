@@ -7,14 +7,14 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.hardware.TalonFXS;
-import com.ctre.phoenix6.configs.TalonFXSConfiguration;
-import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 public class Shooter extends SubsystemBase {
   enum Speed {
-    Stop(0.0),
-    Half(0.5),
-    Full(1.0);
+    STOP(0.0),
+    HALF(0.5),
+    FULL(1.0);
 
     public final double value;
 
@@ -26,12 +26,9 @@ public class Shooter extends SubsystemBase {
   private Speed speed;
   private TalonFXS leftMotor = new TalonFXS(20);
   private TalonFXS rightMotor = new TalonFXS(21);
-  TalonFXSConfiguration configs = new TalonFXSConfiguration();
-
+  
   public Shooter() {
-    this.configs.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    this.rightMotor.set(this.leftMotor.get());
-    this.rightMotor.getConfigurator().apply(configs);
+    this.rightMotor.setControl(new Follower(this.leftMotor.getDeviceID(), MotorAlignmentValue.Opposed));
   }
 
   /**
@@ -45,15 +42,15 @@ public class Shooter extends SubsystemBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(() -> {
       switch (this.speed) {
-        case Stop:
-          this.speed = Speed.Half;
+        case STOP:
+          this.speed = Speed.HALF;
           break;
-        case Half:
-          this.speed = Speed.Full;
+        case HALF:
+          this.speed = Speed.FULL;
           break;
-        case Full:
+        case FULL:
         default:
-          this.speed = Speed.Stop;
+          this.speed = Speed.STOP;
           break;
       }
     });
