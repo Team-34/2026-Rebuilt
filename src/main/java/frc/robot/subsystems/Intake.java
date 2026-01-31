@@ -45,4 +45,16 @@ public class Intake extends SubsystemBase {
             piston.toggle();
         });
     }
+
+    public boolean isDeployed() {
+    return piston.get() == DoubleSolenoid.Value.kForward;
+    }
+
+    public void activate(double speed) {
+    if (isDeployed()) {
+      motor.setControl(motorControl.withOutput(speed));
+        } else {
+        motor.setControl(motorControl.withOutput(0));
+    }
+  }
 }
