@@ -23,11 +23,13 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 import frc.robot.subsystems.Shooter;
 
 public class RobotContainer {
+  private final Climber climber = new Climber();
   private final Shooter shooter = new Shooter();
 
   SlewRateLimiter ForwardFilter = new SlewRateLimiter(1.7);
@@ -130,6 +132,10 @@ public class RobotContainer {
     this.drivetrain.registerTelemetry(this.logger::telemeterize);
 
     this.joystick.rightTrigger().onTrue(this.shooter.cycleSpeedCommand());
+
+    this.joystick.y().onTrue(climber.toggleSolenoid());
+    this.joystick.povLeft().whileTrue(climber.extendCommand());
+    this.joystick.povRight().whileTrue(climber.retractCommand());
   }
 
   public Command getAutonomousCommand() {
