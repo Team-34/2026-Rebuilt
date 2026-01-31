@@ -11,8 +11,8 @@ public class Intake extends SubsystemBase {
   
     private final DoubleSolenoid intakeDouble = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
 
-    public TalonFXS m_minionMotor = new TalonFXS(10);
-    public DutyCycleOut m_motorControl = new DutyCycleOut(10);
+    public final TalonFXS minionMotor = new TalonFXS(10);
+    public final DutyCycleOut motorControl = new DutyCycleOut(10);
 
     public void robotInit() {
        
@@ -24,26 +24,23 @@ public class Intake extends SubsystemBase {
 
     public Command runIn() {
         return runOnce(() -> {
-             m_minionMotor.setControl(m_motorControl.withOutput(0.5));
+             minionMotor.setControl(motorControl.withOutput(0.5));
         });
-   
     }
 
     public Command runOut() {
-        
         return runOnce(() -> {
-             m_minionMotor.setControl(m_motorControl.withOutput(-0.5));
+             minionMotor.setControl(motorControl.withOutput(-0.5));
         });
-       
     }
 
     public Command stop() {
         return runOnce(() -> {
-            m_minionMotor.setControl(m_motorControl.withOutput(0));
+            minionMotor.setControl(motorControl.withOutput(0));
         });
     }
 
-    public Command toggleIntakePneumatics() {
+    public Command toggleIntake() {
         intakeDouble.toggle();
         return null;
     }

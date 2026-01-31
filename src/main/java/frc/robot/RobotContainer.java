@@ -64,7 +64,7 @@ public class RobotContainer {
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
+  private final CommandXboxController driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   SlewRateLimiter ForwardFilter = new SlewRateLimiter(1.7);
@@ -112,13 +112,13 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    m_driverController.a().whileTrue(intake.runIn()).onFalse(intake.stop());
-    m_driverController.b().whileTrue(intake.runOut()).onFalse(intake.stop());
-    m_driverController.x().whileTrue(intake.toggleIntakePneumatics());
-    m_driverController.rightTrigger().onTrue(shooter.cycleSpeedCommand());
-    m_driverController.rightTrigger().onTrue(spindexer.Spin()).onFalse(spindexer.Spinstop());
-    m_driverController.a().onTrue(spindexer.Spin()).onFalse(spindexer.Spinstop());
-    m_driverController.b().onTrue(spindexer.Spinreverse()).onFalse(spindexer.Spinstop());
+    driverController.a().whileTrue(intake.runIn()).onFalse(intake.stop());
+    driverController.b().whileTrue(intake.runOut()).onFalse(intake.stop());
+    driverController.x().whileTrue(intake.toggleIntake());
+    driverController.rightTrigger().onTrue(shooter.cycleSpeedCommand());
+    driverController.rightTrigger().onTrue(spindexer.Spin()).onFalse(spindexer.Spinstop());
+    driverController.a().onTrue(spindexer.Spin()).onFalse(spindexer.Spinstop());
+    driverController.b().onTrue(spindexer.Spinreverse()).onFalse(spindexer.Spinstop());
   }
 
   public Command getAutonomousCommand() {
