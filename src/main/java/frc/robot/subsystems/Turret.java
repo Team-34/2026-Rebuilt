@@ -8,8 +8,6 @@ import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix6.hardware.TalonFXS;
 
-import frc.robot.LimelightHelpers;
-
 public class Turret extends SubsystemBase {
     
     TalonFXS turretMotor = new TalonFXS(50);
@@ -20,15 +18,6 @@ public class Turret extends SubsystemBase {
 
     public Turret() {
     }
-
-    // IDs for the apriltags on both outposts, using 1 for testing purposes
-    //int[] validIDs = {9, 10, 25, 26};
-    int[] validIDs = {1};
-
-    // Get the area of the target, in a percentage of 0 to 100
-    double ta = LimelightHelpers.getTA("");
-
-    LimelightHelpers.PoseEstimate poseEstimate;
 
     /**
      * @param setpoint The setpoint to move the turret to.
@@ -42,6 +31,11 @@ public class Turret extends SubsystemBase {
            }
         ).until(atSetpoint);
     }
+
+    public double getSetpoint() {
+        return turretPID.getSetpoint();
+    }
+
 
     /**
      * @param power The power to give to the motor.
@@ -70,8 +64,6 @@ public class Turret extends SubsystemBase {
                 , turretPID.getSetpoint()
             )
         );
-
-        LimelightHelpers.SetRobotOrientation("", 0, 0, 0, 0, 0, 0);
     }
 
 }

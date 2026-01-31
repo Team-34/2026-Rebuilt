@@ -11,7 +11,8 @@ import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-
+import frc.robot.subsystems.Turret;
+import frc.robot.LimelightCalculations;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -21,7 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Shooter shooter = new Shooter();
-
+  private final Turret turret = new Turret();
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
@@ -46,8 +47,12 @@ public class RobotContainer {
     new Trigger(shooter::exampleCondition)
         .onTrue(new ExampleCommand(shooter));
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
+    driverController.rightBumper().onTrue(turret.turretByPowerCommand(0.5)); // intending for positive power to turn right
+    driverController.leftBumper().onTrue(turret.turretByPowerCommand(-0.5)); 
+    
+    // (In theory) should add the offset of an apriltag in radians to the current setpoint of the PID. Will definitely need testing.
+    driverController.povRight().toggleOnTrue(turret.turretBySetpointCommand(turret.getSetpoint() + LimelightCalculations.returnSetpointLimelight()));
+
     driverController.rightTrigger().onTrue(shooter.cycleSpeedCommand());
   }
 

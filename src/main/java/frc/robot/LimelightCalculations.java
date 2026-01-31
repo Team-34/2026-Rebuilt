@@ -1,5 +1,7 @@
 package frc.robot;
 
+import edu.wpi.first.math.estimator.PoseEstimator;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.LimelightHelpers;
@@ -7,10 +9,12 @@ import frc.robot.LimelightHelpers.PoseEstimate;
 
 import java.lang.Math;
 
-public class LimelightCalculations extends SubsystemBase{
+public class LimelightCalculations {
     
-    double ta = LimelightHelpers.getTA("");
+    //static double ta = LimelightHelpers.getT("");
 
+
+    LimelightHelpers.PoseEstimate pose = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("");
 
     /**
      * Calculates the base-2 logarithm of a number. I ripped this from G4G
@@ -32,17 +36,20 @@ public class LimelightCalculations extends SubsystemBase{
         return txrad;
     }
 
+    //THE POLE is 52.5in off the ground from the center of the limelight
+
     /**
      * Definitely copies directly from the 2024 code.
      * work smarter, not harder
      * @return Distance to the target, in an unknown value (for now). needs to be tested.
      */
-    public double getDistanceToTarget() {
-        return log2(2.5 / ta) - 0.3;
+    public static double getDistanceToTarget() {
+        double output = log2(LimelightHelpers.getTA(""));
+        return output;
     }
-
+        
     public void periodic() {
-
+       
     }
 
 }
