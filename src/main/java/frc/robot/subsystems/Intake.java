@@ -40,8 +40,9 @@ public class Intake extends SubsystemBase {
         });
     }
 
-    public Command Toggle() {
-        piston.toggle();
-        return null;
+    public Command toggle() {
+        return runOnce(() -> {
+            piston.toggle();
+        });
     }
 }
