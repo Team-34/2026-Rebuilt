@@ -114,11 +114,11 @@ public class RobotContainer {
     // cancelling on release.
     driverController.a().whileTrue(intake.runIn()).onFalse(intake.stop());
     driverController.b().whileTrue(intake.runOut()).onFalse(intake.stop());
-    driverController.x().onTrue(intake.Toggle());
+    driverController.x().onTrue(intake.toggle());
     driverController.rightTrigger().onTrue(shooter.cycleSpeedCommand());
-    driverController.rightTrigger().onTrue(spindexer.Spin()).onFalse(spindexer.Spinstop());
-    driverController.a().onTrue(spindexer.Spin()).onFalse(spindexer.Spinstop());
-    driverController.b().onTrue(spindexer.Spinreverse()).onFalse(spindexer.Spinstop());
+    driverController.rightTrigger().onTrue(spindexer.spin()).onFalse(spindexer.spinStop());
+    driverController.a().onTrue(spindexer.spin()).onFalse(spindexer.spinStop());
+    driverController.b().onTrue(spindexer.spinReverse()).onFalse(spindexer.spinStop());
   }
 
   public Command getAutonomousCommand() {
