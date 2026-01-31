@@ -54,7 +54,7 @@ public class RobotContainer {
     // cancelling on release.
     driverController.a().whileTrue(intake.runIn()).onFalse(intake.stop());
     driverController.b().whileTrue(intake.runOut()).onFalse(intake.stop());
-    driverController.x().whileTrue(intake.toggleIntake());
+    driverController.x().onTrue(intake.Toggle());
     driverController.rightTrigger().onTrue(shooter.cycleSpeedCommand());
   }
 
