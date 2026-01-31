@@ -11,7 +11,7 @@ public class Intake extends SubsystemBase {
   
     private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
 
-    public final TalonFXS Motor = new TalonFXS(80);
+    public final TalonFXS Motor = new TalonFXS(60);
     public final DutyCycleOut motorControl = new DutyCycleOut(0);
 
     public void robotInit() {

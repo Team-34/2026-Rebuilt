@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Spindexer extends SubsystemBase {
-    public TalonFX spindexerMotor = new TalonFX(61);
+    public TalonFX spindexerMotor = new TalonFX(55);
 
     public Command Spin() {
         return runOnce(() -> {
