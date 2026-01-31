@@ -9,10 +9,10 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 public class Intake extends SubsystemBase {
   
-    private final DoubleSolenoid intakeDouble = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
+    private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
 
-    public final TalonFXS minionMotor = new TalonFXS(10);
-    public final DutyCycleOut motorControl = new DutyCycleOut(10);
+    public final TalonFXS Motor = new TalonFXS(80);
+    public final DutyCycleOut motorControl = new DutyCycleOut(0);
 
     public void robotInit() {
        
@@ -24,24 +24,24 @@ public class Intake extends SubsystemBase {
 
     public Command runIn() {
         return runOnce(() -> {
-             minionMotor.setControl(motorControl.withOutput(0.5));
+             Motor.setControl(motorControl.withOutput(0.5));
         });
     }
 
     public Command runOut() {
         return runOnce(() -> {
-             minionMotor.setControl(motorControl.withOutput(-0.5));
+             Motor.setControl(motorControl.withOutput(-0.5));
         });
     }
 
     public Command stop() {
         return runOnce(() -> {
-            minionMotor.setControl(motorControl.withOutput(0));
+            Motor.setControl(motorControl.withOutput(0));
         });
     }
 
-    public Command toggleIntake() {
-        intakeDouble.toggle();
+    public Command Toggle() {
+        piston.toggle();
         return null;
     }
 }
