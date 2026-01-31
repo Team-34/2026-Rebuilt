@@ -11,7 +11,7 @@ public class Intake extends SubsystemBase {
   
     private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
 
-    public final TalonFXS Motor = new TalonFXS(60);
+    public final TalonFXS motor = new TalonFXS(60);
     public final DutyCycleOut motorControl = new DutyCycleOut(0);
 
     public void robotInit() {
@@ -24,19 +24,19 @@ public class Intake extends SubsystemBase {
 
     public Command runIn() {
         return runOnce(() -> {
-             Motor.setControl(motorControl.withOutput(0.5));
+             motor.setControl(motorControl.withOutput(0.5));
         });
     }
 
     public Command runOut() {
         return runOnce(() -> {
-             Motor.setControl(motorControl.withOutput(-0.5));
+             motor.setControl(motorControl.withOutput(-0.5));
         });
     }
 
     public Command stop() {
         return runOnce(() -> {
-            Motor.setControl(motorControl.withOutput(0));
+            motor.setControl(motorControl.withOutput(0));
         });
     }
 
