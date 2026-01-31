@@ -13,6 +13,7 @@ Rebuilt: FRC game for the 2025–2026 season
 | Shooter    | Higgins  | Walsh |
 | Turret     | Helton   | Gray & Faulk |
 | Vision     | Helton   | Gray & Faulk |
+| Spindexer  | Morelli  | — |
 
 ## Motors
 
