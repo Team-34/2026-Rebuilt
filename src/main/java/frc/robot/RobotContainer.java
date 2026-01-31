@@ -27,7 +27,7 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
+  private final CommandXboxController driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -52,10 +52,10 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    m_driverController.a().whileTrue(intake.runIn()).onFalse(intake.stop());
-    m_driverController.b().whileTrue(intake.runOut()).onFalse(intake.stop());
-    m_driverController.x().whileTrue(intake.toggleIntakePneumatics());
-    m_driverController.rightTrigger().onTrue(shooter.cycleSpeedCommand());
+    driverController.a().whileTrue(intake.runIn()).onFalse(intake.stop());
+    driverController.b().whileTrue(intake.runOut()).onFalse(intake.stop());
+    driverController.x().whileTrue(intake.toggleIntake());
+    driverController.rightTrigger().onTrue(shooter.cycleSpeedCommand());
   }
 
   /**
