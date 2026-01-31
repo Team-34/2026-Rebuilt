@@ -24,9 +24,9 @@ public class Shooter extends SubsystemBase {
   }
 
   private Speed speed;
-  private TalonFXS leftMotor = new TalonFXS(20);
-  private TalonFXS rightMotor = new TalonFXS(21);
-  
+  private final TalonFXS leftMotor = new TalonFXS(20);
+  private final TalonFXS rightMotor = new TalonFXS(21);
+
   public Shooter() {
     this.rightMotor.setControl(new Follower(this.leftMotor.getDeviceID(), MotorAlignmentValue.Opposed));
   }
@@ -36,23 +36,17 @@ public class Shooter extends SubsystemBase {
    *
    * @returns The command that switches the speed to the next in the cycle.
    */
-  
+
   public Command cycleSpeedCommand() {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(() -> {
-      switch (this.speed) {
-        case STOP:
-          this.speed = Speed.HALF;
-          break;
-        case HALF:
-          this.speed = Speed.FULL;
-          break;
-        case FULL:
-        default:
-          this.speed = Speed.STOP;
-          break;
-      }
+      this.speed = switch (this.speed) {
+        case STOP -> Speed.HALF;
+        case HALF -> Speed.FULL;
+        case FULL -> Speed.STOP;
+        default -> Speed.STOP;
+      };
     });
   }
 
