@@ -19,12 +19,12 @@ Rebuilt: FRC game for the 2025–2026 season
 
 | Subsystem             | Motor(s)                                | Controller(s)        | Can IDs |
 | --                    | --                                      | --                   | -- |
-| Drivetrain (steering) | 4x Falcon                               | TalonFX (_built-in_) | — |
-| Drivetrain (drive)    | 4x Kraken<br>(_reduction: L2 6.75 : 1_) | TalonFX (_built-in_) | — |
+| Drivetrain (steering) | 4x Falcon                               | TalonFX (_built-in_) | 10 - 29 |
+| Drivetrain (drive)    | 4x Kraken<br>(_reduction: L2 6.75 : 1_) | TalonFX (_built-in_) | 10 - 29 |
 ||
-| Intake                | 1x CTR Minion                           | TalonFXS             | 10 - 19 |
-| Shooter               | 2x CTR Minion                           | TalonFXS             | 20 - 29 |
-| Feeder                | 1x Kraken x44                           | TalonFX (_built-in_) | 30 - 39 |
-| Climber               | 2x Kraken x60                           | TalonFX (_built-in_) | 40 - 49 |
-| Turret                | 1x CTR Minion                           | TalonFXS             | 50 - 59 |
-| Spindexer             | 1x Kraken (TBD)                         | TalonFX (_built-in_) | 60 - 69 |
+| Feeder                | 1x Kraken x44                           | TalonFX (_built-in_) | 30 - 34 |
+| Climber               | 2x Kraken x60                           | TalonFX (_built-in_) | 35 - 39 |
+| Turret                | 1x CTR Minion                           | TalonFXS             | 40 - 44 |
+| Spindexer             | 1x Kraken (TBD)                         | TalonFX (_built-in_) | 45 - 49 |
+| Intake                | 1x CTR Minion                           | TalonFXS             | 50 - 54 |
+| Shooter               | 2x CTR Minion                           | TalonFXS             | 55 - 59 |
