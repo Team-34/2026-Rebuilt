@@ -13,6 +13,7 @@ Rebuilt: FRC game for the 2025–2026 season
 | Shooter    | Higgins  | Walsh |
 | Turret     | Helton   | Gray & Faulk |
 | Vision     | Helton   | Gray & Faulk |
+| Spindexer  | Morelli  | — |
 
 ## Motors
 
@@ -25,4 +26,5 @@ Rebuilt: FRC game for the 2025–2026 season
 | Shooter               | 2x CTR Minion                           | TalonFXS             | 20 - 29 |
 | Feeder                | 1x Kraken x44                           | TalonFX (_built-in_) | 30 - 39 |
 | Climber               | 2x Kraken x60                           | TalonFX (_built-in_) | 40 - 49 |
-| Turret                | 1x CTR Minion                           | TalonFXS             | 50 - 19 |
+| Turret                | 1x CTR Minion                           | TalonFXS             | 50 - 59 |
+| Spindexer             | 1x Kraken (TBD)                         | TalonFX (_built-in_) | 60 - 69 |
