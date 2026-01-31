@@ -29,7 +29,6 @@ import frc.robot.subsystems.Shooter;
 
 public class RobotContainer {
   private final Shooter shooter = new Shooter();
-  Motor m_motor = new Motor();
 
   SlewRateLimiter ForwardFilter = new SlewRateLimiter(1.7);
   SlewRateLimiter TurnFilter = new SlewRateLimiter(1.7);
@@ -63,10 +62,6 @@ public class RobotContainer {
   private final SendableChooser<Command> autoChooser;
 
   public RobotContainer() {
-
-    NamedCommands.registerCommand("Move Motor", this.m_motor.MoveMotor(0.5));
-    NamedCommands.registerCommand("Stop Motor", this.m_motor.MoveMotor(0.0));
-
     this.autoChooser = AutoBuilder.buildAutoChooser("Tests");
     SmartDashboard.putData("Auto Mode", this.autoChooser);
 
