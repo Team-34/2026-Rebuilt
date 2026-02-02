@@ -6,12 +6,15 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 public class Shooter extends SubsystemBase {
   enum Speed {
-    Stop(0.0),
-    Half(0.5),
-    Full(1.0);
+    STOP(0.0),
+    HALF(0.5),
+    FULL(1.0);
 
     public final double value;
 
@@ -21,8 +24,11 @@ public class Shooter extends SubsystemBase {
   }
 
   private Speed speed;
+  private final TalonFXS leftMotor = new TalonFXS(20);
+  private final TalonFXS rightMotor = new TalonFXS(21);
 
   public Shooter() {
+    this.rightMotor.setControl(new Follower(this.leftMotor.getDeviceID(), MotorAlignmentValue.Opposed));
   }
 
   /**
@@ -30,22 +36,17 @@ public class Shooter extends SubsystemBase {
    *
    * @returns The command that switches the speed to the next in the cycle.
    */
+
   public Command cycleSpeedCommand() {
     // Inline construction of command goes here.
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(() -> {
-      switch (this.speed) {
-        case Stop:
-          this.speed = Speed.Half;
-          break;
-        case Half:
-          this.speed = Speed.Full;
-          break;
-        case Full:
-        default:
-          this.speed = Speed.Stop;
-          break;
-      }
+      this.speed = switch (this.speed) {
+        case STOP -> Speed.HALF;
+        case HALF -> Speed.FULL;
+        case FULL -> Speed.STOP;
+        default -> Speed.STOP;
+      };
     });
   }
 
