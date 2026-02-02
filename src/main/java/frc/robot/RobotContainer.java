@@ -75,44 +75,44 @@ public class RobotContainer {
         // Drivetrain will execute this command periodically
     this.drivetrain.applyRequest(
       () -> this.drive.withVelocityX(this.ForwardFilter
-        .calculate(-this.joystick.getLeftY() * this.MaxSpeed)) // Drive
-          // forward
-          // with
-          // negative
-          // Y
-          // (forward)
-        .withVelocityY(this.TurnFilter.calculate(
-          -this.joystick.getLeftX() * this.MaxSpeed)) // Drive
-          // left
-          // with
-          // negative
-          // X
-          // (left)
-        .withRotationalRate(this.RotateFilter.calculate(
-          -this.joystick.getRightX() * this.MaxAngularRate)) // Drive
-          // counterclockwise
-          // with
-          // negative
-          // X
-          // (left)
-        ));
+    .calculate(-this.joystick.getLeftY() * this.MaxSpeed)) // Drive
+      // forward
+      // with
+      // negative
+      // Y
+      // (forward)
+    .withVelocityY(this.TurnFilter.calculate(
+      -this.joystick.getLeftX() * this.MaxSpeed)) // Drive
+      // left
+      // with
+      // negative
+      // X
+      // (left)
+    .withRotationalRate(this.RotateFilter.calculate(
+      -this.joystick.getRightX() * this.MaxAngularRate)) // Drive
+      // counterclockwise
+      // with
+      // negative
+      // X
+      // (left)
+    ));
 
     // Idle while the robot is disabled. This ensures the configured
     // neutral mode is applied to the drive motors while disabled.
     final var idle = new SwerveRequest.Idle();
     RobotModeTriggers.disabled().whileTrue(
-        this.drivetrain.applyRequest(() -> idle).ignoringDisable(true));
+    this.drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
     this.joystick.a().whileTrue(this.drivetrain.applyRequest(() -> this.brake));
     this.joystick.b().whileTrue(this.drivetrain.applyRequest(
         () -> this.point.withModuleDirection(
-          new Rotation2d(-this.joystick.getLeftY(), -this.joystick.getLeftX()))));
+    new Rotation2d(-this.joystick.getLeftY(), -this.joystick.getLeftX()))));
 
     this.joystick.povUp().whileTrue(
-        this.drivetrain.applyRequest(() -> this.forwardStraight.withVelocityX(0.5).withVelocityY(0)));
+      this.drivetrain.applyRequest(() -> this.forwardStraight.withVelocityX(0.5).withVelocityY(0)));
     this.joystick.povDown()
-        .whileTrue(this.drivetrain.applyRequest(
-            () -> this.forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
+      .whileTrue(this.drivetrain.applyRequest(
+        () -> this.forwardStraight.withVelocityX(-0.5).withVelocityY(0)));
 
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
@@ -130,18 +130,18 @@ public class RobotContainer {
   }
 
     public Command getAutonomousCommand() {
-        // Simple drive forward auton
-        final var idle = new SwerveRequest.Idle();
-        return Commands.sequence(
-                // Reset our field centric heading to match the robot
-                // facing away from our alliance station wall (0 deg).
-                drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-                // Then slowly drive forward (away from us) for 5 seconds.
-                drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
-                  .withVelocityY(0)
-                  .withRotationalRate(0))
-                  .withTimeout(5.0),
-                // Finally idle for the rest of auton
-                drivetrain.applyRequest(() -> idle));
+      // Simple drive forward auton
+      final var idle = new SwerveRequest.Idle();
+      return Commands.sequence(
+        // Reset our field centric heading to match the robot
+        // facing away from our alliance station wall (0 deg).
+        drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
+        // Then slowly drive forward (away from us) for 5 seconds.
+        drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
+          .withVelocityY(0)
+          .withRotationalRate(0))
+          .withTimeout(5.0),
+        // Finally idle for the rest of auton
+        drivetrain.applyRequest(() -> idle));
     }
 }
