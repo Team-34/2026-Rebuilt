@@ -14,14 +14,6 @@ public class Intake extends SubsystemBase {
     public final TalonFXS motor = new TalonFXS(60);
     public final DutyCycleOut motorControl = new DutyCycleOut(0);
 
-    public void robotInit() {
-       
-    }
-
-    public void teleopPeriodic() {
-        // periodic code can go here
-    }
-
     public Command runIn() {
         return runOnce(() -> {
              motor.setControl(motorControl.withOutput(0.5));
