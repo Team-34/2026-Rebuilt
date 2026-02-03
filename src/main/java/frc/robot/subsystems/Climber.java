@@ -17,11 +17,9 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 
 public class Climber extends SubsystemBase {
   
-  public static Climber climber = new Climber();
-
   private TalonFX leftMotor = new TalonFX(40);
   private TalonFX rightMotor = new TalonFX(41);
-  private DutyCycleOut leftMotorControl = new DutyCycleOut(40);
+  private DutyCycleOut leftMotorControl = new DutyCycleOut(0);
   //private DutyCycleOut rightMotorControl = new DutyCycleOut(41); /* Not being used now but may need it later on */
 
   private DoubleSolenoid doubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
@@ -44,8 +42,7 @@ public class Climber extends SubsystemBase {
     }
 
     public Command toggleSolenoid() {
-      doubleSolenoid.toggle();
-      return null;
+      return runOnce(() -> doubleSolenoid.toggle());
     }
 
     public DoubleSolenoid.Value getSolenoidState() {
