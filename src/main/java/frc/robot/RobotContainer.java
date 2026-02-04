@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -24,9 +26,11 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
-import frc.robot.subsystems.Shooter;
-
 public class RobotContainer {
+        // The robot's subsystems and commands are defined here...
+        // private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+        private final Intake intake = new Intake();
+
         private final Shooter shooter = new Shooter();
 
         SlewRateLimiter ForwardFilter = new SlewRateLimiter(1.7);
@@ -109,10 +113,14 @@ public class RobotContainer {
 
                 drivetrain.registerTelemetry(logger::telemeterize);
                 this.joystick.rightTrigger().onTrue(this.shooter.cycleSpeedCommand());
+                joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
+                joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
+                joystick.x().onTrue(intake.toggle());
+                joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
         }
 
-    public Command getAutonomousCommand() {
-        // Simple drive forward auton
-        return autoChooser.getSelected();
-    }
+        public Command getAutonomousCommand() {
+                // Simple drive forward auton
+                return autoChooser.getSelected();
+        }
 }
