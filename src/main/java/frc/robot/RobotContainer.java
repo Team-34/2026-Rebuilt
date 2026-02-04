@@ -101,7 +101,7 @@ public class RobotContainer {
 
     this.joystick.rightTrigger().onTrue(this.shooter.cycleSpeedCommand());
 
-    this.joystick.y().onTrue(climber.toggleSolenoid());
+    this.joystick.y().onTrue(climber.toggleCommand());
     this.joystick.povLeft().whileTrue(climber.extendCommand());
     this.joystick.povRight().whileTrue(climber.retractCommand());
   }

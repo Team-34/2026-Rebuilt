@@ -17,39 +17,35 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 
 public class Climber extends SubsystemBase {
   
-  private TalonFX leftMotor = new TalonFX(40);
-  private TalonFX rightMotor = new TalonFX(41);
-  private DutyCycleOut leftMotorControl = new DutyCycleOut(0);
-  //private DutyCycleOut rightMotorControl = new DutyCycleOut(41); /* Not being used now but may need it later on */
+  private final TalonFX leftMotor = new TalonFX(40);
+  private final TalonFX rightMotor = new TalonFX(41);
+  private final DutyCycleOut motorControl = new DutyCycleOut(0);
 
-  private DoubleSolenoid doubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
+  private DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
   public Climber() {
     this.rightMotor.setControl(new Follower(this.leftMotor.getDeviceID(), MotorAlignmentValue.Opposed));
+    piston.set(DoubleSolenoid.Value.kReverse);
   }
   
   public Command extendCommand() {
     return runOnce(
         () -> {
-          leftMotor.setControl(leftMotorControl.withOutput(0.25));
+          leftMotor.setControl(motorControl.withOutput(0.25));
         });
   }
 
     public Command retractCommand() {
       return runOnce(
           () -> {
-            leftMotor.setControl(leftMotorControl.withOutput(-0.25));
+            leftMotor.setControl(motorControl.withOutput(-0.25));
           });
     }
 
-    public Command toggleSolenoid() {
-      return runOnce(() -> doubleSolenoid.toggle());
+    public Command toggleCommand() {
+      return runOnce(() -> piston.toggle());
     }
 
-    public DoubleSolenoid.Value getSolenoidState() {
-      return doubleSolenoid.get();
-    }
-
-    public void setSolenoidOff() {
-      doubleSolenoid.set(DoubleSolenoid.Value.kOff);
+    public boolean isExtended() {
+      return piston.get() == DoubleSolenoid.Value.kForward;
     }
 }
