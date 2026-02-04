@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "TestPath"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Move Motor"
+            "pathName": "rotate"
           }
         }
       ]
