@@ -42,7 +42,7 @@ public class Climber extends SubsystemBase {
     }
 
     public Command toggleCommand() {
-      return runOnce(() -> piston.toggle());
+      return runOnce(() -> piston.toggle());  //test
     }
 
     public boolean isExtended() {
