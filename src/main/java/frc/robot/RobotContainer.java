@@ -4,23 +4,16 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -80,7 +73,7 @@ public class RobotContainer {
     .withVelocityY(TurnFilter.calculate(-joystick.getLeftX() * MaxSpeed)) // Drive left with negative X (left)
     .withRotationalRate(RotateFilter.calculate(-joystick.getRightX() * MaxAngularRate)) // Drive counterclockwise with
       // negative X (left)
-      ));
+    ));
 
       // Idle while the robot is disabled. This ensures the configured
       // neutral mode is applied to the drive motors while disabled.
@@ -108,7 +101,7 @@ public class RobotContainer {
     joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
     joystick.x().onTrue(intake.toggle());
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
-    }
+  }
 
   public Command getAutonomousCommand() {
     // Simple drive forward auton
