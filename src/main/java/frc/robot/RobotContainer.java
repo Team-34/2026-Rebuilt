@@ -25,9 +25,12 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Spindexer;
 
 public class RobotContainer {
   private final Shooter shooter = new Shooter();
+
+  private final Spindexer spindexer = new Spindexer();
 
   SlewRateLimiter ForwardFilter = new SlewRateLimiter(1.7);
   SlewRateLimiter TurnFilter = new SlewRateLimiter(1.7);
@@ -127,6 +130,10 @@ public class RobotContainer {
     this.drivetrain.registerTelemetry(this.logger::telemeterize);
 
     this.joystick.rightTrigger().onTrue(this.shooter.cycleSpeedCommand());
+
+    this.joystick.rightTrigger().onTrue(this.spindexer.spin()).onFalse(this.spindexer.stop());
+    this.joystick.a().onTrue(this.spindexer.spin()).onFalse(this.spindexer.stop());
+    this.joystick.b().onTrue(this.spindexer.spinReverse()).onFalse(this.spindexer.stop());
   }
 
     public Command getAutonomousCommand() {

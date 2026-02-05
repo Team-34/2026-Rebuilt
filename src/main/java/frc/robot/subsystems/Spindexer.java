@@ -6,23 +6,25 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Spindexer extends SubsystemBase {
-    public TalonFX spindexerMotor = new TalonFX(55);
+    public final TalonFX Motor = new TalonFX(55);
+
+    private final DutyCycleOut control = new DutyCycleOut(0);
 
     public Command spin() {
         return runOnce(() -> {
-            spindexerMotor.setControl(new DutyCycleOut(0.5));
+            Motor.setControl(this.control.withOutput(0.5));
         });
     }
 
-    public Command spinStop() {
+    public Command stop() {
         return runOnce(() -> {
-            spindexerMotor.setControl(new DutyCycleOut(0));
+            Motor.setControl(this.control.withOutput(0));
         });
     }
 
     public Command spinReverse() {
         return runOnce(() -> {
-            spindexerMotor.setControl(new DutyCycleOut(-0.5));
+            Motor.setControl(this.control.withOutput(-0.5));
         });
     }
 }
