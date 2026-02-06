@@ -24,6 +24,7 @@ import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Spindexer;
 
 
 public class RobotContainer {
@@ -31,6 +32,7 @@ public class RobotContainer {
   private final Climber climber = new Climber();
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
+  private final Spindexer spindexer = new Spindexer();
 
   SlewRateLimiter ForwardFilter = new SlewRateLimiter(1.7);
   SlewRateLimiter TurnFilter = new SlewRateLimiter(1.7);
@@ -105,6 +107,11 @@ public class RobotContainer {
     joystick.x().onTrue(intake.toggle());
 
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
+
+    joystick.rightTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+    joystick.a().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+    joystick.b().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
+    
   }
 
   public Command getAutonomousCommand() {
