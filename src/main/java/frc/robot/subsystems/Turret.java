@@ -1,8 +1,11 @@
 package frc.robot.subsystems;
 
+import frc.robot.LimelightCalculations;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.function.BooleanSupplier;
 
@@ -58,6 +61,9 @@ public class Turret extends SubsystemBase {
      *
      */
     public void periodic() {
+
+        SmartDashboard.putNumber("Distance to limelight target: ", LimelightCalculations.getDistanceToTarget());
+
         turretMotor.set(
             turretPID.calculate(
                 turretMotor.getPosition().getValueAsDouble()
