@@ -14,23 +14,27 @@ public class Intake extends SubsystemBase {
     public final TalonFXS motor = new TalonFXS(60);
     public final DutyCycleOut motorControl = new DutyCycleOut(0);
 
-    public void robotInit() {
-       
+    public boolean isDeployed() {
+        return piston.get() == DoubleSolenoid.Value.kForward;
     }
 
-    public void teleopPeriodic() {
-        // periodic code can go here
+    public boolean isRetracted() {
+        return piston.get() == DoubleSolenoid.Value.kReverse;
     }
 
     public Command runIn() {
         return runOnce(() -> {
-             motor.setControl(motorControl.withOutput(0.5));
+            if (isDeployed()) {
+                motor.setControl(motorControl.withOutput(0.5));
+            }
         });
     }
 
     public Command runOut() {
         return runOnce(() -> {
-             motor.setControl(motorControl.withOutput(-0.5));
+            if (isDeployed()) {
+                motor.setControl(motorControl.withOutput(-0.5));
+            }
         });
     }
 
@@ -42,12 +46,9 @@ public class Intake extends SubsystemBase {
 
     public Command toggle() {
         return runOnce(() -> {
+            motor.setControl(motorControl.withOutput(0));
             piston.toggle();
         });
-    }
-
-    public boolean isDeployed() {
-    return piston.get() == DoubleSolenoid.Value.kForward;
     }
 
     public void activate(double speed) {
