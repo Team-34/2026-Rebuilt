@@ -6,8 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Spindexer extends SubsystemBase {
-    public final TalonFX motor = new TalonFX(55);
-
+    private final TalonFX motor = new TalonFX(55);
     private final DutyCycleOut control = new DutyCycleOut(0);
 
     public Command spin() {
