@@ -4,9 +4,9 @@
 
 package frc.robot;
 
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
-import static edu.wpi.first.units.Units.*;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -22,16 +22,20 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Spindexer;
+
 
 public class RobotContainer {
-        // The robot's subsystems and commands are defined here...
-        // private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
-        private final Intake intake = new Intake();
-
-        private final Shooter shooter = new Shooter();
+  // The robot's subsystems and commands are defined here...
+  private final Climber climber = new Climber();
+  private final Intake intake = new Intake();
+  private final Shooter shooter = new Shooter();
+  private final Spindexer spindexer = new Spindexer();
 
         SlewRateLimiter ForwardFilter = new SlewRateLimiter(1.7);
         SlewRateLimiter TurnFilter = new SlewRateLimiter(1.7);
@@ -70,25 +74,18 @@ public class RobotContainer {
                 FollowPathCommand.warmupCommand().schedule();
         }
 
-        private void configureBindings() {
-                // Note that X is defined as forward according to WPILib convention,
-                // and Y is defined as to the left according to WPILib convention.
-                drivetrain.setDefaultCommand(
-                                // Drivetrain will execute this command periodically
-                                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive
-                                                                                                                   // forward
-                                                                                                                   // with
-                                                                                                                   // negative
-                                                                                                                   // Y
-                                                                                                                   // (forward)
-                                                .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with
-                                                                                                // negative X (left)
-                                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive
-                                                                                                            // counterclockwise
-                                                                                                            // with
-                                                                                                            // negative
-                                                                                                            // X (left)
-                                ));
+  private void configureBindings() {
+      // Note that X is defined as forward according to WPILib convention,
+      // and Y is defined as to the left according to WPILib convention.
+    drivetrain.setDefaultCommand(
+      // Drivetrain will execute this command periodically
+    drivetrain.applyRequest(() -> drive.withVelocityX(ForwardFilter.calculate(-joystick.getLeftY() * MaxSpeed)) // Drive forward with
+      // negative Y
+      // (forward)
+    .withVelocityY(TurnFilter.calculate(-joystick.getLeftX() * MaxSpeed)) // Drive left with negative X (left)
+    .withRotationalRate(RotateFilter.calculate(-joystick.getRightX() * MaxAngularRate)) // Drive counterclockwise with
+      // negative X (left)
+    ));
 
                 // Idle while the robot is disabled. This ensures the configured
                 // neutral mode is applied to the drive motors while disabled.
@@ -111,13 +108,24 @@ public class RobotContainer {
                 // Reset the field-centric heading on left bumper press.
                 joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
-                drivetrain.registerTelemetry(logger::telemeterize);
-                this.joystick.rightTrigger().onTrue(this.shooter.cycleSpeedCommand());
-                joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
-                joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
-                joystick.x().onTrue(intake.toggle());
-                joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
-        }
+    drivetrain.registerTelemetry(logger::telemeterize);
+
+    // ==== OUR SUBSYSTEM BINDINGS ====
+    joystick.y().onTrue(climber.toggleCommand());
+    joystick.povLeft().whileTrue(climber.extendCommand());
+    joystick.povRight().whileTrue(climber.retractCommand());
+
+    joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
+    joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
+    joystick.x().onTrue(intake.toggle());
+
+    joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
+
+    joystick.rightTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+    joystick.a().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+    joystick.b().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
+    
+  }
 
         public Command getAutonomousCommand() {
                 // Simple drive forward auton
