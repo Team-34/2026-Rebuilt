@@ -30,10 +30,10 @@ import frc.robot.subsystems.Spindexer;
 
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Climber climber = new Climber();
-  private final Intake intake = new Intake();
+  //private final Climber climber = new Climber();
+  //private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
-  private final Spindexer spindexer = new Spindexer();
+  //private final Spindexer spindexer = new Spindexer();
 
   SlewRateLimiter ForwardFilter = new SlewRateLimiter(1.7);
   SlewRateLimiter TurnFilter = new SlewRateLimiter(1.7);
@@ -108,20 +108,20 @@ public class RobotContainer {
 
     // ==== OUR SUBSYSTEM BINDINGS ====
 
-    joystick.y().onTrue(climber.toggleCommand());
-    joystick.povLeft().whileTrue(climber.extendCommand());
-    joystick.povRight().whileTrue(climber.retractCommand());
+    // joystick.y().onTrue(climber.toggleCommand());
+    // joystick.povLeft().whileTrue(climber.extendCommand());
+    // joystick.povRight().whileTrue(climber.retractCommand());
 
-    joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
-    joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
-    joystick.x().onTrue(intake.toggle());
+    // joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
+    // joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
+    // joystick.x().onTrue(intake.toggle());
 
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
 
-    joystick.rightTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
-    joystick.a().onTrue(spindexer.spin()).onFalse(spindexer.stop());
-    joystick.b().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
-  }
+  //   joystick.rightTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+  //   joystick.a().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+  //   joystick.b().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
+ }
 
   public Command getAutonomousCommand() {
     // Simple drive forward auton
