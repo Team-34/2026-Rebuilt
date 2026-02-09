@@ -8,54 +8,54 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 public class Intake extends SubsystemBase {
-  
-    private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
 
-    public final TalonFXS motor = new TalonFXS(60);
-    public final DutyCycleOut motorControl = new DutyCycleOut(0);
+  private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
 
-    public boolean isDeployed() {
-        return piston.get() == DoubleSolenoid.Value.kForward;
-    }
+  public final TalonFXS motor = new TalonFXS(60);
+  public final DutyCycleOut motorControl = new DutyCycleOut(0);
 
-    public boolean isRetracted() {
-        return piston.get() == DoubleSolenoid.Value.kReverse;
-    }
+  public boolean isDeployed() {
+    return piston.get() == DoubleSolenoid.Value.kForward;
+  }
 
-    public Command runIn() {
-        return runOnce(() -> {
-            if (isDeployed()) {
-                motor.setControl(motorControl.withOutput(0.5));
-            }
-        });
-    }
+  public boolean isRetracted() {
+    return piston.get() == DoubleSolenoid.Value.kReverse;
+  }
 
-    public Command runOut() {
-        return runOnce(() -> {
-            if (isDeployed()) {
-                motor.setControl(motorControl.withOutput(-0.5));
-            }
-        });
-    }
+  public Command runIn() {
+    return runOnce(() -> {
+      if (isDeployed()) {
+        motor.setControl(motorControl.withOutput(0.5));
+      }
+    });
+  }
 
-    public Command stop() {
-        return runOnce(() -> {
-            motor.setControl(motorControl.withOutput(0));
-        });
-    }
+  public Command runOut() {
+    return runOnce(() -> {
+      if (isDeployed()) {
+        motor.setControl(motorControl.withOutput(-0.5));
+      }
+    });
+  }
 
-    public Command toggle() {
-        return runOnce(() -> {
-            motor.setControl(motorControl.withOutput(0));
-            piston.toggle();
-        });
-    }
+  public Command stop() {
+    return runOnce(() -> {
+      motor.setControl(motorControl.withOutput(0));
+    });
+  }
 
-    public void activate(double speed) {
+  public Command toggle() {
+    return runOnce(() -> {
+      motor.setControl(motorControl.withOutput(0));
+      piston.toggle();
+    });
+  }
+
+  public void activate(final double speed) {
     if (isDeployed()) {
       motor.setControl(motorControl.withOutput(speed));
-        } else {
-        motor.setControl(motorControl.withOutput(0));
+    } else {
+      motor.setControl(motorControl.withOutput(0));
     }
   }
 }
