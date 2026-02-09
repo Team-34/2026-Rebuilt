@@ -22,7 +22,8 @@ Rebuilt: FRC game for the 2025–2026 season
 | Drivetrain (steering) | 4x Falcon                               | TalonFX (_built-in_) | 0 - 19 |
 | Drivetrain (drive)    | 4x Kraken<br>(_reduction: L2 6.75 : 1_) | TalonFX (_built-in_) | 0 - 19 |
 ||
-| Shooter               | 2x CTR Minion                           | TalonFXS             | 20 - 29 |
+| Shooter               | 2x Kraken x60                           | TalonFX (_built-in_) | 20 - 24 |
+| Aiming Mechanism      | 1x Johnson PLG                          | Talon SRX            | 25 - 29 |
 | Feeder                | 1x Kraken x44                           | TalonFX (_built-in_) | 30 - 39 |
 | Climber               | 2x Kraken x60                           | TalonFX (_built-in_) | 40 - 49 |
 | Turret                | 1x CTR Minion                           | TalonFXS             | 50 - 54 |
