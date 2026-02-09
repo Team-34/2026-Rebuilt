@@ -3,8 +3,11 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorArrangementValue;
 
 public class Turret extends SubsystemBase {
     
@@ -13,6 +16,13 @@ public class Turret extends SubsystemBase {
     private final PositionVoltage positionControl = new PositionVoltage(0);
 
     public Turret() {
+        final var config = new TalonFXSConfiguration();
+
+        config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
+
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // <-- May be removed if needed
+        
+        motor.getConfigurator().apply(config);
     }
 
     /**
