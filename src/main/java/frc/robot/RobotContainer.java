@@ -46,10 +46,11 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
   private final Spindexer spindexer = new Spindexer();
+  private final Turret turret = new Turret();
 
-    SlewRateLimiter ForwardFilter = new SlewRateLimiter(1.7);
-    SlewRateLimiter TurnFilter = new SlewRateLimiter(2.0);
-    SlewRateLimiter RotateFilter = new SlewRateLimiter(1.8);
+  private final SlewRateLimiter forwardFilter = new SlewRateLimiter(1.7);
+  private final SlewRateLimiter turnFilter = new SlewRateLimiter(2.0);
+  private final SlewRateLimiter rotateFilter = new SlewRateLimiter(1.8);
     
   // @formatter:off
   private final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -91,9 +92,9 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive
-            .withVelocityX(ForwardFilter.calculate(-joystick.getLeftY() * MaxSpeed)) // Drive forward with negative Y (forward)
-            .withVelocityY(TurnFilter.calculate(-joystick.getLeftX() * MaxSpeed)) // Drive left with negative X (left)
-            .withRotationalRate(RotateFilter.calculate(-joystick.getRightX() * MaxAngularRate)) // Drive counterclockwise with negative X (left)
+            .withVelocityX(forwardFilter.calculate(-joystick.getLeftY() * MaxSpeed)) // Drive forward with negative Y (forward)
+            .withVelocityY(turnFilter.calculate(-joystick.getLeftX() * MaxSpeed)) // Drive left with negative X (left)
+            .withRotationalRate(rotateFilter.calculate(-joystick.getRightX() * MaxAngularRate)) // Drive counterclockwise with negative X (left)
         )
     );
 
@@ -119,8 +120,8 @@ public class RobotContainer {
     joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
     joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-    // Reset the field-centric heading on left bumper press.
-    joystick.leftBumper().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+    // Reset the field-centric heading on start button press.
+    joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
     // Reset the field-centric heading on back button press.
     joystick.back().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
@@ -143,6 +144,13 @@ public class RobotContainer {
     joystick.rightTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
     joystick.a().onTrue(spindexer.spin()).onFalse(spindexer.stop());
     joystick.b().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
+
+    joystick.leftBumper().whileTrue(turret.turretByPowerCommand(-0.5));
+    joystick.rightBumper().whileTrue(turret.turretByPowerCommand(0.5));
+    // For now, it will have an imaginary setpoint of 10.0, but this will be changed 
+    // to a more accurate value in the future.
+    joystick.leftTrigger().whileTrue(turret.turretByPositionCommand(10.0)); 
+
     }
         
 

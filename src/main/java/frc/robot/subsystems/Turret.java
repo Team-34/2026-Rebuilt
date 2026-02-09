@@ -1,23 +1,16 @@
 package frc.robot.subsystems;
 
-import frc.robot.LimelightCalculations;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import java.util.function.BooleanSupplier;
-
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFXS;
 
 public class Turret extends SubsystemBase {
     
-    TalonFXS turretMotor = new TalonFXS(50);
+    private final TalonFXS motor = new TalonFXS(50);
 
-    PIDController turretPID = new PIDController(0.5, 0.5, 0.5);
-
-    BooleanSupplier atSetpoint = () -> turretPID.atSetpoint();
+    private final PositionVoltage positionControl = new PositionVoltage(0);
 
     public Turret() {
     }
@@ -26,19 +19,11 @@ public class Turret extends SubsystemBase {
      * @param setpoint The setpoint to move the turret to.
      * @return Moves the turret to the setpoint.
      */
-    public Command turretBySetpointCommand(double setpoint) {
-        return run
-        (
-           () -> {
-            turretPID.setSetpoint(setpoint);
-           }
-        ).until(atSetpoint);
+    public Command turretByPositionCommand(double position) {
+        return runOnce(() -> {
+          motor.setControl(positionControl.withPosition(position));
+        });
     }
-
-    public double getSetpoint() {
-        return turretPID.getSetpoint();
-    }
-
 
     /**
      * @param power The power to give to the motor.
@@ -48,10 +33,10 @@ public class Turret extends SubsystemBase {
         return runEnd
         (
            () -> {
-            turretMotor.set(power);
+            motor.set(power);
            },
            () -> {
-            turretMotor.stopMotor();
+            motor.stopMotor();
            }
         );
     }
@@ -62,14 +47,6 @@ public class Turret extends SubsystemBase {
      */
     public void periodic() {
 
-        SmartDashboard.putNumber("Distance to limelight target: ", LimelightCalculations.getDistanceToTarget());
-
-        turretMotor.set(
-            turretPID.calculate(
-                turretMotor.getPosition().getValueAsDouble()
-                , turretPID.getSetpoint()
-            )
-        );
     }
 
 }
