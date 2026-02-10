@@ -17,15 +17,16 @@ Rebuilt: FRC game for the 2025–2026 season
 
 ## Motors
 
-| Subsystem             | Motor(s)                                | Controller(s)        | Can IDs |
-| --                    | --                                      | --                   | -- |
-| Drivetrain (steering) | 4x Falcon                               | TalonFX (_built-in_) | 0 - 19 |
-| Drivetrain (drive)    | 4x Kraken<br>(_reduction: L2 6.75 : 1_) | TalonFX (_built-in_) | 0 - 19 |
+| Subsystem      | Can IDs | Function | Motor(s)                                | Controller(s)        |
+| --             | --      | --       | --                                      | --                   |
+| **Drivetrain** | 0 - 19  | steering | 4x Falcon                               | TalonFX (_built-in_) |
+|                |         | drive    | 4x Kraken<br>(_reduction: L2 6.75 : 1_) | TalonFX (_built-in_) |
 ||
-| Shooter               | 2x Kraken x60                           | TalonFX (_built-in_) | 20 - 24 |
-| Aiming Mechanism      | 1x Johnson PLG                          | Talon SRX            | 25 - 29 |
-| Feeder                | 1x Kraken x44                           | TalonFX (_built-in_) | 30 - 39 |
-| Climber               | 2x Kraken x60                           | TalonFX (_built-in_) | 40 - 49 |
-| Turret                | 1x CTR Minion                           | TalonFXS             | 50 - 54 |
-| Spindexer             | 1x Kraken (TBD)                         | TalonFX (_built-in_) | 55 - 59 |
-| Intake                | 1x CTR Minion                           | TalonFXS             | 60 - 63 |
+| **Shooter**    | 20 - 29 | shooting | 2x Kraken x60                           | TalonFX (_built-in_) |
+|                |         | aiming   | 1x Johnson PLG                          | Talon SRX            |
+||
+| **Feeder**     | 30 - 39 |          | 1x Kraken x44                           | TalonFX (_built-in_) |
+| **Climber**    | 40 - 49 |          | 2x Kraken x60                           | TalonFX (_built-in_) |
+| **Turret**     | 50 - 54 |          | 1x CTR Minion                           | TalonFXS             |
+| **Spindexer**  | 55 - 59 |          | 1x Kraken (TBD)                         | TalonFX (_built-in_) |
+| **Intake**     | 60 - 63 |          | 1x CTR Minion                           | TalonFXS             |
