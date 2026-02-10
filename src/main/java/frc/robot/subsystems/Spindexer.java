@@ -26,4 +26,10 @@ public class Spindexer extends SubsystemBase {
       motor.setControl(this.control.withOutput(-0.5));
     });
   }
+
+  public Command cycle() {
+    return runOnce(() -> {
+      motor.setControl(this.control.withOutput(0.5));
+    });
+  }
 }

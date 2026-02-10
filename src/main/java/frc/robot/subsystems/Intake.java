@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.configs.TalonFXSConfiguration;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -8,11 +11,17 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 public class Intake extends SubsystemBase {
-
   private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
 
   public final TalonFXS motor = new TalonFXS(60);
   public final DutyCycleOut motorControl = new DutyCycleOut(0);
+
+  public Intake() {
+    final TalonFXSConfiguration config = new TalonFXSConfiguration();
+    config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    motor.getConfigurator().apply(config);
+  }
 
   public boolean isDeployed() {
     return piston.get() == DoubleSolenoid.Value.kForward;
@@ -52,10 +61,6 @@ public class Intake extends SubsystemBase {
   }
 
   public void activate(final double speed) {
-    if (isDeployed()) {
-      motor.setControl(motorControl.withOutput(speed));
-    } else {
-      motor.setControl(motorControl.withOutput(0));
-    }
+    motor.setControl(motorControl.withOutput(isDeployed() ? speed : 0));
   }
 }
