@@ -17,7 +17,7 @@ public class Intake extends SubsystemBase {
   public final DutyCycleOut motorControl = new DutyCycleOut(0);
 
   public Intake() {
-    TalonFXSConfiguration config = new TalonFXSConfiguration();
+    final TalonFXSConfiguration config = new TalonFXSConfiguration();
     config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     motor.getConfigurator().apply(config);
@@ -61,10 +61,6 @@ public class Intake extends SubsystemBase {
   }
 
   public void activate(final double speed) {
-    if (isDeployed()) {
-      motor.setControl(motorControl.withOutput(speed));
-    } else {
-      motor.setControl(motorControl.withOutput(0));
-    }
+    motor.setControl(motorControl.withOutput(isDeployed() ? speed : 0));
   }
 }
