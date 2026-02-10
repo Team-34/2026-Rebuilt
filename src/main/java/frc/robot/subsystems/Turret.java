@@ -19,6 +19,7 @@ public class Turret extends SubsystemBase {
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // <-- May be removed if needed
 
     motor.getConfigurator().apply(config);
+    motor.set(0.0);
   }
 
   /**
