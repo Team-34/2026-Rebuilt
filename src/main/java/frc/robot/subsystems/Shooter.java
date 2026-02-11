@@ -4,6 +4,12 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Percent;
+
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -26,9 +32,9 @@ public class Shooter extends SubsystemBase {
   }
 
   private Speed speed = Speed.STOP;
-  private final TalonFX master = new TalonFX(20);
-  private final TalonFX padwan = new TalonFX(21);
-
+  private final TalonFX master = new TalonFX(20);//left
+  private final TalonFX padwan = new TalonFX(21);//right
+  private final TalonSRX aimer = new TalonSRX(22);
   /**
  * 
  */
@@ -36,7 +42,18 @@ public Shooter() {
     TalonFXConfiguration master_config = new TalonFXConfiguration();
     master_config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     master.getConfigurator().apply(master_config);
-    padwan.setControl(new Follower(master.getDeviceID(),MotorAlignmentValue.Opposed)); 
+    padwan.setControl(new Follower(master.getDeviceID(),MotorAlignmentValue.Opposed));
+    
+    TalonSRXConfiguration aimer_config = new TalonSRXConfiguration();
+    aimer.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
+    aimer.config_kP(0, 0.1, 0);
+    aimer.config_kI(0, 0.1, 0);
+    aimer.config_kD(0, 0.1, 0);
+    aimer.config_kF(0, 0.1, 0);
+    aimer.configMotionCruiseVelocity(1000, 10);
+    aimer.configMotionAcceleration(500, 10);
+
+
   }
   //right motor should go clockwise
   /**
@@ -54,13 +71,39 @@ public Shooter() {
         case FULL -> Speed.STOP;
         default -> Speed.STOP;
       };
-      runMotor(this.speed.value);
+      runFiringMotor(this.speed.value);
     });
   }
-  private void runMotor(double motor_speed) {
+  private void runFiringMotor(double motor_speed) {
     this.master.set(motor_speed);
   }
 
+  public Command setPosition(){
+     return runOnce(() -> {
+        moveAimingMotorRot(2);
+     });
+  }
+  public Command setPrecent(double run_speed){
+     return runOnce(() -> {
+      moveAimingMotor(run_speed);   
+     });
+  }
+  private void moveAimingMotorRot(double motor_rot) {
+    
+    double position = motor_rot * 4096; 
+    this.aimer.set(TalonSRXControlMode.Position, position);
+    // this moves the motor to 2048 encoder units. still figuring out how fast it reaches that position
+    // and if we can control this speed...
+  }
+  private void moveAimingMotor(double motor_speed) {
+    
+    this.aimer.set(TalonSRXControlMode.PercentOutput, motor_speed);
+    // this moves the motor to 2048 encoder units. still figuring out how fast it reaches that position
+    // and if we can control this speed...
+  }
+
+
+  
   /**
    * An example method querying a boolean state of the subsystem (for example, a
    * digital sensor).
