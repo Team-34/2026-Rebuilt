@@ -4,12 +4,11 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Percent;
+
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -44,12 +43,12 @@ public Shooter() {
     master.getConfigurator().apply(master_config);
     padwan.setControl(new Follower(master.getDeviceID(),MotorAlignmentValue.Opposed));
     
-    TalonSRXConfiguration aimer_config = new TalonSRXConfiguration();
+  
     aimer.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
     aimer.config_kP(0, 0.1, 0);
-    aimer.config_kI(0, 0.1, 0);
-    aimer.config_kD(0, 0.1, 0);
-    aimer.config_kF(0, 0.1, 0);
+    aimer.config_kI(0, 0, 0);
+    aimer.config_kD(0, 0, 0);
+    aimer.config_kF(0, 0, 0);
     aimer.configMotionCruiseVelocity(1000, 10);
     aimer.configMotionAcceleration(500, 10);
 
