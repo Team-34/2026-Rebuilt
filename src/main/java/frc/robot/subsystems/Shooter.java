@@ -32,7 +32,7 @@ public class Shooter extends SubsystemBase {
 
   private Speed speed = Speed.STOP;
   private final TalonFX master = new TalonFX(20);//left
-  private final TalonFX padwan = new TalonFX(21);//right
+  private final TalonFX padawan = new TalonFX(21);//right
   private final TalonSRX aimer = new TalonSRX(22);
   /**
  * 
@@ -41,7 +41,7 @@ public Shooter() {
     TalonFXConfiguration master_config = new TalonFXConfiguration();
     master_config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     master.getConfigurator().apply(master_config);
-    padwan.setControl(new Follower(master.getDeviceID(),MotorAlignmentValue.Opposed));
+    padawan.setControl(new Follower(master.getDeviceID(),MotorAlignmentValue.Opposed));
     
   
     aimer.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 0, 0);
