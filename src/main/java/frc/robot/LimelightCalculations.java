@@ -18,6 +18,6 @@ public class LimelightCalculations {
 
     final double[] targetPose_CameraSpace = LimelightHelpers.getTargetPose_CameraSpace("");
 
-    return targetPose_CameraSpace[tzIndex] * tzToInchesScalar;
+    return 0; //targetPose_CameraSpace[tzIndex] * tzToInchesScalar;
   }
 }
