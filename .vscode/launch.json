@@ -9,13 +9,6 @@
       "name": "Main",
       "request": "launch",
       "mainClass": "frc.robot.Main",
-      "projectName": "2026-Rebuilt-2"
-    },
-    {
-      "type": "java",
-      "name": "Main",
-      "request": "launch",
-      "mainClass": "frc.robot.Main",
       "projectName": "2026-Rebuilt"
     },
     {
