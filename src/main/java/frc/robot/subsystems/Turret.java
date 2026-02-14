@@ -24,12 +24,10 @@ public class Turret extends SubsystemBase {
     motor.getConfigurator().apply(config);
   }
 
-  public void resetEncoder() {
+  private void resetEncoder() {
     // Set the encoder position to zero rotations
     // The argument is the new position value
-    if (!limitSwitch.get()) {
-      motor.setPosition(0.0);
-    }
+    motor.setPosition(0);
   }
 
   /**
@@ -48,5 +46,16 @@ public class Turret extends SubsystemBase {
    */
   public Command turretByPowerCommand(final double power) {
     return runEnd(() -> motor.set(power), () -> motor.stopMotor());
+  }
+
+  private boolean isAtHome() {
+    return !limitSwitch.get();
+  }
+
+  @Override
+  public void periodic() {
+    if (isAtHome()) {
+      resetEncoder();
+    }
   }
 }
