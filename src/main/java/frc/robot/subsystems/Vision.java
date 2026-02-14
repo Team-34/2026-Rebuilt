@@ -7,9 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Vision extends SubsystemBase {
   
-  public Vision() {
-  LimelightHelpers.SetRobotOrientation("limelight", gyroDegrees, 0, 0, 0, 0, 0);
-  }
+  public Vision() {}
 
   Pigeon2 gyro = new Pigeon2(10);
 
@@ -17,10 +15,8 @@ public class Vision extends SubsystemBase {
 
   /**
    * Returns a value from the Targetpose_CameraSpace array.
-   *
    * @param index the index of the array to return as a double.
    * @return Returns data from the Targetpose_CameraSpace array. The index is as follows:
-   * 
    * <ul>
    *  <li>0: Tx (degree measure left or right from the center crosshair)
    *  <li>1: Ty (degree measure up or down from the center crosshair)
@@ -55,11 +51,38 @@ public class Vision extends SubsystemBase {
     return LimelightHelpers.getTV("");
   }
 
+  public double getTX() {
+    return getTPCSArray(0);
+  }
+  
+  public double getTY() {
+    return getTPCSArray(1);
+  }
+
+  public void updatePosition()
+  {
+    LimelightHelpers.SetRobotOrientation("limelight", gyroDegrees, 0, 0, 0, 0, 0);
+  }
+
+  public boolean targetLocked(int tag)
+  {
+    final double TY_TOLERANCE = 0.5;
+    final double TX_TOLERANCE = 0.5;
+    boolean state = false;
+    if (LimelightHelpers.getFiducialID("") == tag || getTY() < TY_TOLERANCE || getTX() < TX_TOLERANCE )
+    {
+      state = true;
+    } else {
+      state = false;
+    }
+    return state;
+  }
+
   public void periodic() {
     SmartDashboard.putNumber("Distance to Target", getDistanceToTarget());
     SmartDashboard.putNumber("Gyro Degrees", gyroDegrees);
     SmartDashboard.putNumber("Limelight Tx", getTPCSArray(0));
     SmartDashboard.putNumber("Limelight Ty", getTPCSArray(1));
-    
+    updatePosition();
   }
 }
