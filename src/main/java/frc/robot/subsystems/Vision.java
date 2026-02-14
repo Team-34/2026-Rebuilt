@@ -1,0 +1,65 @@
+package frc.robot.subsystems;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.LimelightHelpers;
+import com.ctre.phoenix6.hardware.Pigeon2;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+public class Vision extends SubsystemBase {
+  
+  public Vision() {
+  LimelightHelpers.SetRobotOrientation("limelight", gyroDegrees, 0, 0, 0, 0, 0);
+  }
+
+  Pigeon2 gyro = new Pigeon2(10);
+
+  double gyroDegrees = gyro.getYaw().getValueAsDouble() % 360;
+
+  /**
+   * Returns a value from the Targetpose_CameraSpace array.
+   *
+   * @param index the index of the array to return as a double.
+   * @return Returns data from the Targetpose_CameraSpace array. The index is as follows:
+   * 
+   * <ul>
+   *  <li>0: Tx (degree measure left or right from the center crosshair)
+   *  <li>1: Ty (degree measure up or down from the center crosshair)
+   *  <li>2: Tz (distance from target, with each unit being 65 inches)
+   *  <li>3: Pitch (static pitch value of the Limelight as set in the web API, in degrees)
+   *  <li>4: Yaw (static yaw value of the Limelight as set in the web API, in degrees)
+   *  <li>5: Roll (static roll value of the Limelight as set in the web API, in degrees)
+   * </li>
+   * </ul>
+   */
+
+  public double getTPCSArray(int index) 
+  {
+  double[] data = LimelightHelpers.getTargetPose_CameraSpace("");
+  return data[index];
+  }
+
+  public void setPriorityTag(int tag) 
+  {
+    LimelightHelpers.setPriorityTagID("", tag);
+  }
+  
+  public double getDistanceToTarget()
+  {
+    int tzToInchesScalar = 65;
+    int tzIndex = 2;
+    return getTPCSArray(tzIndex) * tzToInchesScalar;
+  }
+  
+  public boolean hasTarget() 
+  {
+    return LimelightHelpers.getTV("");
+  }
+
+  public void periodic() {
+    SmartDashboard.putNumber("Distance to Target", getDistanceToTarget());
+    SmartDashboard.putNumber("Gyro Degrees", gyroDegrees);
+    SmartDashboard.putNumber("Limelight Tx", getTPCSArray(0));
+    SmartDashboard.putNumber("Limelight Ty", getTPCSArray(1));
+    
+  }
+}
