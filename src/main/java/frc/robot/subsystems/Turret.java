@@ -27,7 +27,9 @@ public class Turret extends SubsystemBase {
   public void resetEncoder() {
     // Set the encoder position to zero rotations
     // The argument is the new position value
-    motor.setPosition(0.0);
+    if (!limitSwitch.get()) {
+      motor.setPosition(0.0);
+    }
   }
 
   /**
