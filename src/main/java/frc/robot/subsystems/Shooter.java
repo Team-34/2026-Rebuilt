@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.hardware.TalonFXS;
@@ -26,6 +27,7 @@ public class Shooter extends SubsystemBase {
   private Speed speed;
   private final TalonFXS leftMotor = new TalonFXS(20);
   private final TalonFXS rightMotor = new TalonFXS(21);
+
 
   public Shooter() {
     this.rightMotor.setControl(new Follower(this.leftMotor.getDeviceID(), MotorAlignmentValue.Opposed));

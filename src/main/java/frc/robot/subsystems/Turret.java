@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -12,6 +14,7 @@ import com.ctre.phoenix6.signals.MotorArrangementValue;
 public class Turret extends SubsystemBase {
   private final TalonFXS motor = new TalonFXS(50);
   private final PositionVoltage positionControl = new PositionVoltage(0);
+  private final DigitalInput limitSwitch = new DigitalInput(3);
 
   public Turret() {
     final var config = new TalonFXSConfiguration();
@@ -19,6 +22,12 @@ public class Turret extends SubsystemBase {
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // <-- May be removed if needed
 
     motor.getConfigurator().apply(config);
+  }
+
+  private void resetEncoder() {
+    // Set the encoder position to zero rotations
+    // The argument is the new position value
+    motor.setPosition(0);
   }
 
   /**
@@ -37,5 +46,16 @@ public class Turret extends SubsystemBase {
    */
   public Command turretByPowerCommand(final double power) {
     return runEnd(() -> motor.set(power), () -> motor.stopMotor());
+  }
+
+  private boolean isAtHome() {
+    return !limitSwitch.get();
+  }
+
+  @Override
+  public void periodic() {
+    if (isAtHome()) {
+      resetEncoder();
+    }
   }
 }
