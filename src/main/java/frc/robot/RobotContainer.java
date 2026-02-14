@@ -58,8 +58,8 @@ public class RobotContainer {
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-      .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-      .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+    .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+    .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
   private final SwerveRequest.SwerveDriveBrake shieldwall = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     
@@ -92,9 +92,9 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive
-            .withVelocityX(forwardFilter.calculate(-joystick.getLeftY() * MaxSpeed)) // Drive forward with negative Y (forward)
-            .withVelocityY(turnFilter.calculate(-joystick.getLeftX() * MaxSpeed)) // Drive left with negative X (left)
-            .withRotationalRate(rotateFilter.calculate(-joystick.getRightX() * MaxAngularRate)) // Drive counterclockwise with negative X (left)
+          .withVelocityX(forwardFilter.calculate(-joystick.getLeftY() * MaxSpeed)) // Drive forward with negative Y (forward)
+          .withVelocityY(turnFilter.calculate(-joystick.getLeftX() * MaxSpeed)) // Drive left with negative X (left)
+          .withRotationalRate(rotateFilter.calculate(-joystick.getRightX() * MaxAngularRate)) // Drive counterclockwise with negative X (left)
         )
     );
 
@@ -154,27 +154,25 @@ public class RobotContainer {
     }
         
 
-
     public Command getAutonomousCommand() {
-        // Simple drive forward auton
-        final var idle = new SwerveRequest.Idle();
-        return Commands.sequence(
-                // Reset our field centric heading to match the robot
-                // facing away from our alliance station wall (0 deg).
-                drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-                // Then slowly drive forward (away from us) for 5 seconds.
-                drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
-                        .withVelocityY(0)
-                        .withRotationalRate(0))
-                        .withTimeout(5.0),
-                // Finally idle for the rest of auton
-                drivetrain.applyRequest(() -> idle));
+      // Simple drive forward auton
+      final var idle = new SwerveRequest.Idle();
+      return Commands.sequence(
+        // Reset our field centric heading to match the robot
+        // facing away from our alliance station wall (0 deg).
+        drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
+        // Then slowly drive forward (away from us) for 5 seconds.
+        drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
+          .withVelocityY(0)
+          .withRotationalRate(0))
+          .withTimeout(5.0),
+        // Finally idle for the rest of auton
+        drivetrain.applyRequest(() -> idle));
     }
   // The robot's subsystems and commands are defined here...
   
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+    new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
-  
 }

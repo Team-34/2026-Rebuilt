@@ -23,7 +23,7 @@ Rebuilt: FRC game for the 2025–2026 season
 |                |         | drive    | 4x Kraken<br>(_reduction: L2 6.75 : 1_) | TalonFX (_built-in_) |
 ||
 | **Shooter**    | 20 - 29 | shooting | 2x Kraken x60                           | TalonFX (_built-in_) |
-|                |         | aiming   | 1x Johnson PLG                          | Talon SRX            |
+|                |         | aiming   | 1x Johnson PLG                          | Talon FXS            |
 ||
 | **Feeder**     | 30 - 39 |          | 1x Kraken x44                           | TalonFX (_built-in_) |
 | **Climber**    | 40 - 49 |          | 2x Kraken x60                           | TalonFX (_built-in_) |
