@@ -27,7 +27,6 @@ public class Vision extends SubsystemBase {
    * </li>
    * </ul>
    */
-
   public double getTPCSArray(int index) 
   {
   double[] data = LimelightHelpers.getTargetPose_CameraSpace("");
@@ -46,7 +45,7 @@ public class Vision extends SubsystemBase {
     return getTPCSArray(tzIndex) * tzToInchesScalar;
   }
   
-  public boolean hasTarget() 
+  public boolean isTargetValid() 
   {
     return LimelightHelpers.getTV("");
   }
@@ -64,18 +63,13 @@ public class Vision extends SubsystemBase {
     LimelightHelpers.SetRobotOrientation("limelight", gyroDegrees, 0, 0, 0, 0, 0);
   }
 
-  public boolean targetLocked(int tag)
+  public boolean isTargetLocked(int tag)
   {
     final double TY_TOLERANCE = 0.5;
     final double TX_TOLERANCE = 0.5;
-    boolean state = false;
-    if (LimelightHelpers.getFiducialID("") == tag || getTY() < TY_TOLERANCE || getTX() < TX_TOLERANCE )
-    {
-      state = true;
-    } else {
-      state = false;
-    }
-    return state;
+    boolean isCorrectTag = LimelightHelpers.getFiducialID("") == tag;
+    boolean isWithinTolerance = getTX() < TX_TOLERANCE && getTY() < TY_TOLERANCE;
+    return isCorrectTag && isWithinTolerance;
   }
 
   public void periodic() {
