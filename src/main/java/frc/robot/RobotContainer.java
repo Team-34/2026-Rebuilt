@@ -149,7 +149,7 @@ public class RobotContainer {
     joystick.rightBumper().whileTrue(turret.turretByPowerCommand(0.5));
     // For now, it will have an imaginary setpoint of 10.0, but this will be changed 
     // to a more accurate value in the future.
-    joystick.leftTrigger().whileTrue(turret.turretByPositionCommand(10.0)); 
+    joystick.leftTrigger().onTrue(turret.turretByPositionCommand(10.0)); 
 
     }
         
