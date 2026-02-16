@@ -39,7 +39,6 @@ public class Shooter extends SubsystemBase {
   private final TalonFX master = new TalonFX(22); // left
   private final TalonFX padawan = new TalonFX(21); // right
 
-  private final Encoder hoodEncoder = new Encoder(1, 0); // built-in encoder on PlG
   private final CANcoder externalCancoder = new CANcoder(25); // external CTRE encoder
 
   private final DigitalInput limitSwitch = new DigitalInput(4);
@@ -134,7 +133,6 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Shooter Speed: ", master.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("built-in encoder units", hoodEncoder.get());
     SmartDashboard.putNumber("external encoder units", externalCancoder.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("limit switch: ", limitSwitch.get());
     SmartDashboard.putNumber("Hood Motor pos: ", hoodMotor.getSelectedSensorPosition());
