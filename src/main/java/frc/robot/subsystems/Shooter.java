@@ -34,6 +34,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private Speed speed = Speed.STOP;
+  
   private final TalonSRX hoodMotor = new TalonSRX(23); // hood motor
   private final TalonFX masterFiringMotor = new TalonFX(22); // left
   private final TalonFX padawanFiringMotor = new TalonFX(21); // right
@@ -46,23 +47,20 @@ public class Shooter extends SubsystemBase {
 
   private double hoodSetPoint = 0.0;
 
-  /**
-  * 
-  */
   public Shooter() {
     TalonFXConfiguration masterConfig = new TalonFXConfiguration();
     masterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    master.getConfigurator().apply(masterConfig);
-    padawan.setControl(new Follower(master.getDeviceID(), MotorAlignmentValue.Opposed));
+
+    masterFiringMotor.getConfigurator().apply(masterConfig);
+    padawanFiringMotor.setControl(new Follower(masterFiringMotor.getDeviceID(), MotorAlignmentValue.Opposed));
 
     hoodMotor.setInverted(true);
-
-    hoodMotor.configRemoteFeedbackFilter(externalCancoder.getDeviceID(), RemoteSensorSource.CANCoder, 0, 10);
+    hoodMotor.configRemoteFeedbackFilter(hoodEncoder.getDeviceID(), RemoteSensorSource.CANCoder, 0, 10);
     hoodMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
-    // hoodMotor.configMotionCruiseVelocity(1000, 10);
-    // hoodMotor.configMotionAcceleration(500, 10);
-    setPoint = externalCancoder.getPosition().getValueAsDouble();
-    hoodPID.setSetpoint(setPoint);
+    
+    hoodSetPoint = hoodEncoder.getPosition().getValueAsDouble();
+
+    hoodPID.setSetpoint(hoodSetPoint);
   }
 
   // right motor should go clockwise
@@ -85,67 +83,61 @@ public class Shooter extends SubsystemBase {
     });
   }
 
+  
+  public Command setHoodPosition(double position) {
+    return runOnce(() -> {
+      moveHoodMotorRotations(position);
+    });
+  }
+  
+  public Command setHoodMotorPercent(double speed) {
+    return runOnce(() -> {
+      moveHoodMotorPercent(speed);
+    });
+  }
+
   private void runFiringMotor(double speed) {
-    this.master.set(speed);
+    this.masterFiringMotor.set(speed);
   }
 
-  public Command setPosition(double position) {
-    return runOnce(() -> {
-      moveAimingMotorRot(position);
-    });
+  private void moveHoodMotorRotations(double rotations) {
+    this.hoodSetPoint = rotations;
   }
 
-  public Command setPercent(double run_speed) {
-    return runOnce(() -> {
-      moveAimingMotorPercent(run_speed);
-    });
+  private void moveHoodMotorPercent(double speed) {
+    this.hoodMotor.set(TalonSRXControlMode.PercentOutput, speed);
   }
 
-  private void moveAimingMotorRot(double motor_rot) {
-
-    this.setPoint = motor_rot;
-    // this.hoodMotor.setPosition(position);
-  private void moveAimingMotorRotations(double rotations) {
-    this.setPoint = rotations;
-  }
-
-  private void moveAimingMotorPercent(double motor_speed) {
-
-    this.hoodMotor.set(TalonSRXControlMode.PercentOutput, motor_speed);
-    // this.hoodMotor.setControl(hoodMotorControl.withOutput(motor_speed));
-  }
-
-  private void ZeroEncoder() {
-    externalCancoder.setPosition(0.0);
-    this.setPoint = 0.0;
+  private void ZeroHoodEncoder() {
+    hoodEncoder.setPosition(0.0);
+    this.hoodSetPoint = 0.0;
   }
 
   /**
-   * An example method querying a boolean state of the subsystem (for example, a
-   * digital sensor).
+   * Checks if the hood is at its "home" position, which is defined as the position where the hood encoder reads 0.0. 
+   * This can be used to determine if the hood has reached a known reference point, such as when a limit switch is triggered or after a reset.
    *
    * @return value of some boolean subsystem state, such as a digital sensor.
    */
-  public boolean exampleCondition() {
-    // Query some boolean state, such as a digital sensor.
-    return false;
+  public boolean isHoodAtHome() {
+    return hoodEncoder.getPosition().getValueAsDouble() == 0.0;
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Shooter Speed: ", master.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("external encoder units", externalCancoder.getPosition().getValueAsDouble());
-    SmartDashboard.putBoolean("limit switch: ", limitSwitch.get());
+    SmartDashboard.putNumber("Shooter Speed: ", masterFiringMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("external encoder units", hoodEncoder.getPosition().getValueAsDouble());
+    SmartDashboard.putBoolean("limit switch: ", hoodLimitSwitch.get());
     SmartDashboard.putNumber("Hood Motor pos: ", hoodMotor.getSelectedSensorPosition());
-    // hoodMotor.getSelectedSensorPosition());
-    var pose = MathUtil.clamp(hoodPID.calculate(externalCancoder.getPosition().getValueAsDouble(), setPoint), -1.0,
-        1.0);
-    this.hoodMotor.set(TalonSRXControlMode.PercentOutput, pose);
     SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
-    SmartDashboard.putNumber("Hood Motor Output: ", pose);
 
-    if (isHoodAtHome()) { //<= I dunno if I like this name, but you get the idea
-      zeroHoodEncoder();
+    var pose = MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(), hoodSetPoint), -1.0, 1.0);
+    this.hoodMotor.set(TalonSRXControlMode.PercentOutput, pose);
+    SmartDashboard.putNumber("Hood Motor Output: ", pose);
+    
+
+    if (isHoodAtHome()) {
+      ZeroHoodEncoder();
     }
   }
 

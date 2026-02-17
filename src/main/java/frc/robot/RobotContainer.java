@@ -117,8 +117,8 @@ public class RobotContainer {
     // joystick.x().onTrue(intake.toggle());
 
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
-    joystick.a().onTrue(shooter.setPercent(0.5));
-    joystick.b().onTrue(shooter.setPosition(1.0));
+    joystick.a().onTrue(shooter.setHoodMotorPercent(0.5));
+    joystick.b().onTrue(shooter.setHoodPosition(1.0));
 
 
   //   joystick.rightTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
