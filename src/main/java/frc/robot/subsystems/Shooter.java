@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
   enum Speed {
-    STOP(0.0), HALF(0.5), FULL(1.0);
+    STOP(0.0), HALF(0.5), FULL(1.0); // enum for flywheel speeds
 
     public final double value;
 
@@ -45,7 +45,7 @@ public class Shooter extends SubsystemBase {
 
   private final PIDController hoodPID = new PIDController(2.5, 0.0, 0.0); // PID for hood
 
-  private double hoodSetPoint = 0.0;
+  private double hoodSetPoint = 0.0; // setpoint for hood position in rotations
 
   public Shooter() {
     TalonFXConfiguration masterConfig = new TalonFXConfiguration();
@@ -70,8 +70,7 @@ public class Shooter extends SubsystemBase {
    * @returns The command that switches the speed to the next in the cycle.
    */
 
-  public Command cycleSpeedCommand() { // Inline construction of command goes here.
-    // Subsystem::RunOnce implicitly requires `this` subsystem.
+  public Command cycleSpeedCommand() {
     return runOnce(() -> {
       this.speed = switch (this.speed) {
       case STOP -> Speed.HALF;
@@ -127,9 +126,9 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     SmartDashboard.putNumber("Shooter Speed: ", masterFiringMotor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("external encoder units", hoodEncoder.getPosition().getValueAsDouble());
-    SmartDashboard.putBoolean("limit switch: ", hoodLimitSwitch.get());
     SmartDashboard.putNumber("Hood Motor pos: ", hoodMotor.getSelectedSensorPosition());
     SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
+    SmartDashboard.putBoolean("limit switch: ", hoodLimitSwitch.get());
 
     var pose = MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(), hoodSetPoint), -1.0, 1.0);
     this.hoodMotor.set(TalonSRXControlMode.PercentOutput, pose);
