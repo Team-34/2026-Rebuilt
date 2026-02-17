@@ -105,6 +105,8 @@ public class Shooter extends SubsystemBase {
 
     this.setPoint = motor_rot;
     // this.hoodMotor.setPosition(position);
+  private void moveAimingMotorRotations(double rotations) {
+    this.setPoint = rotations;
   }
 
   private void moveAimingMotorPercent(double motor_speed) {
