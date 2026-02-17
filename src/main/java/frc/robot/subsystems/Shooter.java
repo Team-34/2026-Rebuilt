@@ -85,8 +85,8 @@ public class Shooter extends SubsystemBase {
     });
   }
 
-  private void runFiringMotor(double motor_speed) {
-    this.master.set(motor_speed);
+  private void runFiringMotor(double speed) {
+    this.master.set(speed);
   }
 
   public Command setPosition(double position) {
