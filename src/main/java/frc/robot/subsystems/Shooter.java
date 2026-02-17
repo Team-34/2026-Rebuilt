@@ -38,13 +38,13 @@ public class Shooter extends SubsystemBase {
   private final TalonFX master = new TalonFX(22); // left
   private final TalonFX padawan = new TalonFX(21); // right
 
-  private final CANcoder externalCancoder = new CANcoder(25); // external CTRE encoder
+  private final CANcoder hoodEncoder = new CANcoder(25); // external CTRE encoder
 
-  private final DigitalInput limitSwitch = new DigitalInput(4);
+  private final DigitalInput hoodLimitSwitch = new DigitalInput(4);
 
   private final PIDController hoodPID = new PIDController(2.5, 0.0, 0.0); // PID for hood
 
-  private double setPoint = 0.0;
+  private double hoodSetPoint = 0.0;
 
   /**
   * 
