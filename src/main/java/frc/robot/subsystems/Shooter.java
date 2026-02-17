@@ -89,9 +89,9 @@ public class Shooter extends SubsystemBase {
     this.master.set(motor_speed);
   }
 
-  public Command setPosition() {
+  public Command setPosition(double position) {
     return runOnce(() -> {
-      moveAimingMotorRot(1.0);
+      moveAimingMotorRot(position);
     });
   }
 
