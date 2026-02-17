@@ -144,8 +144,8 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
     SmartDashboard.putNumber("Hood Motor Output: ", pose);
 
-    if (limitSwitch.get() == false) {
-      ZeroEncoder();
+    if (isHoodAtHome()) { //<= I dunno if I like this name, but you get the idea
+      zeroHoodEncoder();
     }
   }
 
