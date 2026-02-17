@@ -35,8 +35,8 @@ public class Shooter extends SubsystemBase {
 
   private Speed speed = Speed.STOP;
   private final TalonSRX hoodMotor = new TalonSRX(23); // hood motor
-  private final TalonFX master = new TalonFX(22); // left
-  private final TalonFX padawan = new TalonFX(21); // right
+  private final TalonFX masterFiringMotor = new TalonFX(22); // left
+  private final TalonFX padawanFiringMotor = new TalonFX(21); // right
 
   private final CANcoder hoodEncoder = new CANcoder(25); // external CTRE encoder
 
