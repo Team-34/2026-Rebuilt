@@ -63,7 +63,6 @@ public class Shooter extends SubsystemBase {
     hoodPID.setSetpoint(hoodSetPoint);
   }
 
-  // right motor should go clockwise
   /**
    * Cyles thought 3 different speeds. Stop -> Half -> Full -> Stop -> ...
    *
