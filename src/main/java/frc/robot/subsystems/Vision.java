@@ -40,8 +40,8 @@ public class Vision extends SubsystemBase {
   
   public double getDistanceToTarget()
   {
-    int tzToInchesScalar = 65;
-    int tzIndex = 2;
+    final int tzToInchesScalar = 65;
+    final int tzIndex = 2;
     return getTPCSArray(tzIndex) * tzToInchesScalar;
   }
   

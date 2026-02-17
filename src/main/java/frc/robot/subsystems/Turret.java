@@ -19,6 +19,9 @@ public class Turret extends SubsystemBase {
   private final TalonFXS motor = new TalonFXS(50);
   private final PositionVoltage positionControl = new PositionVoltage(0);
   private final DigitalInput limitSwitch = new DigitalInput(4);
+  // Limit switch is normally inveted (activated is when the trigger is depressed, 
+  // deactivated is when the trigger is pressed)
+  private boolean isLimitSwitchTriggered = !limitSwitch.get();
 
   public Turret() {
     final var config = new TalonFXSConfiguration();
@@ -28,6 +31,8 @@ public class Turret extends SubsystemBase {
     config.Slot0.kI = 0;
     config.Slot0.kD = 0;
     motor.getConfigurator().apply(config);
+
+    
   }
 
   private void resetEncoder() {
@@ -54,17 +59,17 @@ public class Turret extends SubsystemBase {
     return runEnd(() -> motor.set(power), () -> motor.stopMotor());
   }
 
-  private boolean isAtHome() {
-    return !limitSwitch.get();
+  private boolean isAtZeroPosition() {
+    return isLimitSwitchTriggered;
   }
 
   @Override
   public void periodic() {
-    if (isAtHome()) {
+    if (isAtZeroPosition()) {
       resetEncoder();
     }
     // Minion motor returns the encoder in full rotations (ex. 1 unit is 1 full rotation)
     SmartDashboard.putNumber("Encoder", motor.getPosition().getValueAsDouble());
-    SmartDashboard.putBoolean("Is at Home? ", isAtHome());
+    SmartDashboard.putBoolean("Is at zero? ", isAtZeroPosition());
   }
 }
