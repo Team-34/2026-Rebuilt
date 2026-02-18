@@ -112,9 +112,9 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
     SmartDashboard.putBoolean("limit switch: ", hoodLimitSwitch.get());
 
-    var pose = MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(), hoodSetPoint), -1.0, 1.0);
-    this.hoodMotor.set(TalonSRXControlMode.PercentOutput, pose);
-    SmartDashboard.putNumber("Hood Motor Output: ", pose);
+    var pos = MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(), hoodSetPoint), -1.0, 1.0);
+    this.hoodMotor.set(TalonSRXControlMode.PercentOutput, pos);
+    SmartDashboard.putNumber("Hood Motor Output: ", pos);
     
 
     if (isHoodAtHome()) {
