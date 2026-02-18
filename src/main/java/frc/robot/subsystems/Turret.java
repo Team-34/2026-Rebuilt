@@ -19,9 +19,6 @@ public class Turret extends SubsystemBase {
   private final TalonFXS motor = new TalonFXS(50);
   private final PositionVoltage positionControl = new PositionVoltage(0);
   private final DigitalInput limitSwitch = new DigitalInput(4);
-  // Limit switch is normally inveted (activated is when the trigger is depressed, 
-  // deactivated is when the trigger is pressed)
-  private boolean isLimitSwitchTriggered = !limitSwitch.get();
 
   public Turret() {
     final var config = new TalonFXSConfiguration();
@@ -31,14 +28,6 @@ public class Turret extends SubsystemBase {
     config.Slot0.kI = 0;
     config.Slot0.kD = 0;
     motor.getConfigurator().apply(config);
-
-    
-  }
-
-  private void resetEncoder() {
-    // Set the encoder position to zero rotations
-    // The argument is the new position value
-    motor.setPosition(0);
   }
 
   /**
@@ -60,9 +49,15 @@ public class Turret extends SubsystemBase {
   }
 
   private boolean isAtZeroPosition() {
-    return isLimitSwitchTriggered;
+    return !limitSwitch.get();
   }
 
+  private void resetEncoder() {
+    // Set the encoder position to zero rotations
+    // The argument is the new position value
+    motor.setPosition(0);
+  }
+  
   @Override
   public void periodic() {
     if (isAtZeroPosition()) {

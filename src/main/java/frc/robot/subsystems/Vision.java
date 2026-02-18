@@ -1,14 +1,12 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
-
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 
 public class Vision extends SubsystemBase {
-  
-  public Vision() {}
 
   Pigeon2 gyro = new Pigeon2(10);
 
@@ -26,26 +24,22 @@ public class Vision extends SubsystemBase {
    * </li>
    * </ul>
    */
-  public double getTargetPose_CameraSpaceElement(int index) 
-  {
+  public double getTargetPose_CameraSpaceElement(int index) {
   double[] data = LimelightHelpers.getTargetPose_CameraSpace("");
   return data[index];
   }
 
-  public void setPriorityTag(int tag) 
-  {
+  public void setPriorityTag(int tag) {
     LimelightHelpers.setPriorityTagID("", tag);
   }
   
-  public double getDistanceToTarget()
-  {
+  public double getDistanceToTarget() {
     final int tzToInchesScalar = 65;
     final int tzIndex = 2;
     return getTargetPose_CameraSpaceElement(tzIndex) * tzToInchesScalar;
   }
   
-  public boolean isTargetValid() 
-  {
+  public boolean isTargetValid() {
     return LimelightHelpers.getTV("");
   }
 
@@ -57,18 +51,16 @@ public class Vision extends SubsystemBase {
     return getTargetPose_CameraSpaceElement(1);
   }
 
-  public void updatePosition()
-  {
+  public void updatePosition() {
     double yawInDegrees = gyro.getYaw().getValueAsDouble() % 360;
     LimelightHelpers.SetRobotOrientation("limelight", yawInDegrees, 0, 0, 0, 0, 0);
   }
 
-  public boolean isTargetLocked(int tag)
-  {
+  public boolean isTargetLocked(int tag) {
     final double TY_TOLERANCE = 0.5;
     final double TX_TOLERANCE = 0.5;
     boolean isCorrectTag = LimelightHelpers.getFiducialID("") == tag;
-    boolean isWithinTolerance = getTX() < TX_TOLERANCE && getTY() < TY_TOLERANCE;
+    boolean isWithinTolerance = MathUtil.isNear(0, getTX(), TX_TOLERANCE) && MathUtil.isNear(0, getTY(), TY_TOLERANCE);
     return isCorrectTag && isWithinTolerance;
   }
 
