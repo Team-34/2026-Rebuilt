@@ -95,13 +95,12 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * Checks if the hood is at its "home" position, which is defined as the position where the hood encoder reads 0.0. 
-   * This can be used to determine if the hood has reached a known reference point, such as when a limit switch is triggered or after a reset.
-   *
-   * @return value of some boolean subsystem state, such as a digital sensor.
+   * Checks whether the limit switch is pressed, indicating that the hood as at the lowest
+   * point it can safely go.
+   * @return if the hood is in its home position.
    */
   public boolean isHoodAtHome() {
-    return hoodEncoder.getPosition().getValueAsDouble() == 0.0;
+    return hoodLimitSwitch.get();
   }
 
   @Override
