@@ -1,17 +1,16 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.LimelightHelpers;
 import com.ctre.phoenix6.hardware.Pigeon2;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.LimelightHelpers;
 
 public class Vision extends SubsystemBase {
   
   public Vision() {}
 
   Pigeon2 gyro = new Pigeon2(10);
-
-  double gyroDegrees = gyro.getYaw().getValueAsDouble() % 360;
 
   /**
    * Returns a value from the Targetpose_CameraSpace array.
@@ -27,7 +26,7 @@ public class Vision extends SubsystemBase {
    * </li>
    * </ul>
    */
-  public double getTPCSArray(int index) 
+  public double getTargetPose_CameraSpaceElement(int index) 
   {
   double[] data = LimelightHelpers.getTargetPose_CameraSpace("");
   return data[index];
@@ -42,7 +41,7 @@ public class Vision extends SubsystemBase {
   {
     final int tzToInchesScalar = 65;
     final int tzIndex = 2;
-    return getTPCSArray(tzIndex) * tzToInchesScalar;
+    return getTargetPose_CameraSpaceElement(tzIndex) * tzToInchesScalar;
   }
   
   public boolean isTargetValid() 
@@ -51,16 +50,17 @@ public class Vision extends SubsystemBase {
   }
 
   public double getTX() {
-    return getTPCSArray(0);
+    return getTargetPose_CameraSpaceElement(0);
   }
   
   public double getTY() {
-    return getTPCSArray(1);
+    return getTargetPose_CameraSpaceElement(1);
   }
 
   public void updatePosition()
   {
-    LimelightHelpers.SetRobotOrientation("limelight", gyroDegrees, 0, 0, 0, 0, 0);
+    double yawInDegrees = gyro.getYaw().getValueAsDouble() % 360;
+    LimelightHelpers.SetRobotOrientation("limelight", yawInDegrees, 0, 0, 0, 0, 0);
   }
 
   public boolean isTargetLocked(int tag)
@@ -74,9 +74,8 @@ public class Vision extends SubsystemBase {
 
   public void periodic() {
     SmartDashboard.putNumber("Distance to Target", getDistanceToTarget());
-    SmartDashboard.putNumber("Gyro Degrees", gyroDegrees);
-    SmartDashboard.putNumber("Limelight Tx", getTPCSArray(0));
-    SmartDashboard.putNumber("Limelight Ty", getTPCSArray(1));
+    SmartDashboard.putNumber("Limelight Tx", getTargetPose_CameraSpaceElement(0));
+    SmartDashboard.putNumber("Limelight Ty", getTargetPose_CameraSpaceElement(1));
     updatePosition();
   }
 }
