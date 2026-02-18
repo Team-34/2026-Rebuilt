@@ -94,23 +94,6 @@ public class Shooter extends SubsystemBase {
     });
   }
 
-  private void runFiringMotor(double speed) {
-    this.masterFiringMotor.set(speed);
-  }
-
-  private void moveHoodMotorRotations(double rotations) {
-    this.hoodSetPoint = rotations;
-  }
-
-  private void moveHoodMotorPercent(double speed) {
-    this.hoodMotor.set(TalonSRXControlMode.PercentOutput, speed);
-  }
-
-  private void ZeroHoodEncoder() {
-    hoodEncoder.setPosition(0.0);
-    this.hoodSetPoint = 0.0;
-  }
-
   /**
    * Checks if the hood is at its "home" position, which is defined as the position where the hood encoder reads 0.0. 
    * This can be used to determine if the hood has reached a known reference point, such as when a limit switch is triggered or after a reset.
@@ -135,12 +118,29 @@ public class Shooter extends SubsystemBase {
     
 
     if (isHoodAtHome()) {
-      ZeroHoodEncoder();
+      zeroHoodEncoder();
     }
   }
 
   @Override
   public void simulationPeriodic() {
     // This method will be called once per scheduler run during simulation
+  }
+
+    private void runFiringMotor(double speed) {
+    this.masterFiringMotor.set(speed);
+  }
+
+  private void moveHoodMotorRotations(double rotations) {
+    this.hoodSetPoint = rotations;
+  }
+
+  private void moveHoodMotorPercent(double speed) {
+    this.hoodMotor.set(TalonSRXControlMode.PercentOutput, speed);
+  }
+
+  private void zeroHoodEncoder() {
+    hoodEncoder.setPosition(0.0);
+    this.hoodSetPoint = 0.0;
   }
 }
