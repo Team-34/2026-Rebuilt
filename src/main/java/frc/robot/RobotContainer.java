@@ -42,8 +42,8 @@ import frc.robot.LimelightCalculations;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Climber climber = new Climber();
-  private final Intake intake = new Intake();
+  //private final Climber climber = new Climber();
+  //private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
   private final Spindexer spindexer = new Spindexer();
   private final Turret turret = new Turret();
@@ -131,13 +131,13 @@ public class RobotContainer {
 
     // ==== OUR SUBSYSTEM BINDINGS ====
 
-    joystick.y().onTrue(climber.toggleCommand());
-    joystick.povLeft().whileTrue(climber.extendCommand());
-    joystick.povRight().whileTrue(climber.retractCommand());
+    // joystick.y().onTrue(climber.toggleCommand());
+    // joystick.povLeft().whileTrue(climber.extendCommand());
+    // joystick.povRight().whileTrue(climber.retractCommand());
 
-    joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
-    joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
-    joystick.x().onTrue(intake.toggle());
+    // joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
+    // joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
+    // joystick.x().onTrue(intake.toggle());
 
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
 
