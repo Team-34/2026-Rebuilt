@@ -24,7 +24,7 @@ public class Vision extends SubsystemBase {
    * </li>
    * </ul>
    */
-  public double getTargetPose_CameraSpaceElement(int index) {
+  public double getTargetPose_CameraSpaceArrayElement(int index) {
   double[] data = LimelightHelpers.getTargetPose_CameraSpace("");
   return data[index];
   }
@@ -36,7 +36,7 @@ public class Vision extends SubsystemBase {
   public double getDistanceToTarget() {
     final int tzToInchesScalar = 65;
     final int tzIndex = 2;
-    return getTargetPose_CameraSpaceElement(tzIndex) * tzToInchesScalar;
+    return getTargetPose_CameraSpaceArrayElement(tzIndex) * tzToInchesScalar;
   }
   
   public boolean isTargetValid() {
@@ -44,11 +44,11 @@ public class Vision extends SubsystemBase {
   }
 
   public double getTX() {
-    return getTargetPose_CameraSpaceElement(0);
+    return getTargetPose_CameraSpaceArrayElement(0);
   }
   
   public double getTY() {
-    return getTargetPose_CameraSpaceElement(1);
+    return getTargetPose_CameraSpaceArrayElement(1);
   }
 
   public void updatePosition() {
@@ -66,8 +66,8 @@ public class Vision extends SubsystemBase {
 
   public void periodic() {
     SmartDashboard.putNumber("Distance to Target", getDistanceToTarget());
-    SmartDashboard.putNumber("Limelight Tx", getTargetPose_CameraSpaceElement(0));
-    SmartDashboard.putNumber("Limelight Ty", getTargetPose_CameraSpaceElement(1));
+    SmartDashboard.putNumber("Limelight Tx", getTargetPose_CameraSpaceArrayElement(0));
+    SmartDashboard.putNumber("Limelight Ty", getTargetPose_CameraSpaceArrayElement(1));
     updatePosition();
   }
 }
