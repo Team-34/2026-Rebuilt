@@ -12,13 +12,11 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
-import com.revrobotics.spark.config.ClosedLoopConfig;
-import com.revrobotics.spark.config.ClosedLoopConfigAccessor;
 
 public class Turret extends SubsystemBase {
   private final TalonFXS motor = new TalonFXS(50);
   private final PositionVoltage positionControl = new PositionVoltage(0);
-  private final DigitalInput limitSwitch = new DigitalInput(4);
+  private final DigitalInput limitSwitch = new DigitalInput(3);
 
   public Turret() {
     final var config = new TalonFXSConfiguration();
