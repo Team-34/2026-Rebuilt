@@ -126,7 +126,7 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run during simulation
   }
 
-    private void runFiringMotor(double speed) {
+  private void runFiringMotor(double speed) {
     this.masterFiringMotor.set(speed);
   }
 
