@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.configs.TalonFXSConfiguration;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -8,54 +11,58 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 public class Intake extends SubsystemBase {
-  
-    private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
+  private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
 
-    public final TalonFXS motor = new TalonFXS(60);
-    public final DutyCycleOut motorControl = new DutyCycleOut(0);
+  public final TalonFXS motor = new TalonFXS(60);
+  public final DutyCycleOut motorControl = new DutyCycleOut(0);
 
-    public boolean isDeployed() {
-        return piston.get() == DoubleSolenoid.Value.kForward;
-    }
+  public Intake() {
+    final TalonFXSConfiguration config = new TalonFXSConfiguration();
+    config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    motor.getConfigurator().apply(config);
 
-    public boolean isRetracted() {
-        return piston.get() == DoubleSolenoid.Value.kReverse;
-    }
+    piston.set(DoubleSolenoid.Value.kReverse);
+  }
 
-    public Command runIn() {
-        return runOnce(() -> {
-            if (isDeployed()) {
-                motor.setControl(motorControl.withOutput(0.5));
-            }
-        });
-    }
+  public boolean isDeployed() {
+    return piston.get() == DoubleSolenoid.Value.kForward;
+  }
 
-    public Command runOut() {
-        return runOnce(() -> {
-            if (isDeployed()) {
-                motor.setControl(motorControl.withOutput(-0.5));
-            }
-        });
-    }
+  public boolean isRetracted() {
+    return piston.get() == DoubleSolenoid.Value.kReverse;
+  }
 
-    public Command stop() {
-        return runOnce(() -> {
-            motor.setControl(motorControl.withOutput(0));
-        });
-    }
+  public Command runIn() {
+    return runOnce(() -> {
+      if (isDeployed()) {
+        motor.setControl(motorControl.withOutput(0.5));
+      }
+    });
+  }
 
-    public Command toggle() {
-        return runOnce(() -> {
-            motor.setControl(motorControl.withOutput(0));
-            piston.toggle();
-        });
-    }
+  public Command runOut() {
+    return runOnce(() -> {
+      if (isDeployed()) {
+        motor.setControl(motorControl.withOutput(-0.5));
+      }
+    });
+  }
 
-    public void activate(double speed) {
-    if (isDeployed()) {
-      motor.setControl(motorControl.withOutput(speed));
-        } else {
-        motor.setControl(motorControl.withOutput(0));
-    }
+  public Command stop() {
+    return runOnce(() -> {
+      motor.setControl(motorControl.withOutput(0));
+    });
+  }
+
+  public Command toggle() {
+    return runOnce(() -> {
+      motor.setControl(motorControl.withOutput(0));
+      piston.toggle();
+    });
+  }
+
+  public void activate(final double speed) {
+    motor.setControl(motorControl.withOutput(isDeployed() ? speed : 0));
   }
 }

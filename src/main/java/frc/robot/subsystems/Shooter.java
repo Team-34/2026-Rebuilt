@@ -28,7 +28,7 @@ public class Shooter extends SubsystemBase {
 
     public final double value;
 
-    Speed(double value) {
+    Speed(final double value) {
       this.value = value;
     }
   }
