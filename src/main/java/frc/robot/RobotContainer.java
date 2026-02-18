@@ -32,7 +32,7 @@ import frc.robot.subsystems.Spindexer;
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.subsystems.Turret;
-import frc.robot.LimelightCalculations;
+import frc.robot.subsystems.Vision;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -149,7 +149,7 @@ public class RobotContainer {
     joystick.rightBumper().whileTrue(turret.turretByPowerCommand(0.5));
     // For now, it will have an imaginary setpoint of 10.0, but this will be changed 
     // to a more accurate value in the future.
-    joystick.leftTrigger().whileTrue(turret.turretByPositionCommand(10.0)); 
+    joystick.leftTrigger().onTrue(turret.turretByPositionCommand(10.0)); 
 
     }
         
