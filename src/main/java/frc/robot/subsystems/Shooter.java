@@ -105,7 +105,7 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Shooter Speed: ", masterFiringMotor.getVelocity().getValueAsDouble());
+    SmartDashboard.putNumber("Shooter Speed %: ", masterFiringMotor.getVelocity().getValueAsDouble() * 100);
     SmartDashboard.putNumber("external encoder units", hoodEncoder.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Hood Motor pos: ", hoodMotor.getSelectedSensorPosition());
     SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
