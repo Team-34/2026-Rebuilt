@@ -63,6 +63,6 @@ public class Turret extends SubsystemBase {
     }
     // Minion motor returns the encoder in full rotations (ex. 1 unit is 1 full rotation)
     SmartDashboard.putNumber("Encoder", motor.getPosition().getValueAsDouble());
-    SmartDashboard.putBoolean("Is at zero? ", isAtZeroPosition());
+    SmartDashboard.putBoolean("Zero Position", isAtZeroPosition());
   }
 }
