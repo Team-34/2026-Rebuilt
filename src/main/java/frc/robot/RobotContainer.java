@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Climber;
+//import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -41,7 +41,7 @@ import frc.robot.LimelightHelpers;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Climber climber = new Climber();
+  //private final Climber climber = new Climber();
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
   private final Spindexer spindexer = new Spindexer();
@@ -130,9 +130,9 @@ public class RobotContainer {
 
     // ==== OUR SUBSYSTEM BINDINGS ====
 
-    joystick.y().onTrue(climber.toggleCommand());
-    joystick.povLeft().whileTrue(climber.extendCommand());
-    joystick.povRight().whileTrue(climber.retractCommand());
+    // joystick.y().onTrue(climber.toggleCommand());
+    // joystick.povLeft().whileTrue(climber.extendCommand());
+    // joystick.povRight().whileTrue(climber.retractCommand());
 
     joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
     joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
