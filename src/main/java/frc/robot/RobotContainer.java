@@ -179,4 +179,7 @@ public class RobotContainer {
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   
+  public void disable() {
+    leds.turnOffLEDs();
+  }
 }
