@@ -184,6 +184,10 @@ public class RobotContainer {
 
   
   public void disable() {
-    leds.turnOffLEDs();
+    leds.turnOff();
+  }
+
+  public void enable() {
+    leds.rainbow();
   }
 }
