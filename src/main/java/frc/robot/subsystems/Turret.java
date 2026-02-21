@@ -5,8 +5,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
@@ -25,7 +27,6 @@ public class Turret extends SubsystemBase {
     config.Slot0.kD = 0;
     motor.getConfigurator().apply(config);
   }
-
   /**
    * @param setpoint The setpoint to move the turret to.
    * @return Moves the turret to the setpoint.
@@ -58,6 +59,7 @@ public class Turret extends SubsystemBase {
   public void periodic() {
     if (isAtZeroPosition()) {
       resetEncoder();
+      motor.setControl(new PositionVoltage(0.0277));
     }
     // Minion motor returns the encoder in full rotations (ex. 1 unit is 1 full rotation)
     SmartDashboard.putNumber("Encoder", motor.getPosition().getValueAsDouble());
