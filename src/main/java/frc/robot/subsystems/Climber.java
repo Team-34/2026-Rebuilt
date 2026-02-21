@@ -18,7 +18,7 @@ public class Climber extends SubsystemBase {
   private final TalonFX rightMotor = new TalonFX(41);
   private final DutyCycleOut motorControl = new DutyCycleOut(0);
 
-  private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
+  private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 3, 2);
 
   public Climber() {
     this.rightMotor.setControl(new Follower(this.leftMotor.getDeviceID(), MotorAlignmentValue.Opposed));

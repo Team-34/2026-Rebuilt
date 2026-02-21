@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 public class Intake extends SubsystemBase {
-  private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
+  private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
 
   public final TalonFXS motor = new TalonFXS(60);
   public final DutyCycleOut motorControl = new DutyCycleOut(0);
@@ -21,6 +21,8 @@ public class Intake extends SubsystemBase {
     config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     motor.getConfigurator().apply(config);
+
+    piston.set(DoubleSolenoid.Value.kReverse);
   }
 
   public boolean isDeployed() {
