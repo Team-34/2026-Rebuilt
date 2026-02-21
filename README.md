@@ -37,9 +37,9 @@ Rebuilt: FRC game for the 2025–2026 season
 | Button                        |   Subsystem       |   Action              |   Activation Type |
 | --                            | --                | --                    |   --              |
 | **A**                         |   Spindexer,      |   Feed Forward        |   whileTrue       |
-|                               |   Intake          |   Intake In           |   whileTrue       |                                        
+                               |   Intake          |   Intake In           |   whileTrue       |                                        
 | **B**                         |   Spindexer,      |   Feed Reverse        |   whileTrue       |
-|                               |   Intake          |   Intake Out          |   whileTrue       | 
+                               |   Intake          |   Intake Out          |   whileTrue       | 
 | **X**                         |   Intake          |   Deploy              |   onTrue          |                                         
 | **Y**                         |   Climber         |   Toggle Climber      |   onTrue          |                                          
 | **POV Up**                    |   Unbound         |   N/A                 |   N/A             |                                      
@@ -48,9 +48,9 @@ Rebuilt: FRC game for the 2025–2026 season
 | **POV Right**                 |   Unbound         |   Retract Manual      |   onTrue          |                                    
 | **Left Bumper**               |   Turret          |   Move Left           |   whileTrue       |                                     
 | **Right Bumper**              |   Turret          |   Move Right          |   whileTrue       |                                      
-| **Left Trigger**              |   Turret          |   Move to Setpoint    |   onTrue          |                                  
+| **Left Trigger**              |   Turret          |   Point to Fiducial   |   onTrue          |                                  
 | **Right Trigger**             |   Shooter,        |   Cycle Speed         |   onTrue          |
-|                               |   Spindexer       |   Feed Forward        |   whileTrue       |    
+                               |   Spindexer       |   Feed Forward        |   whileTrue       |    
 | **Left Stick (Movement)**     |   Swerve          |   Robot Translation   |   Permanent       |     
 | **Left Stick (Press)**        |   Swerve          |   Combo Shieldwall    |   Permanent       |     
 | **Right Stick (Movement)**    |   Swerve          |   Robot Rotation      |   Permanent       |     
