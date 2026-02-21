@@ -37,36 +37,24 @@ Rebuilt: FRC game for the 2025–2026 season
 | Button                        |   Subsystem       |   Action              |   Activation Type |
 | --                            | --                | --                    |   --              |
 | **A**                         |   Spindexer,      |   Feed Forward        |   whileTrue       |
-|                               |   Intake          |   Intake In           |   whileTrue       |
-||                                          
+|                               |   Intake          |   Intake In           |   whileTrue       |  
+||                                    
 | **B**                         |   Spindexer,      |   Feed Reverse        |   whileTrue       |
-|                               |   Intake          |   Intake Out          |   whileTrue       |
-||                                      
-| **X**                         |   Intake          |   Deploy              |   onTrue          |
-||                                          
-| **Y**                         |   Climber         |   Toggle Climber      |   onTrue          |
-||                                          
-| **POV Up**                    |   Unbound         |   N/A                 |   N/A             |
-||                                      
-| **POV Left**                  |   Unbound         |   Extend Manual       |   onTrue          |
-||                                      
-| **POV Down**                  |   Unbound         |   N/A                 |   N/A             |
-||                                      
-| **POV Right**                 |   Unbound         |   Retract Manual      |   onTrue          |
-||                                      
-| **Left Bumper**               |   Turret          |   Move Left           |   whileTrue       |
-||                                      
-| **Right Bumper**              |   Turret          |   Move Right          |   whileTrue       |
-||                                      
-| **Left Trigger**              |   Turret          |   Move to Setpoint    |   onTrue          |
-||                                  
+|                               |   Intake          |   Intake Out          |   whileTrue       | 
+||
+| **X**                         |   Intake          |   Deploy              |   onTrue          |                                         
+| **Y**                         |   Climber         |   Toggle Climber      |   onTrue          |                                          
+| **POV Up**                    |   Unbound         |   N/A                 |   N/A             |                                      
+| **POV Left**                  |   Unbound         |   Extend Manual       |   onTrue          |                                      
+| **POV Down**                  |   Unbound         |   N/A                 |   N/A             |                                    
+| **POV Right**                 |   Unbound         |   Retract Manual      |   onTrue          |                                    
+| **Left Bumper**               |   Turret          |   Move Left           |   whileTrue       |                                     
+| **Right Bumper**              |   Turret          |   Move Right          |   whileTrue       |                                      
+| **Left Trigger**              |   Turret          |   Move to Setpoint    |   onTrue          |                                  
 | **Right Trigger**             |   Shooter,        |   Cycle Speed         |   onTrue          |
-|                               |   Spindexer       |   Feed Forward        |   whileTrue       |
-||      
-| **Left Stick (Movement)**     |   Swerve          |   Robot Translation   |   Permanent       |
-||      
-| **Left Stick (Press)**        |   Swerve          |   Combo Shieldwall    |   Permanent       |
-||      
-| **Right Stick (Movement)**    |   Swerve          |   Robot Rotation      |   Permanent       |
-||      
+|                               |   Spindexer       |   Feed Forward        |   whileTrue       |   
+||
+| **Left Stick (Movement)**     |   Swerve          |   Robot Translation   |   Permanent       |     
+| **Left Stick (Press)**        |   Swerve          |   Combo Shieldwall    |   Permanent       |     
+| **Right Stick (Movement)**    |   Swerve          |   Robot Rotation      |   Permanent       |     
 | **Right Stick (Press)**       |   Swerve          |   Combo Shieldwall    |   Permanent       |
