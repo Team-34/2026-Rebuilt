@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.LimelightHelpers;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
@@ -36,6 +37,21 @@ public class Turret extends SubsystemBase {
     return runOnce(() -> {
       motor.setControl(positionControl.withPosition(position));
     });
+  }
+
+  public Command pointAtFiducial(final int tag) {
+    LimelightHelpers.setPriorityTagID("", tag);
+    final double encoder = motor.getPosition().getValueAsDouble();
+    final double tx = LimelightHelpers.getTX("");
+    return runEnd(() -> {
+      if (LimelightHelpers.getFiducialID("") == tag) {
+        motor.setControl(positionControl.withPosition(encoder + tx));
+      }
+    },
+    () -> {
+
+    }
+    );
   }
 
   /**
