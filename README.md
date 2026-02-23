@@ -43,9 +43,9 @@ Rebuilt: FRC game for the 2025–2026 season
 | **X**                         |   Intake          |   Deploy              |   onTrue          |                                         
 | **Y**                         |   Climber         |   Toggle Climber      |   onTrue          |                                          
 | **POV Up**                    |   Unbound         |   N/A                 |   N/A             |                                      
-| **POV Left**                  |   Unbound         |   Extend Manual       |   onTrue          |                                      
+| **POV Left**                  |   Climber         |   Extend Manual       |   onTrue          |                                      
 | **POV Down**                  |   Unbound         |   N/A                 |   N/A             |                                    
-| **POV Right**                 |   Unbound         |   Retract Manual      |   onTrue          |                                    
+| **POV Right**                 |   Climber         |   Retract Manual      |   onTrue          |                                    
 | **Left Bumper**               |   Turret          |   Move Left           |   whileTrue       |                                     
 | **Right Bumper**              |   Turret          |   Move Right          |   whileTrue       |                                      
 | **Left Trigger**              |   Turret          |   Point to Fiducial   |   onTrue          |                                  
