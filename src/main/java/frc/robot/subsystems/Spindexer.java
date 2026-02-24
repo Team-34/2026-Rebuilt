@@ -11,7 +11,7 @@ public class Spindexer extends SubsystemBase {
 
   public Command spin() {
     return runOnce(() -> {
-      motor.setControl(this.control.withOutput(0.5));
+      motor.setControl(this.control.withOutput(-0.3));
     });
   }
 
@@ -23,7 +23,7 @@ public class Spindexer extends SubsystemBase {
 
   public Command spinReverse() {
     return runOnce(() -> {
-      motor.setControl(this.control.withOutput(-0.5));
+      motor.setControl(this.control.withOutput(0.3));
     });
   }
 
