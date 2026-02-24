@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,7 +36,7 @@ public class Turret extends SubsystemBase {
    */
   public Command turretByPositionCommand(final double position) {
     return runOnce(() -> {
-      motor.setControl(positionControl.withPosition(position));
+      motor.setControl(positionControl.withPosition(MathUtil.clamp(position, 0.0, 180.0)));
     });
   }
 
@@ -43,6 +46,12 @@ public class Turret extends SubsystemBase {
    */
   public Command turretByPowerCommand(final double power) {
     return runEnd(() -> motor.set(power), () -> motor.stopMotor());
+  }
+
+  public Command swivelByAngleCommand(Angle angle) {
+    return run(() -> {
+      motor.setControl(positionControl.withPosition(angle));
+    });
   }
 
   private boolean isAtZeroPosition() {
@@ -59,7 +68,6 @@ public class Turret extends SubsystemBase {
   public void periodic() {
     if (isAtZeroPosition()) {
       resetEncoder();
-      motor.setControl(new PositionVoltage(0.0277));
     }
     // Minion motor returns the encoder in full rotations (ex. 1 unit is 1 full rotation)
     SmartDashboard.putNumber("Encoder", motor.getPosition().getValueAsDouble());
