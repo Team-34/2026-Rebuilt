@@ -18,7 +18,7 @@ Rebuilt: FRC game for the 2025–2026 season
 ## Motors
 
 | Subsystem      | Can IDs | Function | Motor(s)                                | Controller(s)        | Note(s)                                 |
-| --             | --      | --       | --                                      | --                   |                                         |
+| --             | --      | --       | --                                      | --                   | --                                      |
 | **Drivetrain** | 0 - 19  | steering | 4x Falcon                               | TalonFX (_built-in_) |                                         |
 |                |         | drive    | 4x Kraken<br>(_reduction: L2 6.75 : 1_) | TalonFX (_built-in_) |                                         |
 ||
