@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
+import static edu.wpi.first.units.Units.Degrees;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
@@ -61,6 +63,13 @@ public class Turret extends SubsystemBase {
 
   private boolean isAtZeroPosition() {
     return !limitSwitch.get();
+  }
+
+  private Angle mechanismAngleToMotorAngle(Angle angle) {
+    
+    final double GEAR_RATIO = 99.0 / 18.0;
+
+    return angle.times(GEAR_RATIO);
   }
 
   private void resetEncoder() {
