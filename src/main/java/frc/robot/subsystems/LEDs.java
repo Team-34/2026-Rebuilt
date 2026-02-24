@@ -10,7 +10,8 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class LEDs extends SubsystemBase {
   private final AddressableLED ledStrip = new AddressableLED(0);
@@ -26,32 +27,45 @@ public class LEDs extends SubsystemBase {
     initColor.applyTo(ledBuffer);
     ledStrip.setData(ledBuffer);
     ledStrip.start();
+    allianceColor();
   }
 
   public void turnOff() {
-    // return runOnce(() -> {
     LEDPattern black = LEDPattern.solid(Color.kBlack);
     black.applyTo(ledBuffer);
     ledStrip.setData(ledBuffer);
-    //ledStrip.start();
-    // });
   }
 
   public void Red() {
     LEDPattern red = LEDPattern.solid(Color.kRed);
     red.applyTo(ledBuffer);
     ledStrip.setData(ledBuffer);
-    //ledStrip.start();
+  }
+
+  public void Blue(){
+    LEDPattern blue = LEDPattern.solid(Color.kBlue);
+    blue.applyTo(ledBuffer);
+    ledStrip.setData(ledBuffer);
   }
 
   public void rainbow(){
-
     m_scrollingRainbow.applyTo(ledBuffer);
     ledStrip.setData(ledBuffer);
   }
 
+  public void allianceColor() {
+    if(DriverStation.isEnabled()) {
+      var ally = DriverStation.getAlliance().get();
+      if(ally == Alliance.Red) {
+        Red();
+      } else if(ally == Alliance.Blue) {
+        Blue();
+      }
+    }
+  }
+
   @Override
-  public void periodic() {
-    //rainbow();
+  public void periodic(){
+
   }
 }
