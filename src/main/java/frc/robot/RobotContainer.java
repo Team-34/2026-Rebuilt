@@ -77,7 +77,7 @@ public class RobotContainer {
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
     // Warmup PathPlanner to avoid Java pauses
-    //FollowPathCommand.warmupCommand().schedule();
+    FollowPathCommand.warmupCommand().schedule();
   }
 
   private void configureBindings() {
@@ -137,34 +137,33 @@ public class RobotContainer {
 
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
 
-    //joystick.rightTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+    joystick.rightTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
     joystick.a().onTrue(spindexer.spin()).onFalse(spindexer.stop());
     joystick.b().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
 
-    //joystick.leftBumper().whileTrue(turret.turretByPowerCommand(-0.5));
-    //joystick.rightBumper().whileTrue(turret.turretByPowerCommand(0.5));
+    joystick.leftBumper().whileTrue(turret.turretByPowerCommand(-0.5));
+    joystick.rightBumper().whileTrue(turret.turretByPowerCommand(0.5));
     // For now, it will have an imaginary setpoint of 10.0, but this will be changed 
     // to a more accurate value in the future.
-    //joystick.leftTrigger().onTrue(turret.turretByPositionCommand(10.0)); 
+    joystick.leftTrigger().onTrue(turret.turretByPositionCommand(10.0)); 
 
     }
         
 
     public Command getAutonomousCommand() {
       // Simple drive forward auton
-      // final var idle = new SwerveRequest.Idle();
-      // return Commands.sequence(
-      //   // Reset our field centric heading to match the robot
-      //   // facing away from our alliance station wall (0 deg).
-      //   drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-      //   // Then slowly drive forward (away from us) for 5 seconds.
-      //   drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
-      //     .withVelocityY(0)
-      //     .withRotationalRate(0))
-      //     .withTimeout(5.0),
-      //   // Finally idle for the rest of auton
-      //   drivetrain.applyRequest(() -> idle));
-      return Commands.none();
+      final var idle = new SwerveRequest.Idle();
+      return Commands.sequence(
+        // Reset our field centric heading to match the robot
+        // facing away from our alliance station wall (0 deg).
+        drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
+        // Then slowly drive forward (away from us) for 5 seconds.
+        drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
+          .withVelocityY(0)
+          .withRotationalRate(0))
+          .withTimeout(5.0),
+        // Finally idle for the rest of auton
+        drivetrain.applyRequest(() -> idle));
     }
   // The robot's subsystems and commands are defined here...
   
