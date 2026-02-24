@@ -30,3 +30,5 @@ Rebuilt: FRC game for the 2025–2026 season
 | **Turret**     | 50 - 54 |          | 1x CTR Minion                           | TalonFXS             |
 | **Spindexer**  | 55 - 59 |          | 1x Kraken (TBD)                         | TalonFX (_built-in_) |
 | **Intake**     | 60 - 63 |          | 1x CTR Minion                           | TalonFXS             |
+
+Turret Ratio == 99:18
