@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.units.AngleUnit;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -10,10 +9,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static edu.wpi.first.units.Units.Degrees;
 
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
@@ -32,6 +29,7 @@ public class Turret extends SubsystemBase {
     config.Slot0.kD = 0;
     motor.getConfigurator().apply(config);
   }
+
   /**
    * @param setpoint The setpoint to move the turret to.
    * @return Moves the turret to the setpoint.
@@ -50,7 +48,7 @@ public class Turret extends SubsystemBase {
     return runEnd(() -> motor.set(power), () -> motor.stopMotor());
   }
 
-  public Command swivelByCommand(Angle angle) {
+  public Command swivelByCommand(final Angle angle) {
     return run(() -> {
       final var clamped = Degrees.of(MathUtil.clamp(angle.in(Degrees), 0, 180));
       final var adjustment = mechanismAngleToMotorAngle(clamped);
@@ -65,8 +63,7 @@ public class Turret extends SubsystemBase {
     return !limitSwitch.get();
   }
 
-  private Angle mechanismAngleToMotorAngle(Angle angle) {
-    
+  private Angle mechanismAngleToMotorAngle(final Angle angle) {
     final double GEAR_RATIO = 99.0 / 18.0;
 
     return angle.times(GEAR_RATIO);
@@ -83,6 +80,7 @@ public class Turret extends SubsystemBase {
     if (isAtZeroPosition()) {
       resetEncoder();
     }
+
     // Minion motor returns the encoder in full rotations (ex. 1 unit is 1 full rotation)
     SmartDashboard.putNumber("Encoder", motor.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("Is at zero? ", isAtZeroPosition());
