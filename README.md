@@ -28,6 +28,6 @@ Rebuilt: FRC game for the 2025–2026 season
 | **Feeder**     | 30 - 39 |          | 1x Kraken x44                           | TalonFX (_built-in_) |
 | **Climber**    | 40 - 49 |          | 2x Kraken x60                           | TalonFX (_built-in_) |
 | **Turret**     | 50 - 54 |          | 1x CTR Minion                           | TalonFXS             | 
-|                |         |          |                      | Gear Ratio 99:18 (_mechanism to motor_) |
+|                |         |          |                        Gear Ratio 99:18 (_mechanism to motor_) |
 | **Spindexer**  | 55 - 59 |          | 1x Kraken (TBD)                         | TalonFX (_built-in_) |
 | **Intake**     | 60 - 63 |          | 1x CTR Minion                           | TalonFXS             |
