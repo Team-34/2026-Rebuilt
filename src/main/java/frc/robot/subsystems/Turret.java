@@ -48,10 +48,10 @@ public class Turret extends SubsystemBase {
     return runEnd(() -> motor.set(power), () -> motor.stopMotor());
   }
 
-  public Command swivelByAngleCommand(Angle relativeAngle) {
+  public Command swivelByAngleCommand(Angle angle) {
     return run(() -> {
-      Angle angle = relativeAngle.plus(motor.getPosition().getValue());
-      motor.setControl(positionControl.withPosition(angle));
+      Angle relativeAngle = angle.plus(motor.getPosition().getValue());
+      motor.setControl(positionControl.withPosition(relativeAngle));
     });
   }
 
