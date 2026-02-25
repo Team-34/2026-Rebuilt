@@ -31,8 +31,9 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * @param position The position to move the turret to. As a percentage of the full rotation (0.0 to 1.0).
+   * @param position The position to move the turret to, in rotations (0.5 is 180 degrees).
    * @return Moves the turret to the specified position.
+    * Note: The position is in rotations, where 0.5 is 180 degrees. The turret can only rotate between 0 and 180 degrees, so the position is clamped to that range (0 to 0.5 rotations).
    */
   public Command turretByPositionCommand(final double position) {
     return runOnce(() -> {
@@ -41,8 +42,9 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * @param power The power to give to the motor.
-   * @return Moves the motor.
+   * @param power The power to move the motor with, between -1 and 1.
+   * @return Moves the turret with the specified power. The turret can only rotate between 0 and 180 degrees, so the power is applied until the limit switch is triggered at the zero position or the encoder reaches the maximum position for 180 degrees.
+    * Note: The power is applied until the limit switch is triggered at the zero position or the encoder reaches the maximum position for 180 degrees. The turret can only rotate between 0 and 180 degrees, so the power is applied until one of those conditions is met.
    */
   public Command turretByPowerCommand(final double power) {
     return runEnd(() -> motor.set(power), () -> motor.stopMotor());
