@@ -17,7 +17,7 @@ import com.ctre.phoenix6.signals.MotorArrangementValue;
 public class Turret extends SubsystemBase {
   private final TalonFXS motor = new TalonFXS(50);
   private final PositionVoltage positionControl = new PositionVoltage(0);
-  private final DigitalInput limitSwitch = new DigitalInput(3);
+  private final DigitalInput limitSwitch = new DigitalInput(5);
 
   public Turret() {
     final var config = new TalonFXSConfiguration();
@@ -46,10 +46,10 @@ public class Turret extends SubsystemBase {
     return runEnd(() -> {
       if (LimelightHelpers.getFiducialID("") == tag) {
         motor.setControl(positionControl.withPosition(encoder + tx));
-      }
+      } else {motor.stopMotor();}
     },
     () -> {
-
+      motor.stopMotor();
     }
     );
   }
