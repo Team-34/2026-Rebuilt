@@ -17,22 +17,33 @@ public class Game extends SubsystemBase {
     return alliance;
   }
 
-  public Optional<Alliance> getAutoWinner() { 
-  }  
+  public Optional<Alliance> getAutoWinner() {
+    String gameData = DriverStation.getGameSpecificMessage();
+    if (gameData.length() > 0) {
+      switch (gameData.charAt(0)) {
+        case 'B':
+          // Blue case code
+          return Optional.of(Alliance.Blue);
+        case 'R':
+          // Red case code
+          return Optional.of(Alliance.Red);
+        default:
+          // This is corrupt data
+          return Optional.of(Alliance.valueOf("NO ALLIANCE FOUND"));
+      }
+    }
+    return Optional.of(Alliance.valueOf("NO ALLIANCE FOUND"));
+  }
 
   public Optional<Shift> getShift() {
     return shift;
   }
 
-  public int getTime() {
-  } 
-  
+  public double getTime() {
+    return DriverStation.getMatchTime();
+  }
+
   public static enum Shift {
-    TRANSITION,
-    ONE,
-    TWO,
-    THREE,
-    FOUR,
-    END;
+    TRANSITION, ONE, TWO, THREE, FOUR, END;
   }
 }
