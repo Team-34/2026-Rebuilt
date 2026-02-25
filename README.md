@@ -17,16 +17,14 @@ Rebuilt: FRC game for the 2025–2026 season
 
 ## Motors
 
-| Subsystem      | Can IDs | Function | Motor(s)                                | Controller(s)        | Note(s)                                       |
-| --             | --      | --       | --                                      | --                   | --                                            |
-| **Drivetrain** | 0 - 19  | steering | 4x Falcon                               | TalonFX (_built-in_) |                                               |
+| Subsystem      | Can IDs | Function | Motor(s)                                | Controller(s)        | Note(s)                                     |
+| --             | --      | --       | --                                      | --                   | --                                          |
+| **Drivetrain** | 0 - 19  | steering | 4x Falcon                               | TalonFX (_built-in_) |                                             |
 |                |         | drive    | 4x Kraken                               | TalonFX (_built-in_) | Gear Ratio=6.75:1 (_L2 mechanism to motor_) |
-||
-| **Shooter**    | 20 - 29 | shooting | 2x Kraken x60                           | TalonFX (_built-in_) |                                               |
-|                |         | aiming   | 1x Johnson PLG                          | Talon SRX            |                                               |
-||
-| **Feeder**     | 30 - 39 |          | 1x Kraken x44                           | TalonFX (_built-in_) |                                               |
-| **Climber**    | 40 - 49 |          | 2x Kraken x60                           | TalonFX (_built-in_) |                                               |
+| **Shooter**    | 20 - 29 | shooting | 2x Kraken x60                           | TalonFX (_built-in_) |                                             |
+|                |         | aiming   | 1x Johnson PLG                          | Talon SRX            |                                             |
+| **Feeder**     | 30 - 39 |          | 1x Kraken x44                           | TalonFX (_built-in_) |                                             |
+| **Climber**    | 40 - 49 |          | 2x Kraken x60                           | TalonFX (_built-in_) |                                             |
 | **Turret**     | 50 - 54 |          | 1x CTR Minion                           | TalonFXS             | Gear Ratio=99:18 (_mechanism to motor_)     |
-| **Spindexer**  | 55 - 59 |          | 1x Kraken (TBD)                         | TalonFX (_built-in_) |                                               |
-| **Intake**     | 60 - 63 |          | 1x CTR Minion                           | TalonFXS             |                                               |
+| **Spindexer**  | 55 - 59 |          | 1x Kraken (TBD)                         | TalonFX (_built-in_) |                                             |
+| **Intake**     | 60 - 63 |          | 1x CTR Minion                           | TalonFXS             |                                             |
