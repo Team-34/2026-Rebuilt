@@ -31,8 +31,8 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * @param setpoint The setpoint to move the turret to.
-   * @return Moves the turret to the setpoint.
+   * @param position The position to move the turret to. As a percentage of the full rotation (0.0 to 1.0).
+   * @return Moves the turret to the specified position.
    */
   public Command turretByPositionCommand(final double position) {
     return runOnce(() -> {
@@ -48,6 +48,10 @@ public class Turret extends SubsystemBase {
     return runEnd(() -> motor.set(power), () -> motor.stopMotor());
   }
 
+  /**
+   * @param angle The angle to swivel the turret by.
+   * @return Moves the turret by the specified angle.
+   */
   public Command swivelByCommand(final Angle angle) {
     return run(() -> {
       final var clamped = Degrees.of(MathUtil.clamp(angle.in(Degrees), 0, 180));
