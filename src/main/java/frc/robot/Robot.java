@@ -50,14 +50,14 @@ public class Robot extends TimedRobot {
         builder.addDoubleProperty("Front Right Velocity",  () -> m_robotContainer.drivetrain.getModule(2).getDriveMotor().getVelocity().getValueAsDouble(), null);
         
         builder.addDoubleProperty("Back Left Angle", () -> m_robotContainer.drivetrain.getModule(3).getSteerMotor().getPosition().getValueAsDouble() % 360, null);
-        builder.addDoubleProperty("Back Left Velocity", () -> m_robotContainer.drivetrain.getModule(2).getDriveMotor().getVelocity().getValueAsDouble(), null);
+        builder.addDoubleProperty("Back Left Velocity", () -> m_robotContainer.drivetrain.getModule(3).getDriveMotor().getVelocity().getValueAsDouble(), null);
         
-        builder.addDoubleProperty("Back Right Angle", () -> m_robotContainer.drivetrain.getModule(3).getSteerMotor().getPosition().getValueAsDouble() % 360, null);
-        builder.addDoubleProperty("Back Right Velocity", () -> m_robotContainer.drivetrain.getModule(2).getDriveMotor().getVelocity().getValueAsDouble(), null);
+        builder.addDoubleProperty("Back Right Angle", () -> m_robotContainer.drivetrain.getModule(4).getSteerMotor().getPosition().getValueAsDouble() % 360, null);
+        builder.addDoubleProperty("Back Right Velocity", () -> m_robotContainer.drivetrain.getModule(4).getDriveMotor().getVelocity().getValueAsDouble(), null);
         
         builder.addDoubleProperty("Robot Angle", () -> m_robotContainer.drivetrain.getPigeon2().getYaw().getValueAsDouble(), null);
-    }
-});
+        }
+      });
     SmartDashboard.putData("Field", m_field);
     this.m_timeAndJoystickReplay.update();
     m_field.setRobotPose(m_robotContainer.limelightHelpers.getBotPose2d(""));
