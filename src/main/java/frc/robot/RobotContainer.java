@@ -42,8 +42,6 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   //private final Climber climber = new Climber();
   //private final Intake intake = new Intake();
-  //private final Climber climber = new Climber();
-  //private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
   private final Spindexer spindexer = new Spindexer();
   private final Turret turret = new Turret();
@@ -113,13 +111,6 @@ public class RobotContainer {
     joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
     joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
     joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-    
-    // Run SysId routines when holding back/start and X/Y.
-    // Note that each routine should be run exactly once in a single log.
-    joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // Reset the field-centric heading on start button press.
     joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
@@ -135,13 +126,7 @@ public class RobotContainer {
     // joystick.y().onTrue(climber.toggleCommand());
     // joystick.povLeft().whileTrue(climber.extendCommand());
     // joystick.povRight().whileTrue(climber.retractCommand());
-    // joystick.y().onTrue(climber.toggleCommand());
-    // joystick.povLeft().whileTrue(climber.extendCommand());
-    // joystick.povRight().whileTrue(climber.retractCommand());
 
-    // joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
-    // joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
-    // joystick.x().onTrue(intake.toggle());
     // joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
     // joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
     // joystick.x().onTrue(intake.toggle());
@@ -182,12 +167,17 @@ public class RobotContainer {
   private final CommandXboxController driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
-  
+  /**
+   * @returns Disables the robot.
+   */
   public void disable() {
     leds.turnOff();
   }
 
+  /**
+   * @returns Enables the robot.
+   */
   public void enable() {
-    leds.rainbow();
+    
   }
 }

@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    
+    this.m_robotContainer.enable();
     if (this.m_autonomousCommand != null) {
       CommandScheduler.getInstance().cancel(this.m_autonomousCommand);
     }
@@ -80,7 +80,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    this.m_robotContainer.enable();
+    
   }
 
   @Override

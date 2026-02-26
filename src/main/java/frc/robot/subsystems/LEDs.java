@@ -1,17 +1,14 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Meters;
-import static edu.wpi.first.units.Units.MetersPerSecond;
-import static edu.wpi.first.units.Units.Percent;
+import java.util.Optional;
 
-import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class LEDs extends SubsystemBase {
   private final AddressableLED ledStrip = new AddressableLED(0);
@@ -24,7 +21,7 @@ public class LEDs extends SubsystemBase {
     initColor.applyTo(ledBuffer);
     ledStrip.setData(ledBuffer);
     ledStrip.start();
-    allianceColor();
+    allianceColor(DriverStation.getAlliance());
   }
 
   public void turnOff() {
@@ -33,32 +30,25 @@ public class LEDs extends SubsystemBase {
     ledStrip.setData(ledBuffer);
   }
 
-  public void Red() {
+  public void red() {
     LEDPattern red = LEDPattern.solid(Color.kRed);
     red.applyTo(ledBuffer);
     ledStrip.setData(ledBuffer);
   }
 
-  public void Blue(){
+  public void blue(){
     LEDPattern blue = LEDPattern.solid(Color.kBlue);
     blue.applyTo(ledBuffer);
     ledStrip.setData(ledBuffer);
   }
 
-
-  public void allianceColor() {
+  public void allianceColor(Optional<DriverStation.Alliance> alliance) {
     if(DriverStation.isEnabled()) {
-      var ally = DriverStation.getAlliance().get();
-      if(ally == Alliance.Red) {
-        Red();
-      } else if(ally == Alliance.Blue) {
-        Blue();
+      if(alliance.isPresent() && alliance.get() == Alliance.Red) {
+        red();
+      } else if(alliance.isPresent() && alliance.get() == Alliance.Blue) {
+        blue();
       }
     }
-  }
-
-  @Override
-  public void periodic(){
-
   }
 }

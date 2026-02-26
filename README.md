@@ -10,7 +10,7 @@ Rebuilt: FRC game for the 2025–2026 season
 | Climber    | Olmsted  | Mitchell |
 | Drivetrain | Siefert  | — |
 | Intake     | Morelli  | Gatlin |
-| LEDs       | Olmsted  | — |
+| LEDs       | Olmsted  | Gray |
 | Shooter    | Higgins  | Walsh |
 | Turret     | Helton   | Gray & Faulk |
 | Vision     | Helton   | Gray & Faulk |
