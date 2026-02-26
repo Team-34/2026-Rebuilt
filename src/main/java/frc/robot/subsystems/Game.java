@@ -9,7 +9,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class Game extends SubsystemBase {
   private Optional<Shift> shift = Optional.empty();
   private Optional<Alliance> alliance = Optional.empty();
-
+  private Optional<Alliance> autoWinner = Optional.empty();
+  
   public Optional<Alliance> getAlliance() {
     if (alliance.isEmpty()) {
       alliance = DriverStation.getAlliance();
@@ -23,20 +24,20 @@ public class Game extends SubsystemBase {
       switch (gameData.charAt(0)) {
         case 'B':
           // Blue case code
-          return Optional.of(Alliance.Blue);
+          this.autoWinner = Optional.of(Alliance.Blue);
         case 'R':
           // Red case code
-          return Optional.of(Alliance.Red);
+          this.autoWinner = Optional.of(Alliance.Red);
         default:
           // This is corrupt data
-          return Optional.of(Alliance.valueOf("NO ALLIANCE FOUND"));
+          return Optional.empty();
       }
     }
-    return Optional.of(Alliance.valueOf("NO ALLIANCE FOUND"));
+    return this.autoWinner;
   }
 
   public Optional<Shift> getShift() {
-    return shift;
+    return Optional.of(shift.get());
   }
 
   public double getTime() {
