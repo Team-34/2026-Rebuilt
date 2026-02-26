@@ -168,6 +168,9 @@ public class RobotContainer {
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   /**
+   * Called in Robot.disabledInit().
+   * Used by subsystems to disable what they need turned off when the robot is disabled.
+   * 
    * @returns Disables the robot.
    */
   public void disable() {
@@ -175,6 +178,9 @@ public class RobotContainer {
   }
 
   /**
+   * Called in Robot.teleopInit().
+   * Used by subsystems to enable what they need turned on when the robot is enabled.
+   * 
    * @returns Enables the robot.
    */
   public void enable() {
