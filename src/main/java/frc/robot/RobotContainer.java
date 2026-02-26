@@ -141,11 +141,11 @@ public class RobotContainer {
     joystick.a().onTrue(spindexer.spin()).onFalse(spindexer.stop());
     joystick.b().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
 
-    joystick.leftBumper().whileTrue(turret.turretByPowerCommand(-0.5));
-    joystick.rightBumper().whileTrue(turret.turretByPowerCommand(0.5));
+    joystick.leftBumper().whileTrue(turret.swivelByPowerCommand(-0.5));
+    joystick.rightBumper().whileTrue(turret.swivelByPowerCommand(0.5));
     // For now, it will have an imaginary setpoint of 10.0, but this will be changed 
     // to a more accurate value in the future.
-    joystick.leftTrigger().onTrue(turret.turretByPositionCommand(10.0)); 
+    joystick.leftTrigger().onTrue(turret.swivelToPositionCommand(10.0)); 
 
     }
         
