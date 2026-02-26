@@ -30,7 +30,7 @@ public class Game extends SubsystemBase {
           this.autoWinner = Optional.of(Alliance.Red);
         default:
           // This is corrupt data
-          return Optional.empty();
+          this.autoWinner = Optional.empty();
       }
     }
     return this.autoWinner;
