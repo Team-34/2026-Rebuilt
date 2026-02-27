@@ -10,7 +10,7 @@ public class Game extends SubsystemBase {
   private Optional<Shift> shift = Optional.empty();
   private Optional<Alliance> alliance = Optional.empty();
   private Optional<Alliance> autoWinner = Optional.empty();
-  
+
   public Optional<Alliance> getAlliance() {
     if (alliance.isEmpty()) {
       alliance = DriverStation.getAlliance();
@@ -21,17 +21,11 @@ public class Game extends SubsystemBase {
   public Optional<Alliance> getAutoWinner() {
     String gameData = DriverStation.getGameSpecificMessage();
     if (gameData.length() > 0) {
-      switch (gameData.charAt(0)) {
-        case 'B':
-          // Blue case code
-          this.autoWinner = Optional.of(Alliance.Blue);
-        case 'R':
-          // Red case code
-          this.autoWinner = Optional.of(Alliance.Red);
-        default:
-          // This is corrupt data
-          this.autoWinner = Optional.empty();
-      }
+      this.autoWinner = switch (gameData.charAt(0)) {
+        case 'B' -> Optional.of(Alliance.Blue);
+        case 'R' -> Optional.of(Alliance.Red);
+        default -> this.autoWinner = Optional.empty();
+      };
     }
     return this.autoWinner;
   }
