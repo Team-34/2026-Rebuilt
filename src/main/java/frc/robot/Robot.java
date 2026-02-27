@@ -9,8 +9,6 @@ import com.ctre.phoenix6.StatusSignal;
 import com.ctre.phoenix6.Utils;
 
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,25 +36,22 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-     SmartDashboard.putData("Swerve Drive", new Sendable() {
-      @Override
-      public void initSendable(SendableBuilder builder) {
-        builder.setSmartDashboardType("SwerveDrive");
-        
-        builder.addDoubleProperty("Front Left Angle", () -> m_robotContainer.drivetrain.getModule(1).getSteerMotor().getPosition().getValueAsDouble() % 360, null);
-        builder.addDoubleProperty("Front Left Velocity", () -> m_robotContainer.drivetrain.getModule(1).getDriveMotor().getVelocity().getValueAsDouble(), null);
-        
-        builder.addDoubleProperty("Front Right Angle",  () -> m_robotContainer.drivetrain.getModule(2).getSteerMotor().getPosition().getValueAsDouble() % 360, null);
-        builder.addDoubleProperty("Front Right Velocity",  () -> m_robotContainer.drivetrain.getModule(2).getDriveMotor().getVelocity().getValueAsDouble(), null);
-        
-        builder.addDoubleProperty("Back Left Angle", () -> m_robotContainer.drivetrain.getModule(3).getSteerMotor().getPosition().getValueAsDouble() % 360, null);
-        builder.addDoubleProperty("Back Left Velocity", () -> m_robotContainer.drivetrain.getModule(3).getDriveMotor().getVelocity().getValueAsDouble(), null);
-        
-        builder.addDoubleProperty("Back Right Angle", () -> m_robotContainer.drivetrain.getModule(4).getSteerMotor().getPosition().getValueAsDouble() % 360, null);
-        builder.addDoubleProperty("Back Right Velocity", () -> m_robotContainer.drivetrain.getModule(4).getDriveMotor().getVelocity().getValueAsDouble(), null);
-        
-        builder.addDoubleProperty("Robot Angle", () -> m_robotContainer.drivetrain.getPigeon2().getYaw().getValueAsDouble(), null);
-        }
+     SmartDashboard.putData("Swerve Drive", builder -> {
+      builder.setSmartDashboardType("SwerveDrive");
+      
+      builder.addDoubleProperty("Front Left Angle", () -> m_robotContainer.drivetrain.getModule(1).getSteerMotor().getPosition().getValueAsDouble() % 360, null);
+      builder.addDoubleProperty("Front Left Velocity", () -> m_robotContainer.drivetrain.getModule(1).getDriveMotor().getVelocity().getValueAsDouble(), null);
+      
+      builder.addDoubleProperty("Front Right Angle",  () -> m_robotContainer.drivetrain.getModule(2).getSteerMotor().getPosition().getValueAsDouble() % 360, null);
+      builder.addDoubleProperty("Front Right Velocity",  () -> m_robotContainer.drivetrain.getModule(2).getDriveMotor().getVelocity().getValueAsDouble(), null);
+      
+      builder.addDoubleProperty("Back Left Angle", () -> m_robotContainer.drivetrain.getModule(3).getSteerMotor().getPosition().getValueAsDouble() % 360, null);
+      builder.addDoubleProperty("Back Left Velocity", () -> m_robotContainer.drivetrain.getModule(3).getDriveMotor().getVelocity().getValueAsDouble(), null);
+      
+      builder.addDoubleProperty("Back Right Angle", () -> m_robotContainer.drivetrain.getModule(4).getSteerMotor().getPosition().getValueAsDouble() % 360, null);
+      builder.addDoubleProperty("Back Right Velocity", () -> m_robotContainer.drivetrain.getModule(4).getDriveMotor().getVelocity().getValueAsDouble(), null);
+      
+      builder.addDoubleProperty("Robot Angle", () -> m_robotContainer.drivetrain.getPigeon2().getYaw().getValueAsDouble(), null);
       });
     SmartDashboard.putData("Field", m_field);
     this.m_timeAndJoystickReplay.update();
