@@ -6,10 +6,17 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Game information, including cached information given by the Driver Station.
+ */
 public class Game extends SubsystemBase {
   private Optional<Alliance> alliance = Optional.empty();
   private Optional<Alliance> autoWinner = Optional.empty();
 
+  /**
+   * The allience given by the Driver Station.
+   * @return The alliance. Can be empty if no alliance given by the Driver Station.
+   */
   public Optional<Alliance> getAlliance() {
     if (alliance.isEmpty()) {
       alliance = DriverStation.getAlliance();
@@ -19,6 +26,7 @@ public class Game extends SubsystemBase {
 
   /**
    * To figure out who won the auto phase and who starts in shift 1.
+   * 
    * @return Witch allaince won autonomous.
    */
   public Optional<Alliance> getAutoWinner() {
@@ -36,8 +44,9 @@ public class Game extends SubsystemBase {
   }
 
   /**
-   * Determines which shift we're in.
-   * Only valid for teleop period, you wil get a Optional.empty() in autonomous.
+   * Determines which shift we're in. Only valid for teleop period, you wil get a
+   * Optional.empty() in autonomous.
+   * 
    * @return current shift.
    */
   public Optional<Shift> getShift() {
@@ -72,13 +81,12 @@ public class Game extends SubsystemBase {
 
     /**
      * Checks if any of the shifts are active based on the given match time.
+     * 
      * @param time Current match time
      * @return True if {@code time} is within the start and end time of a shift.
      */
     public boolean isActive(double time) {
       return (time <= start && time >= end);
     }
-
   }
-
 }
