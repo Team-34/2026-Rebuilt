@@ -63,7 +63,8 @@ public class Vision extends SubsystemBase {
     boolean isWithinTolerance = MathUtil.isNear(0, getTX(), TX_TOLERANCE) && MathUtil.isNear(0, getTY(), TY_TOLERANCE);
     return isCorrectTag && isWithinTolerance;
   }
-
+  
+  @Override
   public void periodic() {
     SmartDashboard.putNumber("Distance to Target", getDistanceToTarget());
     SmartDashboard.putNumber("Limelight Tx", getTargetPose_CameraSpaceArrayElement(0));

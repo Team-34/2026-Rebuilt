@@ -30,3 +30,27 @@ Rebuilt: FRC game for the 2025–2026 season
 | **Turret**     | 50 - 54 |          | 1x CTR Minion                           | TalonFXS             | 99:18 (_mechanism:motor_)     |
 | **Spindexer**  | 55 - 59 |          | 1x Kraken (TBD)                         | TalonFX (_built-in_) |                               |
 | **Intake**     | 60 - 63 |          | 1x CTR Minion                           | TalonFXS             |                               |
+
+## Planned Button-map
+
+| Button                        |   Subsystem       |   Action              |   Activation Type |
+| --                            | --                | --                    |   --              |
+| **A**                         |   Spindexer,      |   Feed Forward        |   whileTrue       |
+| **A**                         |   Intake          |   Intake In           |   whileTrue       |                                        
+| **B**                         |   Spindexer,      |   Feed Reverse        |   whileTrue       |
+| **B**                         |   Intake          |   Intake Out          |   whileTrue       | 
+| **X**                         |   Intake          |   Deploy              |   onTrue          |                                         
+| **Y**                         |   Climber         |   Toggle Climber      |   onTrue          |                                          
+| **POV Up**                    |   Unbound         |   N/A                 |   N/A             |                                      
+| **POV Left**                  |   Climber         |   Extend Manual       |   onTrue          |                                      
+| **POV Down**                  |   Unbound         |   N/A                 |   N/A             |                                    
+| **POV Right**                 |   Climber         |   Retract Manual      |   onTrue          |                                    
+| **Left Bumper**               |   Turret          |   Move Left           |   whileTrue       |                                     
+| **Right Bumper**              |   Turret          |   Move Right          |   whileTrue       |                                      
+| **Left Trigger**              |   Turret          |   Point to Fiducial   |   onTrue          |                                  
+| **Right Trigger**             |   Shooter,        |   Cycle Speed         |   onTrue          |
+| **Right Trigger**             |   Spindexer       |   Feed Forward        |   whileTrue       |    
+| **Left Stick (Movement)**     |   Swerve          |   Robot Translation   |   Permanent       |     
+| **Left Stick (Press)**        |   Swerve          |   Combo Shieldwall    |   Permanent       |     
+| **Right Stick (Movement)**    |   Swerve          |   Robot Rotation      |   Permanent       |     
+| **Right Stick (Press)**       |   Swerve          |   Combo Shieldwall    |   Permanent       |
