@@ -1,13 +1,11 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-import com.ctre.phoenix6.configs.ClosedLoopGeneralConfigs;
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFXS;
@@ -46,12 +44,12 @@ public class Turret extends SubsystemBase {
     return runEnd(() -> {
       if (LimelightHelpers.getFiducialID("") == tag) {
         motor.setControl(positionControl.withPosition(encoder + tx));
-      } else {motor.stopMotor();}
-    },
-    () -> {
+      } else {
+        motor.stopMotor();
+      }
+    }, () -> {
       motor.stopMotor();
-    }
-    );
+    });
   }
 
   /**
@@ -71,13 +69,14 @@ public class Turret extends SubsystemBase {
     // The argument is the new position value
     motor.setPosition(0);
   }
-  
+
   @Override
   public void periodic() {
     if (isAtZeroPosition()) {
       resetEncoder();
     }
-    // Minion motor returns the encoder in full rotations (ex. 1 unit is 1 full rotation)
+    // Minion motor returns the encoder in full rotations (ex. 1 unit is 1 full
+    // rotation)
     SmartDashboard.putNumber("Encoder", motor.getPosition().getValueAsDouble());
     SmartDashboard.putBoolean("Zero Position", isAtZeroPosition());
   }
