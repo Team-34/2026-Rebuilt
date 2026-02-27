@@ -17,6 +17,10 @@ public class Game extends SubsystemBase {
     return alliance;
   }
 
+  /**
+   * To figure out who won the auto phase and who starts in shift 1.
+   * @return Witch allaince won autonomous.
+   */
   public Optional<Alliance> getAutoWinner() {
     String gameData = DriverStation.getGameSpecificMessage();
 
@@ -31,6 +35,11 @@ public class Game extends SubsystemBase {
     return this.autoWinner;
   }
 
+  /**
+   * Determines which shift we're in.
+   * Only valid for teleop period, you wil get a Optional.empty() in autonomous.
+   * @return current shift.
+   */
   public Optional<Shift> getShift() {
     if (DriverStation.isTeleop()) {
       for (var shift : Shift.values()) {
@@ -47,6 +56,9 @@ public class Game extends SubsystemBase {
     return DriverStation.getMatchTime();
   }
 
+  /**
+   * The different shifts' start and end times.
+   */
   public static enum Shift {
     TRANSITION(140, 130), ONE(130, 105), TWO(105, 80), THREE(80, 55), FOUR(55, 30), END(30, 0);
 
@@ -58,14 +70,11 @@ public class Game extends SubsystemBase {
       this.end = end;
     }
 
-    public double getStartTime() {
-      return start;
-    }
-
-    public double getEndTime() {
-      return end;
-    }
-
+    /**
+     * Checks if any of the shifts are active based on the given match time.
+     * @param time Current match time
+     * @return True if {@code time} is within the start and end time of a shift.
+     */
     public boolean isActive(double time) {
       return (time <= start && time >= end);
     }
