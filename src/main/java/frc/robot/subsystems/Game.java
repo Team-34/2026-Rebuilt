@@ -20,6 +20,7 @@ public class Game extends SubsystemBase {
 
   public Optional<Alliance> getAutoWinner() {
     String gameData = DriverStation.getGameSpecificMessage();
+
     if (gameData.length() > 0) {
       this.autoWinner = switch (gameData.charAt(0)) {
         case 'B' -> Optional.of(Alliance.Blue);
@@ -27,6 +28,7 @@ public class Game extends SubsystemBase {
         default -> this.autoWinner = Optional.empty();
       };
     }
+    
     return this.autoWinner;
   }
 
