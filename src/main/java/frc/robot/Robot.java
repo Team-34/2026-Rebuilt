@@ -5,10 +5,6 @@
 package frc.robot;
 
 import com.ctre.phoenix6.HootAutoReplay;
-import com.ctre.phoenix6.StatusSignal;
-import com.ctre.phoenix6.Utils;
-
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
