@@ -2,90 +2,61 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
- * Game information, including cached information given by the Driver Station.
+ * Game information.
  */
-public class Game extends SubsystemBase {
-  private Optional<Alliance> alliance = Optional.empty();
-  private Optional<Alliance> autoWinner = Optional.empty();
-
+public interface Game {
   /**
-   * The allience given by the Driver Station.
-   * @return The alliance. Can be empty if no alliance given by the Driver Station.
-   */
-  public Optional<Alliance> getAlliance() {
-    if (alliance.isEmpty()) {
-      alliance = DriverStation.getAlliance();
-    }
-    return alliance;
-  }
-
-  /**
-   * To figure out who won the auto phase and who starts in shift 1.
+   * Our alliance.
    * 
-   * @return Witch allaince won autonomous.
+   * @return Our alliance, or empty if unknown.
    */
-  public Optional<Alliance> getAutoWinner() {
-    String gameData = DriverStation.getGameSpecificMessage();
-
-    if (gameData.length() > 0) {
-      this.autoWinner = switch (gameData.charAt(0)) {
-        case 'B' -> Optional.of(Alliance.Blue);
-        case 'R' -> Optional.of(Alliance.Red);
-        default -> Optional.empty();
-      };
-    }
-
-    return this.autoWinner;
-  }
+  public Optional<Alliance> getAlliance();
 
   /**
-   * Determines which shift we're in. Only valid for teleop period, you wil get a
-   * Optional.empty() in autonomous.
+   * The alliance that won the autonomous period.
    * 
-   * @return current shift.
+   * @return The alliance that won the autonomous period, or empty if unknown.
    */
-  public Optional<Shift> getShift() {
-    if (DriverStation.isTeleop()) {
-      for (var shift : Shift.values()) {
-        if (shift.isActive(getTime())) {
-          return Optional.of(shift);
-        }
-      }
-    }
-
-    return Optional.empty();
-  }
-
-  private double getTime() {
-    return DriverStation.getMatchTime();
-  }
+  public Optional<Alliance> getAutoWinner();
 
   /**
-   * The different shifts' start and end times.
+   * The curent shift. Only valid for teleop period; empty if in autonomous period.
+   * 
+   * @return The current shift, or empty if not in teleop period.
+   */
+  public Optional<Shift> getShift();
+
+  /**
+   * Teleop shifts with their start & end times (in seconds remaining in teleop).
    */
   public static enum Shift {
-    TRANSITION(140, 130), ONE(130, 105), TWO(105, 80), THREE(80, 55), FOUR(55, 30), END(30, 0);
+    TRANSITION(140, 130),
+    ONE(130, 105),
+    TWO(105, 80), 
+    THREE(80, 55), 
+    FOUR(55, 30), 
+    END(30, 0);
 
     private final double start;
     private final double end;
 
-    private Shift(double start, double end) {
+    private Shift(final double start, final double end) {
       this.start = start;
       this.end = end;
     }
 
     /**
-     * Checks if any of the shifts are active based on the given match time.
+     * Is this shift active at the given the match time?
      * 
-     * @param time Current match time
-     * @return True if {@code time} is within the start and end time of a shift.
+     * @param time Current match time in seconds left in the current period
+     *             (Autonomous or Teleop)
+     * @return {@code true} if {@code time} is within the start and end time of
+     *         this shift.
      */
-    public boolean isActive(double time) {
+    public boolean isActive(final double time) {
       return (time <= start && time >= end);
     }
   }
