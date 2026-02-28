@@ -23,7 +23,7 @@ public interface Game {
   public Optional<Alliance> getAutoWinner();
 
   /**
-   * The curent shift. Only valid for teleop period; empty if in autonomous period.
+   * The current shift. Only valid for teleop period; empty if in autonomous period.
    * 
    * @return The current shift, or empty if not in teleop period.
    */

@@ -14,7 +14,7 @@ public class DriverStationGame extends SubsystemBase implements Game {
   private Optional<Alliance> autoWinner = Optional.empty();
 
   /**
-   * The allience given by the Driver Station.
+   * The alliance given by the Driver Station.
    * 
    * @return The alliance. Can be empty if no alliance given by the Driver
    *         Station.
@@ -30,7 +30,7 @@ public class DriverStationGame extends SubsystemBase implements Game {
   /**
    * To figure out who won the auto phase and who starts in shift 1.
    * 
-   * @return Witch allaince won autonomous.
+   * @return Which alliance won autonomous.
    */
   @Override
   public Optional<Alliance> getAutoWinner() {
@@ -51,7 +51,7 @@ public class DriverStationGame extends SubsystemBase implements Game {
    * Determines which shift we're in. Only valid for teleop period, you wil get a
    * Optional.empty() in autonomous.
    * 
-   * @return current shift.
+   * @return Current shift.
    */
   @Override
   public Optional<Shift> getShift() {
