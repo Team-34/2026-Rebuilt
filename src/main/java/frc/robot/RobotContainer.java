@@ -27,6 +27,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Spindexer; 
 import frc.robot.subsystems.Turret;
@@ -43,6 +44,7 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter();
   private final Spindexer spindexer = new Spindexer();
   private final Turret turret = new Turret();
+  private final LEDs leds = new LEDs();
 
   private final SlewRateLimiter forwardFilter = new SlewRateLimiter(1.7);
   private final SlewRateLimiter turnFilter = new SlewRateLimiter(2.0);
@@ -108,13 +110,6 @@ public class RobotContainer {
     joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
     joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
     joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-    
-    // Run SysId routines when holding back/start and X/Y.
-    // Note that each routine should be run exactly once in a single log.
-    joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // Reset the field-centric heading on start button press.
     joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
@@ -169,6 +164,14 @@ public class RobotContainer {
    
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
-    new CommandXboxController(OperatorConstants.kDriverControllerPort);
+      new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
+  /**
+   * Called in Robot.disabledInit().
+   * Used by subsystems to disable what they need turned off when the robot is disabled.
+   * 
+   */
+  public void disable() {
+    leds.turnOff();
+  }
 }

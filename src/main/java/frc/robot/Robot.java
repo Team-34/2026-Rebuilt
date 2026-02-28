@@ -61,6 +61,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledInit() {
+    this.m_robotContainer.disable();
   }
 
   @Override
@@ -69,6 +70,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void disabledExit() {
+    
   }
 
   @Override
@@ -97,6 +99,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    
   }
 
   @Override
