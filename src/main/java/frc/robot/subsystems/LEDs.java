@@ -15,10 +15,8 @@ public class LEDs extends SubsystemBase {
   private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(300);
 
   /**
-   * Called in RobotContainer constructor. Sets the length of the LED strip to the
-   * length of the LED buffer, sets the LED strip to a solid green color, starts
-   * the LED strip, and sets the LED strip to a solid red or blue color based on
-   * the alliance color.
+   * Constructs a new LEDs subsystem, 
+   * setting the LED strip to an alliance color if available or if not, to solid green
    */
   public LEDs() {
     ledStrip.setLength(ledBuffer.getLength());
@@ -28,10 +26,9 @@ public class LEDs extends SubsystemBase {
   }
 
   /**
-   * Called in all solid color methods to set the LED strip to a solid color. This
-   * helps reduce ammount of code duplication.
+   * Sets the LED strip to a given solid color.
    * 
-   * @param color
+   * @param color the color to set the LED strip to.
    */
   public void solid(Color color) {
     LEDPattern pattern = LEDPattern.solid(color);
@@ -40,30 +37,32 @@ public class LEDs extends SubsystemBase {
   }
 
   /**
-   * Called in RobotContainer.disable(). Turns off the LED strip by setting it to
-   * a solid black color.
+   * Turns off the LED strip.
    */
   public void turnOff() {
     solid(Color.kBlack);
   }
 
   /**
-   * Called in LEDs.allianceColor() Sets the LED strip to a solid red color.
+   * Sets the LED strip to a solid red color.
    */
   public void red() {
     solid(Color.kRed);
   }
 
   /**
-   * Called in LEDs.allianceColor() Sets the LED strip to a solid blue color.
+   * Sets the LED strip to a solid blue color.
    */
   public void blue() {
     solid(Color.kBlue);
   }
 
   /**
-   * Called in LEDs constructor. Sets the LED strip to a solid red or blue color
-   * based on the alliance color.
+   * Sets the LED strip to the solid of the alliance if available.
+   * 
+   * Does not change the color if {@code alliance} is empty.
+   * 
+   * @param alliance this teams alliance.
    */
   public void allianceColor(Optional<DriverStation.Alliance> alliance) {
     alliance.ifPresent(a -> {
