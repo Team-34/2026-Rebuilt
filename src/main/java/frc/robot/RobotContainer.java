@@ -24,14 +24,13 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Spindexer;
-
+import frc.robot.subsystems.Spindexer; 
 import frc.robot.subsystems.Turret;
-
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -40,8 +39,8 @@ import frc.robot.subsystems.Turret;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  //private final Climber climber = new Climber();
-  //private final Intake intake = new Intake();
+  private final Climber climber = new Climber();
+  private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
   private final Spindexer spindexer = new Spindexer();
   private final Turret turret = new Turret();
@@ -50,7 +49,7 @@ public class RobotContainer {
   private final SlewRateLimiter forwardFilter = new SlewRateLimiter(1.7);
   private final SlewRateLimiter turnFilter = new SlewRateLimiter(2.0);
   private final SlewRateLimiter rotateFilter = new SlewRateLimiter(1.8);
-    
+  
   // @formatter:off
   private final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -64,7 +63,7 @@ public class RobotContainer {
     
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
-
+  public final LimelightHelpers limelightHelpers = new LimelightHelpers();
   private final CommandXboxController joystick = new CommandXboxController(0);
   private final SendableChooser<Command> autoChooser;
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -123,13 +122,13 @@ public class RobotContainer {
 
     // ==== OUR SUBSYSTEM BINDINGS ====
 
-    // joystick.y().onTrue(climber.toggleCommand());
-    // joystick.povLeft().whileTrue(climber.extendCommand());
-    // joystick.povRight().whileTrue(climber.retractCommand());
+    joystick.y().onTrue(climber.toggleCommand());
+    joystick.povLeft().whileTrue(climber.extendCommand());
+    joystick.povRight().whileTrue(climber.retractCommand());
 
-    // joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
-    // joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
-    // joystick.x().onTrue(intake.toggle());
+    joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
+    joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
+    joystick.x().onTrue(intake.toggle());
 
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
 
@@ -162,7 +161,7 @@ public class RobotContainer {
         drivetrain.applyRequest(() -> idle));
     }
   // The robot's subsystems and commands are defined here...
-  
+   
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);

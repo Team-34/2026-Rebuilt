@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.LimelightHelpers;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
@@ -14,7 +15,7 @@ import com.ctre.phoenix6.signals.MotorArrangementValue;
 public class Turret extends SubsystemBase {
   private final TalonFXS motor = new TalonFXS(50);
   private final PositionVoltage positionControl = new PositionVoltage(0);
-  private final DigitalInput limitSwitch = new DigitalInput(3);
+  private final DigitalInput limitSwitch = new DigitalInput(5);
 
   public Turret() {
     final var config = new TalonFXSConfiguration();
@@ -36,6 +37,21 @@ public class Turret extends SubsystemBase {
     });
   }
 
+  public Command pointAtFiducial(final int tag) {
+    LimelightHelpers.setPriorityTagID("", tag);
+    final double encoder = motor.getPosition().getValueAsDouble();
+    final double tx = LimelightHelpers.getTX("");
+    return runEnd(() -> {
+      if (LimelightHelpers.getFiducialID("") == tag) {
+        motor.setControl(positionControl.withPosition(encoder + tx));
+      } else {
+        motor.stopMotor();
+      }
+    }, () -> {
+      motor.stopMotor();
+    });
+  }
+
   /**
    * @param power The power to give to the motor.
    * @return Moves the motor.
@@ -53,14 +69,15 @@ public class Turret extends SubsystemBase {
     // The argument is the new position value
     motor.setPosition(0);
   }
-  
+
   @Override
   public void periodic() {
     if (isAtZeroPosition()) {
       resetEncoder();
     }
-    // Minion motor returns the encoder in full rotations (ex. 1 unit is 1 full rotation)
+    // Minion motor returns the encoder in full rotations (ex. 1 unit is 1 full
+    // rotation)
     SmartDashboard.putNumber("Encoder", motor.getPosition().getValueAsDouble());
-    SmartDashboard.putBoolean("Is at zero? ", isAtZeroPosition());
+    SmartDashboard.putBoolean("Zero Position", isAtZeroPosition());
   }
 }
