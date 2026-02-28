@@ -130,7 +130,7 @@ public class Turret extends SubsystemBase {
    *
    * @param speed The speed to move the motor at for zeroing. Keep this value VERY low, but not low enough to stall the motor.
    */
-  public Command findZeroHighCommand(double speed) {
+  private Command findZeroHighCommand(double speed) {
     final double bigDeg = Math.abs((motor.getPosition().getValueAsDouble() * GEAR_RATIO) % 360);
     return runOnce(() -> {
       if (isAtZeroPosition() == false && bigDeg >= 225) {motor.set(speed);}
@@ -144,7 +144,7 @@ public class Turret extends SubsystemBase {
    * 
    * @param speed The speed to move the motor at for zeroing. Keep this value VERY low, but not low enough to stall the motor.
    */
-  public Command findZeroLowCommand(double speed) {
+  private Command findZeroLowCommand(double speed) {
     final double bigDeg = Math.abs((motor.getPosition().getValueAsDouble() * GEAR_RATIO) % 360);
     return runOnce(() -> {
       if (isAtZeroPosition() == false && bigDeg <= 135) {motor.set(-speed);}
