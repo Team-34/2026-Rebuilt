@@ -48,7 +48,7 @@ public class DriverStationGame extends SubsystemBase implements Game {
   }
 
   /**
-   * Determines which shift we're in. Only valid for teleop period, you wil get a
+   * Determines which shift we're in. Only valid for teleop period, you will get an
    * Optional.empty() in autonomous.
    * 
    * @return Current shift.
