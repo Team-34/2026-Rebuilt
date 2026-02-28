@@ -147,7 +147,7 @@ public class Turret extends SubsystemBase {
   public Command findZeroLowCommand(double speed) {
     final double bigDeg = Math.abs((motor.getPosition().getValueAsDouble() * GEAR_RATIO) % 360);
     return runOnce(() -> {
-      if (isAtZeroPosition() == false && bigDeg <= 90) {motor.set(speed);}
+      if (isAtZeroPosition() == false && bigDeg <= 90) {motor.set(-speed);}
     });
   }
   /**
