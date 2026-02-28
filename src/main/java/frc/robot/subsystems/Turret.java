@@ -163,11 +163,15 @@ public class Turret extends SubsystemBase {
    * Keep this value below 120 but above a feasible number for the turret to actually be at.
    * @param highTolerance The higher tolerance for zeroing. 
    * Keep this value below 120 but above a feasible number for the turret to actually be at.
+   * 
+   * @return Command to move towards zero, and stop once it is reached.
    */
   public Command findZeroCommand(int lowTolerance, int highTolerance, double speed) {
     final double bigDeg = Math.abs((motor.getPosition().getValueAsDouble() * GEAR_RATIO) % 360);
+
     final boolean nearHigh = MathUtil.isNear(360, bigDeg, highTolerance);
     final boolean nearLow = MathUtil.isNear(0, bigDeg, lowTolerance);
+
     final boolean zeroSwitch = !limitSwitch.get();
 
     return run(() -> {
