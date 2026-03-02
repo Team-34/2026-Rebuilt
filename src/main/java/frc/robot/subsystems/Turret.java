@@ -20,12 +20,12 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 
 public class Turret extends SubsystemBase {
-  private static final double GEAR_RATIO = 18.0 / 99.0;
+  private static final double GEAR_RATIO = 99.0 / 18.0;
 
   private final TalonFXS motor = new TalonFXS(50);
   private final PositionVoltage positionControl = new PositionVoltage(0);
   private final DigitalInput limitSwitch = new DigitalInput(9);
-
+  private boolean overLimit;
   public Turret() {
     final var config = new TalonFXSConfiguration();
     config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
@@ -34,6 +34,21 @@ public class Turret extends SubsystemBase {
     config.Slot0.kI = 0;
     config.Slot0.kD = 0;
     motor.getConfigurator().apply(config);
+  }
+
+  public Command pointAtFiducial(final int tag) {
+    LimelightHelpers.setPriorityTagID("", tag);
+    final double encoder = motor.getPosition().getValueAsDouble();
+    final double tx = LimelightHelpers.getTX("");
+    return runEnd(() -> {
+      if (LimelightHelpers.getFiducialID("") == tag) {
+        motor.setControl(positionControl.withPosition(encoder + tx));
+      } else {
+        motor.stopMotor();
+      }
+    }, () -> {
+      motor.stopMotor();
+    });
   }
 
   /**
@@ -91,12 +106,29 @@ public class Turret extends SubsystemBase {
    * conditions is met.
    * </p>
    * 
+   * **UPDATED**
+   * In theory, if the given encoder value is below the arbitrary limit and we are 
+   * moving at a velocity that would make us move past the limit
    * @param power The power to move the motor with, between -1 and 1. Positive
    *              power is counterclockwise; negative is clockwise.
    * @return Command to swivel the turret.
+   * POSITIVE CCW
+   * NEG CW
    */
+
   public Command swivelByPowerCommand(final double power) {
-    return runEnd(() -> motor.set(power), motor::stopMotor);
+    final double encoder = motor.getPosition().getValueAsDouble();
+    return runEnd(
+      () -> {
+        if (!overLimit) {
+          motor.set(power);
+        } else {
+          motor.set(-power);
+        }
+      },
+      () -> {
+        motor.stopMotor();
+      } );
   }
 
   /**
@@ -131,9 +163,10 @@ public class Turret extends SubsystemBase {
    * @param speed The speed to move the motor at for zeroing. Keep this value VERY low, but not low enough to stall the motor.
    */
   private Command findZeroHighCommand(double speed) {
-    final double bigDeg = Math.abs((motor.getPosition().getValueAsDouble() * GEAR_RATIO) % 360);
+    final double bigDeg = ((mechanismAngleToMotorAngle(motor.getPosition().getValue()).div(GEAR_RATIO)).abs(Degrees));
+    final int LIMIT = 225;
     return runOnce(() -> {
-      if (isAtZeroPosition() == false && bigDeg >= 225) {motor.set(speed);}
+      if (isAtZeroPosition() == false && bigDeg >= LIMIT) {motor.set(speed);}
     });
   }
 
@@ -145,9 +178,10 @@ public class Turret extends SubsystemBase {
    * @param speed The speed to move the motor at for zeroing. Keep this value VERY low, but not low enough to stall the motor.
    */
   private Command findZeroLowCommand(double speed) {
-    final double bigDeg = Math.abs((motor.getPosition().getValueAsDouble() * GEAR_RATIO) % 360);
+    final double bigDeg = ((mechanismAngleToMotorAngle(motor.getPosition().getValue()).div(GEAR_RATIO)).abs(Degrees));
+    final int LIMIT = 135;
     return runOnce(() -> {
-      if (isAtZeroPosition() == false && bigDeg <= 135) {motor.set(-speed);}
+      if (!isAtZeroPosition() && bigDeg <= LIMIT) {motor.set(-speed);}
     });
   }
   /**
@@ -172,6 +206,7 @@ public class Turret extends SubsystemBase {
     final boolean nearHigh = MathUtil.isNear(360, bigDeg, highTolerance);
     final boolean nearLow = MathUtil.isNear(0, bigDeg, lowTolerance);
 
+
     final boolean zeroSwitch = !limitSwitch.get();
 
     return run(() -> {
@@ -180,10 +215,7 @@ public class Turret extends SubsystemBase {
       } else if (nearLow) {
         findZeroLowCommand(speed);
       }
-      if (zeroSwitch) {
-        motor.stopMotor();
-      }
-    });
+    }).until(() -> zeroSwitch);
   }
 
   /**
@@ -211,11 +243,19 @@ public class Turret extends SubsystemBase {
     if (isAtZeroPosition()) {
       resetEncoder();
     }
-
+    if (motor.getPosition().getValueAsDouble() >= 2.71 && motor.getVelocity().getValueAsDouble() > 0.0) {
+      overLimit = true;
+    }
+    if (motor.getPosition().getValueAsDouble() <= 0 && motor.getVelocity().getValueAsDouble() > 0.0) {
+      overLimit = true;
+    }
     // Minion motor returns the encoder in full rotations (ex. 1 unit is 1 full
     // rotation)
+    
+    SmartDashboard.putBoolean("Over Limit?", overLimit);
+    SmartDashboard.putNumber("Turret Vel", motor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Encoder", motor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("Big Wheel Degrees", Math.abs((motor.getPosition().getValueAsDouble() * GEAR_RATIO) % 360));
+    SmartDashboard.putNumber("Big Wheel Degrees", (mechanismAngleToMotorAngle(motor.getPosition().getValue()).div(GEAR_RATIO)).abs(Degrees));
     SmartDashboard.putBoolean("Is at zero? ", isAtZeroPosition());
   }
 }

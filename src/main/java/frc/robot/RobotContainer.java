@@ -85,14 +85,14 @@ public class RobotContainer {
 
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
-    drivetrain.setDefaultCommand(
-        // Drivetrain will execute this command periodically
-        drivetrain.applyRequest(() -> drive
-          .withVelocityX(forwardFilter.calculate(-joystick.getLeftY() * MaxSpeed)) // Drive forward with negative Y (forward)
-          .withVelocityY(turnFilter.calculate(-joystick.getLeftX() * MaxSpeed)) // Drive left with negative X (left)
-          .withRotationalRate(rotateFilter.calculate(-joystick.getRightX() * MaxAngularRate)) // Drive counterclockwise with negative X (left)
-        )
-    );
+    // drivetrain.setDefaultCommand(
+    //     // Drivetrain will execute this command periodically
+    //     drivetrain.applyRequest(() -> drive
+    //       .withVelocityX(forwardFilter.calculate(-joystick.getLeftY() * MaxSpeed)) // Drive forward with negative Y (forward)
+    //       .withVelocityY(turnFilter.calculate(-joystick.getLeftX() * MaxSpeed)) // Drive left with negative X (left)
+    //       .withRotationalRate(rotateFilter.calculate(-joystick.getRightX() * MaxAngularRate)) // Drive counterclockwise with negative X (left)
+    //     )
+    // );
 
     // Idle while the robot is disabled. This ensures the configured
     // neutral mode is applied to the drive motors while disabled.
@@ -141,11 +141,12 @@ public class RobotContainer {
     joystick.a().onTrue(spindexer.spin()).onFalse(spindexer.stop());
     joystick.b().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
 
-    joystick.leftBumper().whileTrue(turret.swivelByPowerCommand(-0.5));
-    joystick.rightBumper().whileTrue(turret.swivelByPowerCommand(0.5));
+    joystick.leftBumper().whileTrue(turret.swivelByPowerCommand(-0.05));
+    joystick.rightBumper().whileTrue(turret.swivelByPowerCommand(0.05));
     
     joystick.leftTrigger().onTrue(turret.swivelToPositionCommand(0.0)); 
 
+    joystick.leftStick().onTrue(turret.findZeroCommand(90, 90, 0.07));
     }
         
 
