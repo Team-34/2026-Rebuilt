@@ -26,6 +26,8 @@ import frc.robot.Constants.OperatorConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.DriverStationGame;
+import frc.robot.subsystems.Game;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
@@ -39,12 +41,13 @@ import frc.robot.subsystems.Turret;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  private final Game game = new DriverStationGame();
   private final Climber climber = new Climber();
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
   private final Spindexer spindexer = new Spindexer();
   private final Turret turret = new Turret();
-  private final LEDs leds = new LEDs();
+  private final LEDs leds = new LEDs(game);
 
   private final SlewRateLimiter forwardFilter = new SlewRateLimiter(1.7);
   private final SlewRateLimiter turnFilter = new SlewRateLimiter(2.0);
