@@ -1,10 +1,7 @@
 package frc.robot.subsystems;
 
-import java.util.Optional;
-
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.util.Color;
@@ -13,16 +10,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class LEDs extends SubsystemBase {
   private final AddressableLED ledStrip = new AddressableLED(0);
   private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(300);
+  private final Game game;
 
   /**
    * Constructs a new LEDs subsystem, 
    * setting the LED strip to an alliance color if available or if not, to solid green
+   * 
+   * @param game the game information to use for determining alliance color.
    */
-  public LEDs() {
+  public LEDs(final Game game) {
+    this.game = game;
     ledStrip.setLength(ledBuffer.getLength());
     solid(Color.kGreen);
     ledStrip.start();
-    allianceColor(DriverStation.getAlliance());
   }
 
   /**
@@ -62,10 +62,9 @@ public class LEDs extends SubsystemBase {
    * 
    * Does not change the color if {@code alliance} is empty.
    * 
-   * @param alliance this teams alliance.
    */
-  public void allianceColor(Optional<DriverStation.Alliance> alliance) {
-    alliance.ifPresent(a -> {
+  public void allianceColor() {
+    game.getAlliance().ifPresent(a -> {
       if (a == Alliance.Red) {
         red();
       } else {
