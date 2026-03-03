@@ -2,16 +2,11 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.LimelightHelpers;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import java.util.function.BooleanSupplier;
 import static edu.wpi.first.units.Units.Degrees;
 
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
@@ -21,11 +16,15 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 
 public class Turret extends SubsystemBase {
-  private static final double GEAR_RATIO = 99.0 / 18.0;
+  private static final double GEAR_RATIO = 99.0 / 18.0; // turret : motor
 
   private final TalonFXS motor = new TalonFXS(50);
   private final PositionVoltage positionControl = new PositionVoltage(0);
   private final DigitalInput limitSwitch = new DigitalInput(9);
+  
+  /**
+   * Creates a new {@code Turret} instance.
+   */
   public Turret() {
     final var config = new TalonFXSConfiguration();
     config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
@@ -52,7 +51,7 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * Converts turret position (in rotations) to the eqivalent motor position.
+   * Converts turret position (in rotations) to the equivalent motor position.
    * 
    * @param rotations Turret position (in rotations)
    * @return Motor equivalent of {@code rotations}
@@ -61,12 +60,18 @@ public class Turret extends SubsystemBase {
     return rotations * GEAR_RATIO;
   }
 
+  /**
+   * Converts motor position (in rotations) to the equivalent turret position.
+   * 
+   * @param rotations Motor position (in rotations)
+   * @return Turret equivalent of {@code rotations}
+   */
   public static double motorPositiontoMechanismPosition(final double rotations) {
     return GEAR_RATIO / rotations;
   }
 
   /**
-   * Converts turret position angle to the eqivalent motor position angle.
+   * Converts turret position angle to the equivalent motor position angle.
    * 
    * @param rotations Turret position angle
    * @return Motor equivalent of {@code angle}
@@ -75,9 +80,16 @@ public class Turret extends SubsystemBase {
     return angle.times(GEAR_RATIO);
   }
 
+  /**
+   * Converts motor position angle to the equivalent turret position angle.
+   * 
+   * @param rotations Motor position angle
+   * @return Turret equivalent of {@code angle}
+   */
   public static Angle motorAngleToMechanismAngle(final Angle angle) {
     return angle.div(GEAR_RATIO);
   }
+
   /**
    * Rotates the turret to the given absolute position.
    * <p>
@@ -125,31 +137,26 @@ public class Turret extends SubsystemBase {
    * POSITIVE CCW
    * NEG CW
    */
-
   public Command swivelByPowerCommand(final double power) {
-    return runEnd(
-      () -> {
-         motor.set(power);
-      }, 
-      () -> {
-        motor.stopMotor();
-      }).until(
-        () -> {
-        final var turretPos = motorAngleToMechanismAngle(motor.getPosition().getValue());
-        final double motorVoltage = motor.getMotorVoltage().getValueAsDouble();
-        boolean highCheck = turretPos.gte(Degrees.of(180));
-        boolean lowCheck = turretPos.lte(Degrees.of(0));
-        SmartDashboard.putNumber("Motor Voltage Command", motorVoltage);
-        SmartDashboard.putNumber("Turret Position Command", turretPos.in(Degrees));
-        SmartDashboard.putBoolean("High Check?", highCheck);
-        SmartDashboard.putBoolean("Low Check?", lowCheck);
-        return (highCheck && motorVoltage > 0) || (lowCheck && motorVoltage < 0);
-      });
+    return runEnd(() -> motor.set(power), motor::stopMotor).until(() -> {
+      final var turretPos = motorAngleToMechanismAngle(motor.getPosition().getValue());
+      final double motorVoltage = motor.getMotorVoltage().getValueAsDouble();
+      final boolean highCheck = turretPos.gte(Degrees.of(180));
+      final boolean lowCheck = turretPos.lte(Degrees.of(0));
+
+      SmartDashboard.putNumber("Motor Voltage Command", motorVoltage);
+      SmartDashboard.putNumber("Turret Position Command", turretPos.in(Degrees));
+      SmartDashboard.putBoolean("High Check?", highCheck);
+      SmartDashboard.putBoolean("Low Check?", lowCheck);
+
+      return (highCheck && motorVoltage > 0) || (lowCheck && motorVoltage < 0);
+    });
   }
 
   public Command stopMotor() {
     return runOnce(() -> {motor.stopMotor();});
   }
+
   /**
    * Swivels the turret by the given angle.
    * <p>
@@ -181,7 +188,7 @@ public class Turret extends SubsystemBase {
    *
    * @param speed The speed to move the motor at for zeroing. Keep this value VERY low, but not low enough to stall the motor.
    */
-  private Command findZeroHighCommand(double speed) {
+  private Command findZeroHighCommand(final double speed) {
     final double bigDeg = ((mechanismAngleToMotorAngle(motor.getPosition().getValue()).div(GEAR_RATIO)).abs(Degrees));
     final int LIMIT = 225;
     return runOnce(() -> {
@@ -196,13 +203,14 @@ public class Turret extends SubsystemBase {
    * 
    * @param speed The speed to move the motor at for zeroing. Keep this value VERY low, but not low enough to stall the motor.
    */
-  private Command findZeroLowCommand(double speed) {
+  private Command findZeroLowCommand(final double speed) {
     final double bigDeg = ((mechanismAngleToMotorAngle(motor.getPosition().getValue()).div(GEAR_RATIO)).abs(Degrees));
     final int LIMIT = 135;
     return runOnce(() -> {
       if (!isAtZeroPosition() && bigDeg <= LIMIT) {motor.set(-speed);}
     });
   }
+
   /**
    * The main command for zeroing the turret. This is meant to be employed on init of either teleop or the robot.
    * <p>
@@ -219,7 +227,7 @@ public class Turret extends SubsystemBase {
    * 
    * @return Command to move towards zero, and stop once it is reached.
    */
-  public Command findZeroCommand(int lowTolerance, int highTolerance, double speed) {
+  public Command findZeroCommand(final int lowTolerance, final int highTolerance, final double speed) {
     return run(() -> {
       final double bigDeg = Math.abs((motor.getPosition().getValueAsDouble() * GEAR_RATIO) % 360);
 
