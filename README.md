@@ -55,5 +55,5 @@ Rebuilt: FRC game for the 2025–2026 season
 | **Left Stick (Press)**        |   Swerve          |   Combo Shieldwall               |   Permanent       |     
 | **Right Stick (Movement)**    |   Swerve          |   Robot Rotation                 |   Permanent       |     
 | **Right Stick (Press)**       |   Swerve          |   Combo Shieldwall               |   Permanent       |
-| **Start**                      |   Swerve          |   Resets field-centric heading   |   onTrue          |
+| **Start**                     |   Swerve          |   Resets field-centric heading   |   onTrue          |
 | **Back**                      |   Swerve          |   Resets field-centric heading   |   onTrue          |
