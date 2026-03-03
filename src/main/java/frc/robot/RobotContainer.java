@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -15,6 +16,7 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,7 +29,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Spindexer;
-
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Turret;
 
 /**
@@ -39,7 +41,7 @@ import frc.robot.subsystems.Turret;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   //private final Climber climber = new Climber();
-  //private final Intake intake = new Intake();
+  private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
   private final Spindexer spindexer = new Spindexer();
   private final Turret turret = new Turret();
@@ -131,20 +133,19 @@ public class RobotContainer {
     // joystick.povLeft().whileTrue(climber.extendCommand());
     // joystick.povRight().whileTrue(climber.retractCommand());
 
-    // joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
-    // joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
-    // joystick.x().onTrue(intake.toggle());
+    joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
+    joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
+    joystick.x().onTrue(intake.toggle());
 
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
-
     joystick.rightTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
-    joystick.a().onTrue(spindexer.spin()).onFalse(spindexer.stop());
-    joystick.b().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
-
-    joystick.leftBumper().whileTrue(turret.swivelByPowerCommand(-0.05));
-    joystick.rightBumper().whileTrue(turret.swivelByPowerCommand(0.05));
     
-    joystick.leftTrigger().onTrue(turret.swivelToPositionCommand(0.0)); 
+    joystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.05)).onFalse(turret.stopMotor());
+    joystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.05)).onFalse(turret.stopMotor());
+    
+    joystick.povUp().onTrue(turret.swivelToPositionCommand(Degree.of(0)));
+    joystick.povLeft().onTrue(turret.swivelToPositionCommand(Degree.of(90))); 
+    joystick.povDown().onTrue(turret.swivelToPositionCommand(Degree.of(180))); 
 
     joystick.leftStick().onTrue(turret.findZeroCommand(90, 90, 0.07));
     }

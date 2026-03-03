@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Time;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Timer;
@@ -25,12 +26,11 @@ public class Turret extends SubsystemBase {
   private final TalonFXS motor = new TalonFXS(50);
   private final PositionVoltage positionControl = new PositionVoltage(0);
   private final DigitalInput limitSwitch = new DigitalInput(9);
-  private boolean overLimit;
   public Turret() {
     final var config = new TalonFXSConfiguration();
     config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // <-- May be removed if needed
-    config.Slot0.kP = 1.5;
+    config.Slot0.kP = 1.125;
     config.Slot0.kI = 0;
     config.Slot0.kD = 0;
     motor.getConfigurator().apply(config);
@@ -61,6 +61,10 @@ public class Turret extends SubsystemBase {
     return rotations * GEAR_RATIO;
   }
 
+  public static double motorPositiontoMechanismPosition(final double rotations) {
+    return GEAR_RATIO / rotations;
+  }
+
   /**
    * Converts turret position angle to the eqivalent motor position angle.
    * 
@@ -71,6 +75,9 @@ public class Turret extends SubsystemBase {
     return angle.times(GEAR_RATIO);
   }
 
+  public static Angle motorAngleToMechanismAngle(final Angle angle) {
+    return angle.div(GEAR_RATIO);
+  }
   /**
    * Rotates the turret to the given absolute position.
    * <p>
@@ -87,10 +94,13 @@ public class Turret extends SubsystemBase {
    *                  degrees), counterclockwise from the home position.
    * @return Command to swivel the turret.
    */
-  public Command swivelToPositionCommand(final double rotations) {
+  public Command swivelToPositionCommand(final Angle degree) {
     return runOnce(() -> {
-      final var clamped = MathUtil.clamp(rotations, 0.0, 0.5);
-      motor.setControl(positionControl.withPosition(mechanismPositionToMotorPosition(clamped)));
+      final Angle encoder = motor.getPosition().getValue();
+      // final var clamped = MathUtil.clamp(rotations, 0.0, 0.5);
+      // motor.setControl(positionControl.withPosition(mechanismPositionToMotorPosition(clamped)));
+      
+      motor.setControl(positionControl.withPosition(mechanismAngleToMotorAngle(degree)));
     });
   }
 
@@ -117,20 +127,29 @@ public class Turret extends SubsystemBase {
    */
 
   public Command swivelByPowerCommand(final double power) {
-    final double encoder = motor.getPosition().getValueAsDouble();
     return runEnd(
       () -> {
-        if (!overLimit) {
-          motor.set(power);
-        } else {
-          motor.set(-power);
-        }
-      },
+         motor.set(power);
+      }, 
       () -> {
         motor.stopMotor();
-      } );
+      }).until(
+        () -> {
+        final var turretPos = motorAngleToMechanismAngle(motor.getPosition().getValue());
+        final double motorVoltage = motor.getMotorVoltage().getValueAsDouble();
+        boolean highCheck = turretPos.gte(Degrees.of(180));
+        boolean lowCheck = turretPos.lte(Degrees.of(0));
+        SmartDashboard.putNumber("Motor Voltage Command", motorVoltage);
+        SmartDashboard.putNumber("Turret Position Command", turretPos.in(Degrees));
+        SmartDashboard.putBoolean("High Check?", highCheck);
+        SmartDashboard.putBoolean("Low Check?", lowCheck);
+        return (highCheck && motorVoltage > 0) || (lowCheck && motorVoltage < 0);
+      });
   }
 
+  public Command stopMotor() {
+    return runOnce(() -> {motor.stopMotor();});
+  }
   /**
    * Swivels the turret by the given angle.
    * <p>
@@ -201,21 +220,19 @@ public class Turret extends SubsystemBase {
    * @return Command to move towards zero, and stop once it is reached.
    */
   public Command findZeroCommand(int lowTolerance, int highTolerance, double speed) {
-    final double bigDeg = Math.abs((motor.getPosition().getValueAsDouble() * GEAR_RATIO) % 360);
-
-    final boolean nearHigh = MathUtil.isNear(360, bigDeg, highTolerance);
-    final boolean nearLow = MathUtil.isNear(0, bigDeg, lowTolerance);
-
-
-    final boolean zeroSwitch = !limitSwitch.get();
-
     return run(() -> {
+      final double bigDeg = Math.abs((motor.getPosition().getValueAsDouble() * GEAR_RATIO) % 360);
+
+      final boolean nearHigh = MathUtil.isNear(360, bigDeg, highTolerance);
+      final boolean nearLow = MathUtil.isNear(0, bigDeg, lowTolerance);
+
+      final boolean zeroSwitch = !limitSwitch.get();
       if (nearHigh) {
         findZeroHighCommand(speed);
       } else if (nearLow) {
         findZeroLowCommand(speed);
       }
-    }).until(() -> zeroSwitch);
+    }).until(() -> !this.limitSwitch.get());
   }
 
   /**
@@ -243,19 +260,13 @@ public class Turret extends SubsystemBase {
     if (isAtZeroPosition()) {
       resetEncoder();
     }
-    if (motor.getPosition().getValueAsDouble() >= 2.71 && motor.getVelocity().getValueAsDouble() > 0.0) {
-      overLimit = true;
-    }
-    if (motor.getPosition().getValueAsDouble() <= 0 && motor.getVelocity().getValueAsDouble() > 0.0) {
-      overLimit = true;
-    }
+    
     // Minion motor returns the encoder in full rotations (ex. 1 unit is 1 full
     // rotation)
-    
-    SmartDashboard.putBoolean("Over Limit?", overLimit);
+    SmartDashboard.putNumber("Turret Motor Voltage", motor.getMotorVoltage().getValueAsDouble());
     SmartDashboard.putNumber("Turret Vel", motor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Encoder", motor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("Big Wheel Degrees", (mechanismAngleToMotorAngle(motor.getPosition().getValue()).div(GEAR_RATIO)).abs(Degrees));
+    SmartDashboard.putNumber("Turret Mechanism Pos", motorAngleToMechanismAngle(motor.getPosition().getValue()).in(Degrees));
     SmartDashboard.putBoolean("Is at zero? ", isAtZeroPosition());
   }
 }

@@ -9,9 +9,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.PneumaticsControlModule;
 
 public class Intake extends SubsystemBase {
-  private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+  private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.REVPH, 14, 15);
 
   public final TalonFXS motor = new TalonFXS(60);
   public final DutyCycleOut motorControl = new DutyCycleOut(0);
@@ -64,5 +66,10 @@ public class Intake extends SubsystemBase {
 
   public void activate(final double speed) {
     motor.setControl(motorControl.withOutput(isDeployed() ? speed : 0));
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putBoolean("Intake Deployed", isDeployed());
   }
 }
