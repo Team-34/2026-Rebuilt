@@ -41,4 +41,27 @@ public class MathsTest {
   ) {
     assertEquals(expected, Maths.clamp(value, low, high));
   }
+
+  static Stream<Arguments> min_testCases() {
+    return Stream.of(
+      Arguments.of(Inches.of(45), Inches.of(99), Inches.of(45)),
+      Arguments.of(Inches.of(3.55), Inches.of(-2.78), Inches.of(-2.78)),
+
+      Arguments.of(Amps.of(45), Amps.of(99), Amps.of(45)),
+      Arguments.of(Amps.of(3.55), Amps.of(-2.78), Amps.of(-2.78)),
+
+      Arguments.of(Seconds.of(45), Seconds.of(99), Seconds.of(45)),
+      Arguments.of(Seconds.of(3.55), Seconds.of(-2.78), Seconds.of(-2.78))
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("min_testCases")
+  public <T extends Comparable<? super T>> void min_returnsTheLesserOfTwoValues(
+    final T a, 
+    final T b, 
+    final T expected
+  ) {
+    assertEquals(expected, Maths.min(a, b));
+  }
 }
