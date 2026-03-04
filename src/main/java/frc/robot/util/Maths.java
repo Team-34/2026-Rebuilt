@@ -3,6 +3,10 @@ package frc.robot.util;
 public class Maths {
   private Maths() {}
 
+  public static <T extends Comparable<? super T>> T max(final T a, final T b) {
+    return a.compareTo(b) > 0 ? a : b;
+  }
+
   public static <T extends Comparable<? super T>> T min(final T a, final T b) {
     return a.compareTo(b) < 0 ? a : b;
   }

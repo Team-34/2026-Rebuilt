@@ -2,7 +2,10 @@ package frc.robot.util;
 
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Feet;
+import static edu.wpi.first.units.Units.Grams;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Newtons;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
@@ -40,6 +43,29 @@ public class MathsTest {
     final T expected
   ) {
     assertEquals(expected, Maths.clamp(value, low, high));
+  }
+
+  static Stream<Arguments> max_testCases() {
+    return Stream.of(
+      Arguments.of(Feet.of(45), Feet.of(99), Feet.of(99)),
+      Arguments.of(Feet.of(3.55), Feet.of(-2.78), Feet.of(3.55)),
+
+      Arguments.of(Grams.of(45), Grams.of(99), Grams.of(99)),
+      Arguments.of(Grams.of(3.55), Grams.of(-2.78), Grams.of(3.55)),
+
+      Arguments.of(Newtons.of(45), Newtons.of(99), Newtons.of(99)),
+      Arguments.of(Newtons.of(3.55), Newtons.of(-2.78), Newtons.of(3.55))
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("max_testCases")
+  public <T extends Comparable<? super T>> void max_returnsTheGreaterOfTwoValues(
+    final T a, 
+    final T b, 
+    final T expected
+  ) {
+    assertEquals(expected, Maths.max(a, b));
   }
 
   static Stream<Arguments> min_testCases() {
