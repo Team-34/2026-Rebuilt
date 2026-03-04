@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -34,7 +35,7 @@ public class AStrategy {
   public void cannotScoreInHubWhenShiftIsUnknown() {
     final var game = new StubGame()
       .withAlliance(Alliance.Blue)
-      .withAutoWinnder(Alliance.Blue);
+      .withAutoWinner(Alliance.Blue);
 
     final var uut = new Strategy(game);
 
@@ -45,7 +46,7 @@ public class AStrategy {
   public void canScoreInHubDuringTransition() {
     final var game = new StubGame()
       .withAlliance(Alliance.Blue)
-      .withAutoWinnder(Alliance.Red)
+      .withAutoWinner(Alliance.Red)
       .withShift(Shift.TRANSITION);
 
     final var uut = new Strategy(game);
@@ -57,7 +58,7 @@ public class AStrategy {
   public void canScoreInHubDuringEndGame() {
     final var game = new StubGame()
       .withAlliance(Alliance.Red)
-      .withAutoWinnder(Alliance.Blue)
+      .withAutoWinner(Alliance.Blue)
       .withShift(Shift.END);
 
     final var uut = new Strategy(game);
@@ -88,12 +89,12 @@ public class AStrategy {
     final boolean expected
   ) {
     final var game = new StubGame()
-      .withAlliance(Alliance.Red)
-      .withAutoWinnder(Alliance.Blue)
-      .withShift(Shift.END);
+      .withAlliance(alliance)
+      .withAutoWinner(winner)
+      .withShift(shift);
 
     final var uut = new Strategy(game);
 
-    assertTrue(uut.canScoreInHub());
+    assertEquals(expected, uut.canScoreInHub());
   }
 }

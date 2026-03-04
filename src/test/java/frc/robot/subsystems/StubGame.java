@@ -29,7 +29,7 @@ public class StubGame implements Game {
     return this;
   }
 
-  public StubGame withAutoWinnder(final Alliance winner) {
+  public StubGame withAutoWinner(final Alliance winner) {
     this.autoWinner = Optional.of(winner);
     return this;
   }
