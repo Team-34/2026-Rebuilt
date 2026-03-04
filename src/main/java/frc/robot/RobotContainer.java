@@ -26,12 +26,15 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
-import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Spindexer;
+import frc.robot.subsystems.DriverStationGame;
+import frc.robot.subsystems.Game;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LEDs;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Spindexer; 
 import frc.robot.subsystems.Turret;
-
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -40,16 +43,18 @@ import frc.robot.subsystems.Turret;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  //private final Climber climber = new Climber();
+  private final Game game = new DriverStationGame();
+  private final Climber climber = new Climber();
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
   private final Spindexer spindexer = new Spindexer();
   private final Turret turret = new Turret();
+  private final LEDs leds = new LEDs(game);
 
   private final SlewRateLimiter forwardFilter = new SlewRateLimiter(1.7);
   private final SlewRateLimiter turnFilter = new SlewRateLimiter(2.0);
   private final SlewRateLimiter rotateFilter = new SlewRateLimiter(1.8);
-    
+  
   // @formatter:off
   private final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -63,7 +68,7 @@ public class RobotContainer {
     
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
-
+  public final LimelightHelpers limelightHelpers = new LimelightHelpers();
   private final CommandXboxController joystick = new CommandXboxController(0);
   private final SendableChooser<Command> autoChooser;
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -110,13 +115,6 @@ public class RobotContainer {
     joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
     joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
     joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-    
-    // Run SysId routines when holding back/start and X/Y.
-    // Note that each routine should be run exactly once in a single log.
-    joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // Reset the field-centric heading on start button press.
     joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
@@ -129,9 +127,9 @@ public class RobotContainer {
 
     // ==== OUR SUBSYSTEM BINDINGS ====
 
-    // joystick.y().onTrue(climber.toggleCommand());
-    // joystick.povLeft().whileTrue(climber.extendCommand());
-    // joystick.povRight().whileTrue(climber.retractCommand());
+    joystick.y().onTrue(climber.toggleCommand());
+    joystick.povLeft().whileTrue(climber.extendCommand());
+    joystick.povRight().whileTrue(climber.retractCommand());
 
     joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
     joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
@@ -152,24 +150,20 @@ public class RobotContainer {
         
 
     public Command getAutonomousCommand() {
-      // Simple drive forward auton
-      final var idle = new SwerveRequest.Idle();
-      return Commands.sequence(
-        // Reset our field centric heading to match the robot
-        // facing away from our alliance station wall (0 deg).
-        drivetrain.runOnce(() -> drivetrain.seedFieldCentric(Rotation2d.kZero)),
-        // Then slowly drive forward (away from us) for 5 seconds.
-        drivetrain.applyRequest(() -> drive.withVelocityX(0.5)
-          .withVelocityY(0)
-          .withRotationalRate(0))
-          .withTimeout(5.0),
-        // Finally idle for the rest of auton
-        drivetrain.applyRequest(() -> idle));
+      return autoChooser.getSelected();
     }
   // The robot's subsystems and commands are defined here...
-  
+   
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
-    new CommandXboxController(OperatorConstants.kDriverControllerPort);
+      new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
+  /**
+   * Called in Robot.disabledInit().
+   * Used by subsystems to disable what they need turned off when the robot is disabled.
+   * 
+   */
+  public void disable() {
+    leds.turnOff();
+  }
 }
