@@ -55,8 +55,8 @@ public class RobotContainer {
 
   private DriveCoefficient driveCoefficient = DriveCoefficient.FULL;
 
-  private final SlewRateLimiter forwardFilter = new SlewRateLimiter(1.7);
-  private final SlewRateLimiter turnFilter = new SlewRateLimiter(2.0);
+  private final SlewRateLimiter forwardFilter = new SlewRateLimiter(3.0);
+  private final SlewRateLimiter turnFilter = new SlewRateLimiter(3.5);
   private final SlewRateLimiter rotateFilter = new SlewRateLimiter(1.8);
 
   enum DriveCoefficient {
@@ -122,9 +122,9 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive
-          .withVelocityX(forwardFilter.calculate(-joystick.getLeftY() * MaxSpeed )) // Drive forward with negative Y (forward)
-          .withVelocityY(turnFilter.calculate(-joystick.getLeftX() * MaxSpeed )) // Drive left with negative X (left)
-          .withRotationalRate(rotateFilter.calculate(-joystick.getRightX() * MaxAngularRate)) // Drive counterclockwise with negative X (left)
+          .withVelocityX(forwardFilter.calculate(joystick.getLeftY() * MaxSpeed )) // Drive forward with negative Y (forward)
+          .withVelocityY(turnFilter.calculate(joystick.getLeftX() * MaxSpeed )) // Drive left with negative X (left)
+          .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         )
     );
 
