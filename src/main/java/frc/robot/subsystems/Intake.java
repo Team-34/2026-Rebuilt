@@ -7,13 +7,13 @@ import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid; 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.PneumaticsControlModule;
 
 public class Intake extends SubsystemBase {
-  private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.REVPH, 14, 15);
+  private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.REVPH, 15, 14);
 
   public final TalonFXS motor = new TalonFXS(60);
   public final DutyCycleOut motorControl = new DutyCycleOut(0);
@@ -24,30 +24,30 @@ public class Intake extends SubsystemBase {
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     motor.getConfigurator().apply(config);
 
-    piston.set(DoubleSolenoid.Value.kReverse);
+    piston.set(DoubleSolenoid.Value.kForward);
   }
 
   public boolean isDeployed() {
-    return piston.get() == DoubleSolenoid.Value.kForward;
+    return piston.get() == DoubleSolenoid.Value.kReverse;
   }
 
   public boolean isRetracted() {
-    return piston.get() == DoubleSolenoid.Value.kReverse;
+    return piston.get() == DoubleSolenoid.Value.kForward;
   }
 
   public Command runIn() {
     return runOnce(() -> {
-      if (isDeployed()) {
+     
         motor.setControl(motorControl.withOutput(0.5));
-      }
+      
     });
   }
 
   public Command runOut() {
     return runOnce(() -> {
-      if (isDeployed()) {
+    
         motor.setControl(motorControl.withOutput(-0.5));
-      }
+      
     });
   }
 

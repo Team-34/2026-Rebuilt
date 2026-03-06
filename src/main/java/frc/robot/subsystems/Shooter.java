@@ -35,13 +35,13 @@ public class Shooter extends SubsystemBase {
 
   private Speed speed = Speed.STOP;
 
-  private final TalonSRX hoodMotor = new TalonSRX(23); // hood motor
-  private final TalonFX masterFiringMotor = new TalonFX(22); // left
-  private final TalonFX padawanFiringMotor = new TalonFX(21); // right
+  private final TalonSRX hoodMotor = new TalonSRX(43); // hood motor
+  private final TalonFX masterFiringMotor = new TalonFX(42); // left
+  private final TalonFX padawanFiringMotor = new TalonFX(41); // right
 
-  private final CANcoder hoodEncoder = new CANcoder(25); // external CTRE encoder
+  private final CANcoder hoodEncoder = new CANcoder(45); // external CTRE encoder
 
-  private final DigitalInput hoodLimitSwitch = new DigitalInput(4); // limit switch for hood (obvi)
+  private final DigitalInput hoodLimitSwitch = new DigitalInput(8); // limit switch for hood (obvi)
 
   private final PIDController hoodPID = new PIDController(2.5, 0.0, 0.0); // PID for hood
 
@@ -49,7 +49,7 @@ public class Shooter extends SubsystemBase {
 
   public Shooter() {
     TalonFXConfiguration masterConfig = new TalonFXConfiguration();
-    masterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    masterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     masterFiringMotor.getConfigurator().apply(masterConfig);
     padawanFiringMotor.setControl(new Follower(masterFiringMotor.getDeviceID(), MotorAlignmentValue.Opposed));
@@ -80,7 +80,13 @@ public class Shooter extends SubsystemBase {
       runFiringMotor(this.speed.value);
     });
   }
-
+  
+  public Command shooterByPercentCommand(double speed) {
+    return runEnd(
+      () -> {runFiringMotor(speed);},
+      () -> {masterFiringMotor.stopMotor();}
+    );
+  }
   
   public Command setHoodPosition(double position) {
     return runOnce(() -> {

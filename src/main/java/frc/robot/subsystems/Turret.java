@@ -141,7 +141,7 @@ public class Turret extends SubsystemBase {
     return runEnd(() -> motor.set(power), motor::stopMotor).until(() -> {
       final var turretPos = motorAngleToMechanismAngle(motor.getPosition().getValue());
       final double motorVoltage = motor.getMotorVoltage().getValueAsDouble();
-      final boolean highCheck = turretPos.gte(Degrees.of(180));
+      final boolean highCheck = turretPos.gte(Degrees.of(90));
       final boolean lowCheck = turretPos.lte(Degrees.of(0));
 
       SmartDashboard.putNumber("Motor Voltage Command", motorVoltage);
