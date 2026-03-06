@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
   enum Speed {
-    STOP(0.0), HALF(0.5), FULL(1.0); // enum for flywheel speeds
+    STOP(0.0), HALF(0.5), FULL(0.75); // enum for flywheel speeds
 
     public final double value;
 
