@@ -106,7 +106,7 @@ public class Shooter extends SubsystemBase {
    * @return if the hood is in its home position.
    */
   public boolean isHoodAtHome() {
-    return hoodLimitSwitch.get();
+    return !hoodLimitSwitch.get();
   }
 
   @Override

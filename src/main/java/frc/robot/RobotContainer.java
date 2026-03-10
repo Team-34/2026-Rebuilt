@@ -161,16 +161,17 @@ public class RobotContainer {
     joystick.x().onTrue(intake.toggle());
 
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
-    joystick.rightTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+    joystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
     
     joystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.1)).onFalse(turret.stopMotor());
     joystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.1)).onFalse(turret.stopMotor());
     
-    joystick.povUp().onTrue(turret.swivelToPositionCommand(Degree.of(0)));
-    joystick.povLeft().onTrue(turret.swivelToPositionCommand(Degree.of(90))); 
-    //joystick.povDown().onTrue(turret.swivelToPositionCommand(Degree.of(180))); 
-    joystick.povRight().onTrue(new InstantCommand(() -> driveCoefficient = driveCoefficient.next()));
-    joystick.leftStick().onTrue(turret.findZeroCommand(90, 90, 0.07));
+    
+    joystick.povRight().onTrue(turret.swivelToPositionCommand(Degree.of(90))); 
+    joystick.povLeft().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
+
+    joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
+    joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
     }
      
 
