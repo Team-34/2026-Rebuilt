@@ -17,6 +17,7 @@ import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -160,6 +161,11 @@ public class RobotContainer {
     joystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
     joystick.x().onTrue(intake.toggle());
 
+    joystick.y().whileTrue(turret.pointAtFiducial(1));
+
+    joystick.povUp().onTrue(shooter.increaseCommand()).onFalse(shooter.stop());
+    joystick.povDown().onTrue(shooter.decreaseCommand()).onFalse(shooter.stop());
+
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
     joystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
     
@@ -170,8 +176,8 @@ public class RobotContainer {
     joystick.povRight().onTrue(turret.swivelToPositionCommand(Degree.of(90))); 
     joystick.povLeft().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
 
-    joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
-    joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
+    //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
+    //joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
     }
      
 
@@ -191,5 +197,6 @@ public class RobotContainer {
    */
   public void disable() {
     leds.turnOff();
+    NetworkTableInstance.getDefault().getTable("limelight").getEntry("throttle_set").setNumber(100);
   }
 }

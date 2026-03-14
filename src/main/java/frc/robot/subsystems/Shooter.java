@@ -35,6 +35,8 @@ public class Shooter extends SubsystemBase {
 
   private Speed speed = Speed.STOP;
 
+  private double testingSpeed = 0.5;
+
   private final TalonSRX hoodMotor = new TalonSRX(43); // hood motor
   private final TalonFX masterFiringMotor = new TalonFX(42); // left
   private final TalonFX padawanFiringMotor = new TalonFX(41); // right
@@ -57,7 +59,7 @@ public class Shooter extends SubsystemBase {
     hoodMotor.setInverted(true);
     hoodMotor.configRemoteFeedbackFilter(hoodEncoder.getDeviceID(), RemoteSensorSource.CANCoder, 0, 10);
     hoodMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
-    
+
     hoodSetPoint = hoodEncoder.getPosition().getValueAsDouble();
 
     hoodPID.setSetpoint(hoodSetPoint);
@@ -72,37 +74,60 @@ public class Shooter extends SubsystemBase {
   public Command cycleSpeedCommand() {
     return runOnce(() -> {
       this.speed = switch (this.speed) {
-      case STOP -> Speed.HALF;
-      case HALF -> Speed.FULL;
-      case FULL -> Speed.STOP;
-      default -> Speed.STOP;
+        case STOP -> Speed.HALF;
+        case HALF -> Speed.FULL;
+        case FULL -> Speed.STOP;
+        default -> Speed.STOP;
       };
       runFiringMotor(this.speed.value);
     });
   }
-  
+
   public Command shooterByPercentCommand(double speed) {
-    return runEnd(
-      () -> {runFiringMotor(speed);},
-      () -> {masterFiringMotor.stopMotor();}
-    );
+    return runEnd(() -> {
+      runFiringMotor(speed);
+    }, () -> {
+      masterFiringMotor.stopMotor();
+    });
   }
-  
+
   public Command setHoodPosition(double position) {
     return runOnce(() -> {
       moveHoodMotorRotations(position);
     });
   }
-  
+
+  public Command increaseCommand() {
+    return runOnce(() -> {
+      
+      testingSpeed = MathUtil.clamp(testingSpeed + 0.025, 0.1, 1.0);
+      runFiringMotor(testingSpeed);
+    });
+  }
+
+  public Command decreaseCommand() {
+    return runOnce(() -> {
+      testingSpeed = MathUtil.clamp(testingSpeed - 0.025, 0.1, 1.0);
+      runFiringMotor(testingSpeed);
+    });
+  }
+
   public Command setHoodMotorPercent(double speed) {
     return runOnce(() -> {
       moveHoodMotorPercent(speed);
     });
   }
 
+  public Command stop(){
+    return runOnce(() -> {
+      masterFiringMotor.stopMotor();
+    });
+  }
+
   /**
-   * Checks whether the limit switch is pressed, indicating that the hood as at the lowest
-   * point it can safely go.
+   * Checks whether the limit switch is pressed, indicating that the hood as at
+   * the lowest point it can safely go.
+   * 
    * @return if the hood is in its home position.
    */
   public boolean isHoodAtHome() {
@@ -111,7 +136,7 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Shooter Speed %: ", masterFiringMotor.getVelocity().getValueAsDouble() * 100);
+    SmartDashboard.putNumber("Shooter Speed %: ", masterFiringMotor.getDutyCycle().getValueAsDouble() * 100);
     SmartDashboard.putNumber("external encoder units", hoodEncoder.getPosition().getValueAsDouble());
     SmartDashboard.putNumber("Hood Motor pos: ", hoodMotor.getSelectedSensorPosition());
     SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
@@ -120,7 +145,6 @@ public class Shooter extends SubsystemBase {
     var pos = MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(), hoodSetPoint), -1.0, 1.0);
     this.hoodMotor.set(TalonSRXControlMode.PercentOutput, pos);
     SmartDashboard.putNumber("Hood Motor Output: ", pos);
-    
 
     if (isHoodAtHome()) {
       zeroHoodEncoder();

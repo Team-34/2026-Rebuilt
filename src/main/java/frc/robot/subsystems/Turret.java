@@ -1,19 +1,25 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
+import frc.robot.LimelightHelpers.RawFiducial;
+import frc.robot.util.Maths;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import static edu.wpi.first.units.Units.Degrees;
+
+import java.util.List;
 
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
 import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class Turret extends SubsystemBase {
   private static final double GEAR_RATIO = 99.0 / 18.0; // turret : motor
@@ -21,7 +27,7 @@ public class Turret extends SubsystemBase {
   private final TalonFXS motor = new TalonFXS(50);
   private final PositionVoltage positionControl = new PositionVoltage(0);
   private final DigitalInput limitSwitch = new DigitalInput(9);
-  
+
   /**
    * Creates a new {@code Turret} instance.
    */
@@ -32,18 +38,24 @@ public class Turret extends SubsystemBase {
     config.Slot0.kP = 1.5;
     config.Slot0.kI = 0;
     config.Slot0.kD = 0;
+    config.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
     motor.getConfigurator().apply(config);
   }
 
   public Command pointAtFiducial(final int tag) {
-    LimelightHelpers.setPriorityTagID("", tag);
-    final double encoder = motor.getPosition().getValueAsDouble();
-    final double tx = LimelightHelpers.getTX("");
     return runEnd(() -> {
-      if (LimelightHelpers.getFiducialID("") == tag) {
-        motor.setControl(positionControl.withPosition(encoder + tx));
-      } else {
-        motor.stopMotor();
+      RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
+      SmartDashboard.putString("ForLoop1", "before for-loop");
+      for (LimelightHelpers.RawFiducial fiducial : fiducials) {
+      SmartDashboard.putString("TESTING1", "inside for-loop");
+        if (fiducial.id == tag) { 
+          var turretPosition = motorAngleToMechanismAngle(motor.getPosition().getValue());
+          var tx = Degrees.of(fiducial.txnc).unaryMinus();
+          var newTurretPosition = Maths.clamp(tx.plus(turretPosition), Degrees.zero(), Degrees.of(180.0));
+          var motorPosition = mechanismAngleToMotorAngle(newTurretPosition);
+          motor.setControl(positionControl.withPosition(motorPosition));
+          break;
+        }
       }
     }, () -> {
       motor.stopMotor();
@@ -111,7 +123,7 @@ public class Turret extends SubsystemBase {
       final Angle encoder = motor.getPosition().getValue();
       // final var clamped = MathUtil.clamp(rotations, 0.0, 0.5);
       // motor.setControl(positionControl.withPosition(mechanismPositionToMotorPosition(clamped)));
-      
+
       motor.setControl(positionControl.withPosition(mechanismAngleToMotorAngle(degree)));
     });
   }
@@ -127,15 +139,12 @@ public class Turret extends SubsystemBase {
    * between 0 and 180 degrees, so the power is applied until one of those
    * conditions is met.
    * </p>
+   * **UPDATED** In theory, if the given encoder value is below the arbitrary
+   * limit and we are moving at a velocity that would make us move past the limit
    * 
-   * **UPDATED**
-   * In theory, if the given encoder value is below the arbitrary limit and we are 
-   * moving at a velocity that would make us move past the limit
    * @param power The power to move the motor with, between -1 and 1. Positive
    *              power is counterclockwise; negative is clockwise.
-   * @return Command to swivel the turret.
-   * POSITIVE CCW
-   * NEG CW
+   * @return Command to swivel the turret. POSITIVE CCW NEG CW
    */
   public Command swivelByPowerCommand(final double power) {
     return runEnd(() -> motor.set(power), motor::stopMotor).until(() -> {
@@ -154,7 +163,9 @@ public class Turret extends SubsystemBase {
   }
 
   public Command stopMotor() {
-    return runOnce(() -> {motor.stopMotor();});
+    return runOnce(() -> {
+      motor.stopMotor();
+    });
   }
 
   /**
@@ -182,49 +193,62 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * The high zeroing method. Will only be ran if the turret ring's position is near (but below) 360 and greater than 225.
+   * The high zeroing method. Will only be ran if the turret ring's position is
+   * near (but below) 360 and greater than 225.
    * <p>
-   * The (supposed) logic is: move positive until we turn over 360 and reach zero. 
+   * The (supposed) logic is: move positive until we turn over 360 and reach zero.
    *
-   * @param speed The speed to move the motor at for zeroing. Keep this value VERY low, but not low enough to stall the motor.
+   * @param speed The speed to move the motor at for zeroing. Keep this value VERY
+   *              low, but not low enough to stall the motor.
    */
   private Command findZeroHighCommand(final double speed) {
     final double bigDeg = ((mechanismAngleToMotorAngle(motor.getPosition().getValue()).div(GEAR_RATIO)).abs(Degrees));
     final int LIMIT = 225;
     return runOnce(() -> {
-      if (isAtZeroPosition() == false && bigDeg >= LIMIT) {motor.set(speed);}
+      if (isAtZeroPosition() == false && bigDeg >= LIMIT) {
+        motor.set(speed);
+      }
     });
   }
 
   /**
-   * The low zeroing method. Will only be ran if the turret ring's position is near (but above) 0 but above 90.
+   * The low zeroing method. Will only be ran if the turret ring's position is
+   * near (but above) 0 but above 90.
    * <p>
-   * The (supposed) logic is: move negative until we reach zero. 
+   * The (supposed) logic is: move negative until we reach zero.
    * 
-   * @param speed The speed to move the motor at for zeroing. Keep this value VERY low, but not low enough to stall the motor.
+   * @param speed The speed to move the motor at for zeroing. Keep this value VERY
+   *              low, but not low enough to stall the motor.
    */
   private Command findZeroLowCommand(final double speed) {
     final double bigDeg = ((mechanismAngleToMotorAngle(motor.getPosition().getValue()).div(GEAR_RATIO)).abs(Degrees));
     final int LIMIT = 135;
     return runOnce(() -> {
-      if (!isAtZeroPosition() && bigDeg <= LIMIT) {motor.set(-speed);}
+      if (!isAtZeroPosition() && bigDeg <= LIMIT) {
+        motor.set(-speed);
+      }
     });
   }
 
   /**
-   * The main command for zeroing the turret. This is meant to be employed on init of either teleop or the robot.
+   * The main command for zeroing the turret. This is meant to be employed on init
+   * of either teleop or the robot.
    * <p>
    * The logic behind this method:
    * <p>
-   * If we are below 360 and within the given {@code highTolerance}, move positive (or CW/CCW, will need testing) until we turn over 360 and reach zero.
+   * If we are below 360 and within the given {@code highTolerance}, move positive
+   * (or CW/CCW, will need testing) until we turn over 360 and reach zero.
    * <p>
-   * If we are above 0 and within the given {@code lowTolerance}, move negative (or CW/CCW, will need testing) until we reach zero.
+   * If we are above 0 and within the given {@code lowTolerance}, move negative
+   * (or CW/CCW, will need testing) until we reach zero.
    * <p>
-   * @param lowTolerance The lower tolerance for zeroing. 
-   * Keep this value below 120 but above a feasible number for the turret to actually be at.
-   * @param highTolerance The higher tolerance for zeroing. 
-   * Keep this value below 120 but above a feasible number for the turret to actually be at.
    * 
+   * @param lowTolerance  The lower tolerance for zeroing. Keep this value below
+   *                      120 but above a feasible number for the turret to
+   *                      actually be at.
+   * @param highTolerance The higher tolerance for zeroing. Keep this value below
+   *                      120 but above a feasible number for the turret to
+   *                      actually be at.
    * @return Command to move towards zero, and stop once it is reached.
    */
   public Command findZeroCommand(final int lowTolerance, final int highTolerance, final double speed) {
@@ -255,27 +279,29 @@ public class Turret extends SubsystemBase {
   }
 
   /**
-   * Sets the encoder position to zero rotations. This does not move the motor;
-   * it tells the encoder that it should consider its current position to be
-   * zero (0).
+   * Sets the encoder position to zero rotations. This does not move the motor; it
+   * tells the encoder that it should consider its current position to be zero
+   * (0).
    */
   private void resetEncoder() {
     motor.setPosition(0);
   }
-
 
   @Override
   public void periodic() {
     if (isAtZeroPosition()) {
       resetEncoder();
     }
-    
+
+    // pointAtFiducial(1);
+
     // Minion motor returns the encoder in full rotations (ex. 1 unit is 1 full
     // rotation)
     SmartDashboard.putNumber("Turret Motor Voltage", motor.getMotorVoltage().getValueAsDouble());
     SmartDashboard.putNumber("Turret Vel", motor.getVelocity().getValueAsDouble());
     SmartDashboard.putNumber("Encoder", motor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("Turret Mechanism Pos", motorAngleToMechanismAngle(motor.getPosition().getValue()).in(Degrees));
+    SmartDashboard.putNumber("Turret Mechanism Pos",
+        motorAngleToMechanismAngle(motor.getPosition().getValue()).in(Degrees));
     SmartDashboard.putBoolean("Is at zero? ", isAtZeroPosition());
   }
 }
