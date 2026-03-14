@@ -38,6 +38,7 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Spindexer; 
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Vision;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -51,8 +52,9 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Shooter shooter = new Shooter();
   private final Spindexer spindexer = new Spindexer();
-  private final Turret turret = new Turret();
+  private final Turret turret = new Turret(game);
   private final LEDs leds = new LEDs(game);
+  private final Vision vision = new Vision(game);
 
   private DriveCoefficient driveCoefficient = DriveCoefficient.FULL;
 
@@ -105,7 +107,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
     NamedCommands.registerCommand("RunIntake", intake.runIn());
     NamedCommands.registerCommand("Run Spindexer", spindexer.spin());
-    NamedCommands.registerCommand("Aim At A.T", turret.pointAtFiducial(0));
+    //NamedCommands.registerCommand("Aim At A.T", turret.pointAtHubCommand(0));
     NamedCommands.registerCommand("Turret to 90", turret.swivelToPositionCommand(Degree.of(90)));
 
     this.configureBindings();
@@ -161,7 +163,7 @@ public class RobotContainer {
     joystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
     joystick.x().onTrue(intake.toggle());
 
-    joystick.y().whileTrue(turret.pointAtFiducial(1));
+    joystick.y().whileTrue(turret.pointAtHubCommand());
 
     joystick.povUp().onTrue(shooter.increaseCommand()).onFalse(shooter.stop());
     joystick.povDown().onTrue(shooter.decreaseCommand()).onFalse(shooter.stop());
@@ -174,7 +176,7 @@ public class RobotContainer {
     
     
     joystick.povRight().onTrue(turret.swivelToPositionCommand(Degree.of(90))); 
-    joystick.povLeft().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
+    joystick.povLeft().onTrue(turret.findZeroCommand(0.1));
 
     //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
     //joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
@@ -197,6 +199,5 @@ public class RobotContainer {
    */
   public void disable() {
     leds.turnOff();
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("throttle_set").setNumber(100);
   }
 }

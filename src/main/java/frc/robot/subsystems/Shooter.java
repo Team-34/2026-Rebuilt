@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Inches;
+
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
@@ -17,6 +19,7 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -117,6 +120,14 @@ public class Shooter extends SubsystemBase {
       moveHoodMotorPercent(speed);
     });
   }
+
+  public static double distanceToFiringSpeed(Distance distance) {
+    var x = distance.in(Inches);
+    var x_2 = x * x;
+    var x_3 = x_2 * x;
+
+    return 0.167 + (7.31e-03 * x) + (-4.24e-05 * x_2) + (1.11e-07 * x_3);
+  } 
 
   public Command stop(){
     return runOnce(() -> {

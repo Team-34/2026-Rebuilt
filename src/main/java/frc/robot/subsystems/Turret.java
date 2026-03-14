@@ -27,28 +27,31 @@ public class Turret extends SubsystemBase {
   private final TalonFXS motor = new TalonFXS(50);
   private final PositionVoltage positionControl = new PositionVoltage(0);
   private final DigitalInput limitSwitch = new DigitalInput(9);
-
-  /**
-   * Creates a new {@code Turret} instance.
-   */
-  public Turret() {
-    final var config = new TalonFXSConfiguration();
-    config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive; // <-- May be removed if needed
-    config.Slot0.kP = 1.5;
-    config.Slot0.kI = 0;
-    config.Slot0.kD = 0;
-    config.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
-    motor.getConfigurator().apply(config);
-  }
-
-  public Command pointAtFiducial(final int tag) {
-    return runEnd(() -> {
+  
+    private final Game game;
+  
+    /**
+     * Creates a new {@code Turret} instance.
+     */
+    public Turret(final Game game) {
+      final var config = new TalonFXSConfiguration();
+      config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
+      config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+      config.Slot0.kP = 3.5;
+      config.Slot0.kI = 0;
+      config.Slot0.kD = 0.1;
+      config.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
+      motor.getConfigurator().apply(config);
+      
+      this.game = game;
+    }
+  
+    public Command pointAtHubCommand() {
+      return runEnd(() -> {
+      List<Integer> tags = game.getHubTagIDs();
       RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
-      SmartDashboard.putString("ForLoop1", "before for-loop");
       for (LimelightHelpers.RawFiducial fiducial : fiducials) {
-      SmartDashboard.putString("TESTING1", "inside for-loop");
-        if (fiducial.id == tag) { 
+        if (tags.contains(fiducial.id)) {
           var turretPosition = motorAngleToMechanismAngle(motor.getPosition().getValue());
           var tx = Degrees.of(fiducial.txnc).unaryMinus();
           var newTurretPosition = Maths.clamp(tx.plus(turretPosition), Degrees.zero(), Degrees.of(180.0));
@@ -201,14 +204,12 @@ public class Turret extends SubsystemBase {
    * @param speed The speed to move the motor at for zeroing. Keep this value VERY
    *              low, but not low enough to stall the motor.
    */
-  private Command findZeroHighCommand(final double speed) {
+  private void findZeroHigh(final double speed) {
     final double bigDeg = ((mechanismAngleToMotorAngle(motor.getPosition().getValue()).div(GEAR_RATIO)).abs(Degrees));
     final int LIMIT = 225;
-    return runOnce(() -> {
-      if (isAtZeroPosition() == false && bigDeg >= LIMIT) {
-        motor.set(speed);
-      }
-    });
+    if (isAtZeroPosition() == false && bigDeg >= LIMIT) {
+      motor.set(speed);
+    }
   }
 
   /**
@@ -220,14 +221,12 @@ public class Turret extends SubsystemBase {
    * @param speed The speed to move the motor at for zeroing. Keep this value VERY
    *              low, but not low enough to stall the motor.
    */
-  private Command findZeroLowCommand(final double speed) {
+  private void findZeroLow(final double speed) {
     final double bigDeg = ((mechanismAngleToMotorAngle(motor.getPosition().getValue()).div(GEAR_RATIO)).abs(Degrees));
     final int LIMIT = 135;
-    return runOnce(() -> {
-      if (!isAtZeroPosition() && bigDeg <= LIMIT) {
-        motor.set(-speed);
-      }
-    });
+    if (!isAtZeroPosition() && bigDeg <= LIMIT) {
+      motor.set(-speed);
+    }
   }
 
   /**
@@ -251,20 +250,9 @@ public class Turret extends SubsystemBase {
    *                      actually be at.
    * @return Command to move towards zero, and stop once it is reached.
    */
-  public Command findZeroCommand(final int lowTolerance, final int highTolerance, final double speed) {
-    return run(() -> {
-      final double bigDeg = Math.abs((motor.getPosition().getValueAsDouble() * GEAR_RATIO) % 360);
-
-      final boolean nearHigh = MathUtil.isNear(360, bigDeg, highTolerance);
-      final boolean nearLow = MathUtil.isNear(0, bigDeg, lowTolerance);
-
-      final boolean zeroSwitch = !limitSwitch.get();
-      if (nearHigh) {
-        findZeroHighCommand(speed);
-      } else if (nearLow) {
-        findZeroLowCommand(speed);
-      }
-    }).until(() -> !this.limitSwitch.get());
+  public Command findZeroCommand(final double speed) {
+    return runEnd(() -> motor.set(-speed), () -> motor.stopMotor())
+              .until(() -> isAtZeroPosition());
   }
 
   /**
