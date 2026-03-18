@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
+import frc.robot.util.Maths;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import static edu.wpi.first.units.Units.Degrees;
 
@@ -172,12 +173,11 @@ public class Turret extends SubsystemBase {
    */
   public Command swivelByCommand(final Angle angle) {
     return run(() -> {
-      final var clamped = Degrees.of(MathUtil.clamp(angle.in(Degrees), 0, 180));
-      final var adjustment = mechanismAngleToMotorAngle(clamped);
-
-      final var currentMotorPosition = motor.getPosition().getValue();
-      final var newMotorPosition = currentMotorPosition.plus(adjustment);
-      motor.setControl(positionControl.withPosition(newMotorPosition));
+      final var currentTurretAngle = motorAngleToMechanismAngle(motor.getPosition().getValue());
+      final var targetTurretAngle = currentTurretAngle.plus(angle);
+      final var clampedTurretAngle = Maths.clamp(targetTurretAngle, Degrees.zero(), Degrees.of(180));
+      final var targetMotorAngle = mechanismAngleToMotorAngle(clampedTurretAngle);
+      motor.setControl(positionControl.withPosition(targetMotorAngle));
     });
   }
 
