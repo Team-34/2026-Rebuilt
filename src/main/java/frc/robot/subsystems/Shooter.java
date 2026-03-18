@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -21,9 +22,11 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class Shooter extends SubsystemBase {
   enum Speed {
@@ -44,17 +47,23 @@ public class Shooter extends SubsystemBase {
   private final TalonFX masterFiringMotor = new TalonFX(42); // left
   private final TalonFX padawanFiringMotor = new TalonFX(41); // right
 
+  private final DutyCycleOut firingMotorControl = new DutyCycleOut(0);
+
   private final CANcoder hoodEncoder = new CANcoder(45); // external CTRE encoder
 
   private final DigitalInput hoodLimitSwitch = new DigitalInput(8); // limit switch for hood (obvi)
-
+  private final Trigger hoodAtHome = new Trigger(this::isHoodAtHome);
   private final PIDController hoodPID = new PIDController(2.5, 0.0, 0.0); // PID for hood
 
   private double hoodSetPoint = 0.0; // setpoint for hood position in rotations
 
-  public Shooter() {
+  private final Vision vision;
+
+  public Shooter(Vision vision) {
     TalonFXConfiguration masterConfig = new TalonFXConfiguration();
     masterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    masterConfig.Slot0.kV = 0.12;
+    masterConfig.Slot0.kP = 0.11;
 
     masterFiringMotor.getConfigurator().apply(masterConfig);
     padawanFiringMotor.setControl(new Follower(masterFiringMotor.getDeviceID(), MotorAlignmentValue.Opposed));
@@ -66,6 +75,9 @@ public class Shooter extends SubsystemBase {
     hoodSetPoint = hoodEncoder.getPosition().getValueAsDouble();
 
     hoodPID.setSetpoint(hoodSetPoint);
+
+    this.vision = vision;
+    hoodAtHome.onTrue(runOnce(this::zeroHoodEncoder));
   }
 
   /**
@@ -102,7 +114,7 @@ public class Shooter extends SubsystemBase {
 
   public Command increaseCommand() {
     return runOnce(() -> {
-      
+
       testingSpeed = MathUtil.clamp(testingSpeed + 0.025, 0.1, 1.0);
       runFiringMotor(testingSpeed);
     });
@@ -127,9 +139,20 @@ public class Shooter extends SubsystemBase {
     var x_3 = x_2 * x;
 
     return 0.167 + (7.31e-03 * x) + (-4.24e-05 * x_2) + (1.11e-07 * x_3);
-  } 
+  }
 
-  public Command stop(){
+  public Command aimAndShootCommand() {
+    return runEnd(() -> {
+      vision.getDistanceToHub().ifPresentOrElse(distance -> {
+        SmartDashboard.putString("Distance to Hub", distance.toString());
+        var speed = distanceToFiringSpeed(distance);
+        SmartDashboard.putNumber("Calculated Shooter Speed", speed);
+        runFiringMotor(speed);
+      }, this::runAtIdle);
+    }, this::runAtIdle);
+  }
+
+  public Command stop() {
     return runOnce(() -> {
       masterFiringMotor.stopMotor();
     });
@@ -147,19 +170,19 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Shooter Speed %: ", masterFiringMotor.getDutyCycle().getValueAsDouble() * 100);
-    SmartDashboard.putNumber("external encoder units", hoodEncoder.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("Hood Motor pos: ", hoodMotor.getSelectedSensorPosition());
-    SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
-    SmartDashboard.putBoolean("limit switch: ", hoodLimitSwitch.get());
+    // SmartDashboard.putNumber("Shooter Speed %: ", masterFiringMotor.getDutyCycle().getValueAsDouble() * 100);
+    // SmartDashboard.putNumber("external encoder units", hoodEncoder.getPosition().getValueAsDouble());
+    // SmartDashboard.putNumber("Hood Motor pos: ", hoodMotor.getSelectedSensorPosition());
+    // SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
+    // SmartDashboard.putBoolean("limit switch: ", hoodLimitSwitch.get());
 
-    var pos = MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(), hoodSetPoint), -1.0, 1.0);
-    this.hoodMotor.set(TalonSRXControlMode.PercentOutput, pos);
-    SmartDashboard.putNumber("Hood Motor Output: ", pos);
+    // var pos = MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(), hoodSetPoint), -1.0, 1.0);
+    // this.hoodMotor.set(TalonSRXControlMode.PercentOutput, pos);
+    //SmartDashboard.putNumber("Hood Motor Output: ", pos);
 
-    if (isHoodAtHome()) {
-      zeroHoodEncoder();
-    }
+    // if (isHoodAtHome()) {
+    //   zeroHoodEncoder();
+    // }
   }
 
   @Override
@@ -167,8 +190,8 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run during simulation
   }
 
-  private void runFiringMotor(double speed) {
-    this.masterFiringMotor.set(speed);
+  private void runFiringMotor(double percent) {
+    this.masterFiringMotor.setControl(firingMotorControl.withOutput(percent));
   }
 
   private void moveHoodMotorRotations(double rotations) {
@@ -182,5 +205,9 @@ public class Shooter extends SubsystemBase {
   private void zeroHoodEncoder() {
     hoodEncoder.setPosition(0.0);
     this.hoodSetPoint = 0.0;
+  }
+
+  private void runAtIdle() {
+    this.masterFiringMotor.set(0.1);
   }
 }

@@ -51,9 +51,9 @@ public class Robot extends TimedRobot {
       
     //   builder.addDoubleProperty("Robot Angle", () -> m_robotContainer.drivetrain.getPigeon2().getYaw().getValueAsDouble(), null);
     //   });
-    SmartDashboard.putData("Field", m_field);
+    //SmartDashboard.putData("Field", m_field);
     this.m_timeAndJoystickReplay.update();
-    m_field.setRobotPose(m_robotContainer.limelightHelpers.getBotPose2d(""));
+    //m_field.setRobotPose(m_robotContainer.limelightHelpers.getBotPose2d(""));
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic

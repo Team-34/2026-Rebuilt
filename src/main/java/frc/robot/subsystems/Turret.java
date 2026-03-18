@@ -27,42 +27,37 @@ public class Turret extends SubsystemBase {
   private final TalonFXS motor = new TalonFXS(50);
   private final PositionVoltage positionControl = new PositionVoltage(0);
   private final DigitalInput limitSwitch = new DigitalInput(9);
-  
-    private final Game game;
-  
-    /**
-     * Creates a new {@code Turret} instance.
-     */
-    public Turret(final Game game) {
-      final var config = new TalonFXSConfiguration();
-      config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
-      config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-      config.Slot0.kP = 3.5;
-      config.Slot0.kI = 0;
-      config.Slot0.kD = 0.1;
-      config.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
-      motor.getConfigurator().apply(config);
-      
-      this.game = game;
-    }
-  
-    public Command pointAtHubCommand() {
-      return runEnd(() -> {
-      List<Integer> tags = game.getHubTagIDs();
-      RawFiducial[] fiducials = LimelightHelpers.getRawFiducials("");
-      for (LimelightHelpers.RawFiducial fiducial : fiducials) {
-        if (tags.contains(fiducial.id)) {
-          var turretPosition = motorAngleToMechanismAngle(motor.getPosition().getValue());
-          var tx = Degrees.of(fiducial.txnc).unaryMinus();
-          var newTurretPosition = Maths.clamp(tx.plus(turretPosition), Degrees.zero(), Degrees.of(180.0));
-          var motorPosition = mechanismAngleToMotorAngle(newTurretPosition);
-          motor.setControl(positionControl.withPosition(motorPosition));
-          break;
-        }
-      }
-    }, () -> {
-      motor.stopMotor();
-    });
+
+  private final Game game;
+
+  private Vision vision;
+
+  /**
+   * Creates a new {@code Turret} instance.
+   */
+  public Turret(final Game game, final Vision vision) {
+    final var config = new TalonFXSConfiguration();
+    config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
+    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.Slot0.kP = 3.5;
+    config.Slot0.kI = 0;
+    config.Slot0.kD = 0.1;
+    config.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
+    motor.getConfigurator().apply(config);
+
+    this.game = game;
+    this.vision = vision;
+  }
+
+  public Command pointAtHubCommand() {
+    return runEnd(() -> {
+      vision.getAzimuthToHub().ifPresentOrElse(az -> {
+        var turretPosition = motorAngleToMechanismAngle(motor.getPosition().getValue());
+        var newTurretPosition = Maths.clamp(az.unaryMinus().plus(turretPosition), Degrees.zero(), Degrees.of(180.0));
+        var motorPosition = mechanismAngleToMotorAngle(newTurretPosition);
+        motor.setControl(positionControl.withPosition(motorPosition));
+      }, motor::stopMotor);
+    }, motor::stopMotor);
   }
 
   /**
@@ -251,8 +246,7 @@ public class Turret extends SubsystemBase {
    * @return Command to move towards zero, and stop once it is reached.
    */
   public Command findZeroCommand(final double speed) {
-    return runEnd(() -> motor.set(-speed), () -> motor.stopMotor())
-              .until(() -> isAtZeroPosition());
+    return runEnd(() -> motor.set(-speed), () -> motor.stopMotor()).until(() -> isAtZeroPosition());
   }
 
   /**

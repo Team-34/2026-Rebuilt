@@ -50,11 +50,11 @@ public class RobotContainer {
   private final Game game = new DriverStationGame();
  // private final Climber climber = new Climber();
   private final Intake intake = new Intake();
-  private final Shooter shooter = new Shooter();
   private final Spindexer spindexer = new Spindexer();
-  private final Turret turret = new Turret(game);
-  private final LEDs leds = new LEDs(game);
   private final Vision vision = new Vision(game);
+  private final Turret turret = new Turret(game, vision);
+  private final LEDs leds = new LEDs(game);
+  private final Shooter shooter = new Shooter(vision);
 
   private DriveCoefficient driveCoefficient = DriveCoefficient.FULL;
 
@@ -163,8 +163,7 @@ public class RobotContainer {
     joystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
     joystick.x().onTrue(intake.toggle());
 
-    joystick.y().whileTrue(turret.pointAtHubCommand());
-
+    joystick.y().whileTrue(Commands.parallel(shooter.aimAndShootCommand(), turret.pointAtHubCommand()));
     joystick.povUp().onTrue(shooter.increaseCommand()).onFalse(shooter.stop());
     joystick.povDown().onTrue(shooter.decreaseCommand()).onFalse(shooter.stop());
 
