@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
 
+import java.util.Optional;
+
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.RemoteSensorSource;
 import com.ctre.phoenix.motorcontrol.TalonSRXControlMode;
@@ -22,7 +24,6 @@ import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -59,8 +60,10 @@ public class Shooter extends SubsystemBase {
 
   private final Vision vision;
 
-  public Shooter(Vision vision) {
-    TalonFXConfiguration masterConfig = new TalonFXConfiguration();
+  private Optional<Distance> cachedHubDistance = Optional.empty();
+
+  public Shooter(final Vision vision) {
+    final TalonFXConfiguration masterConfig = new TalonFXConfiguration();
     masterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     masterConfig.Slot0.kV = 0.12;
     masterConfig.Slot0.kP = 0.11;
@@ -98,7 +101,7 @@ public class Shooter extends SubsystemBase {
     });
   }
 
-  public Command shooterByPercentCommand(double speed) {
+  public Command shooterByPercentCommand(final double speed) {
     return runEnd(() -> {
       runFiringMotor(speed);
     }, () -> {
@@ -106,7 +109,7 @@ public class Shooter extends SubsystemBase {
     });
   }
 
-  public Command setHoodPosition(double position) {
+  public Command setHoodPosition(final double position) {
     return runOnce(() -> {
       moveHoodMotorRotations(position);
     });
@@ -127,29 +130,37 @@ public class Shooter extends SubsystemBase {
     });
   }
 
-  public Command setHoodMotorPercent(double speed) {
+  public Command setHoodMotorPercent(final double speed) {
     return runOnce(() -> {
       moveHoodMotorPercent(speed);
     });
   }
 
-  public static double distanceToFiringSpeed(Distance distance) {
-    var x = distance.in(Inches);
-    var x_2 = x * x;
-    var x_3 = x_2 * x;
+  public static double distanceToFiringSpeed(final Distance distance) {
+    final var x = distance.in(Inches);
+    final var x_2 = x * x;
+    final var x_3 = x_2 * x;
 
     return 0.167 + (7.31e-03 * x) + (-4.24e-05 * x_2) + (1.11e-07 * x_3);
   }
 
   public Command aimAndShootCommand() {
     return runEnd(() -> {
-      vision.getDistanceToHub().ifPresentOrElse(distance -> {
+      final var newDistanceToHub = vision.getDistanceToHub();
+      if (newDistanceToHub.isPresent()) {
+        cachedHubDistance = newDistanceToHub;
+      }
+
+      cachedHubDistance.ifPresentOrElse(distance -> {
         SmartDashboard.putString("Distance to Hub", distance.toString());
-        var speed = distanceToFiringSpeed(distance);
+        final var speed = distanceToFiringSpeed(distance);
         SmartDashboard.putNumber("Calculated Shooter Speed", speed);
         runFiringMotor(speed);
       }, this::runAtIdle);
-    }, this::runAtIdle);
+    }, () -> {
+      cachedHubDistance = Optional.empty();
+      runAtIdle();
+    });
   }
 
   public Command stop() {
@@ -190,15 +201,15 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run during simulation
   }
 
-  private void runFiringMotor(double percent) {
+  private void runFiringMotor(final double percent) {
     this.masterFiringMotor.setControl(firingMotorControl.withOutput(percent));
   }
 
-  private void moveHoodMotorRotations(double rotations) {
+  private void moveHoodMotorRotations(final double rotations) {
     this.hoodSetPoint = rotations;
   }
 
-  private void moveHoodMotorPercent(double speed) {
+  private void moveHoodMotorPercent(final double speed) {
     this.hoodMotor.set(TalonSRXControlMode.PercentOutput, speed);
   }
 
