@@ -48,7 +48,7 @@ public class Shooter extends SubsystemBase {
   private double hoodSetPoint = 0.0; // setpoint for hood position in rotations
 
   public Shooter() {
-    TalonFXConfiguration masterConfig = new TalonFXConfiguration();
+    final TalonFXConfiguration masterConfig = new TalonFXConfiguration();
     masterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     masterFiringMotor.getConfigurator().apply(masterConfig);
@@ -81,23 +81,16 @@ public class Shooter extends SubsystemBase {
     });
   }
   
-  public Command shooterByPercentCommand(double speed) {
-    return runEnd(
-      () -> {runFiringMotor(speed);},
-      () -> {masterFiringMotor.stopMotor();}
-    );
+  public Command fireByPercentCommand(final double speed) {
+    return runEnd(() -> runFiringMotor(speed), masterFiringMotor::stopMotor);
   }
   
-  public Command setHoodPosition(double position) {
-    return runOnce(() -> {
-      moveHoodMotorRotations(position);
-    });
+  public Command setHoodPosition(final double position) {
+    return runOnce(() -> moveHoodMotorRotations(position));
   }
   
-  public Command setHoodMotorPercent(double speed) {
-    return runOnce(() -> {
-      moveHoodMotorPercent(speed);
-    });
+  public Command setHoodMotorPercent(final double speed) {
+    return runOnce(() -> moveHoodMotorPercent(speed));
   }
 
   /**
@@ -117,7 +110,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
     SmartDashboard.putBoolean("limit switch: ", hoodLimitSwitch.get());
 
-    var pos = MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(), hoodSetPoint), -1.0, 1.0);
+    final var pos = MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(), hoodSetPoint), -1.0, 1.0);
     this.hoodMotor.set(TalonSRXControlMode.PercentOutput, pos);
     SmartDashboard.putNumber("Hood Motor Output: ", pos);
     
@@ -132,20 +125,20 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run during simulation
   }
 
-  private void runFiringMotor(double speed) {
+  private void runFiringMotor(final double speed) {
     this.masterFiringMotor.set(speed);
   }
 
-  private void moveHoodMotorRotations(double rotations) {
+  private void moveHoodMotorRotations(final double rotations) {
     this.hoodSetPoint = rotations;
   }
 
-  private void moveHoodMotorPercent(double speed) {
+  private void moveHoodMotorPercent(final double speed) {
     this.hoodMotor.set(TalonSRXControlMode.PercentOutput, speed);
   }
 
   private void zeroHoodEncoder() {
-    hoodEncoder.setPosition(0.0);
+    this.hoodEncoder.setPosition(0.0);
     this.hoodSetPoint = 0.0;
   }
 }
