@@ -105,7 +105,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("RunIntake", intake.runIn());
     NamedCommands.registerCommand("Run Spindexer", spindexer.spin());
     NamedCommands.registerCommand("Aim At A.T", turret.pointAtFiducial(0));
-    NamedCommands.registerCommand("Turret to 90", turret.swivelToPositionCommand(Degree.of(90)));
+    NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)));
 
     this.configureBindings();
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -163,11 +163,11 @@ public class RobotContainer {
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
     joystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
     
-    joystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.1)).onFalse(turret.stopMotor());
-    joystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.1)).onFalse(turret.stopMotor());
+    joystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.1)).onFalse(turret.stop());
+    joystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.1)).onFalse(turret.stop());
     
     
-    joystick.povRight().onTrue(turret.swivelToPositionCommand(Degree.of(90))); 
+    joystick.povRight().onTrue(turret.swivelToCommand(Degree.of(90))); 
     joystick.povLeft().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
 
     joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
