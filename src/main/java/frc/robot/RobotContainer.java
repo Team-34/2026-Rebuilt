@@ -14,6 +14,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -57,7 +58,6 @@ public class RobotContainer {
   private final Shooter shooter = new Shooter(vision);
 
   private DriveCoefficient driveCoefficient = DriveCoefficient.FULL;
-
   private final SlewRateLimiter forwardFilter = new SlewRateLimiter(3.0);
   private final SlewRateLimiter turnFilter = new SlewRateLimiter(3.5);
   private final SlewRateLimiter rotateFilter = new SlewRateLimiter(1.8);
@@ -163,7 +163,9 @@ public class RobotContainer {
     joystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
     joystick.x().onTrue(intake.toggle());
 
-    joystick.y().whileTrue(Commands.parallel(shooter.aimAndShootCommand(), turret.pointAtHubCommand()));
+    //joystick.y().whileTrue(Commands.parallel(shooter.aimAndShootCommand(), turret.pointAtHubCommand()));
+    joystick.y().onTrue(shooter.runFiringMotorByRPSCommand(69)).onFalse(shooter.stop());
+
     joystick.povUp().onTrue(shooter.increaseCommand()).onFalse(shooter.stop());
     joystick.povDown().onTrue(shooter.decreaseCommand()).onFalse(shooter.stop());
 
