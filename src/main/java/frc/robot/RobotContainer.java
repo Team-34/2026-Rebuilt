@@ -7,6 +7,7 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -163,11 +164,12 @@ public class RobotContainer {
     joystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
     joystick.x().onTrue(intake.toggle());
 
-    //joystick.y().whileTrue(Commands.parallel(shooter.aimAndShootCommand(), turret.pointAtHubCommand()));
-    joystick.y().onTrue(shooter.runFiringMotorByRPSCommand(69)).onFalse(shooter.stop());
+    //joystick.y().whileTrue(Commands.parallel(shooter.shootCommand(), turret.pointAtHubCommand()));
+    joystick.y().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
+    //joystick.y().onTrue(shooter.runFiringMotorByRPSCommand(RevolutionsPerSecond.of(47)));
 
-    joystick.povUp().onTrue(shooter.increaseCommand()).onFalse(shooter.stop());
-    joystick.povDown().onTrue(shooter.decreaseCommand()).onFalse(shooter.stop());
+    joystick.povUp().onTrue(shooter.increaseByRPSCommand()).onFalse(shooter.stop());
+    joystick.povDown().onTrue(shooter.decreaseByRPSCommand()).onFalse(shooter.stop());
 
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
     joystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());

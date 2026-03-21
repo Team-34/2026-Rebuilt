@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -26,6 +27,8 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.units.measure.AngularAcceleration;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -47,6 +50,7 @@ public class Shooter extends SubsystemBase {
   private Speed speed = Speed.STOP;
 
   private double testingSpeed = 0.5;
+  private double testingRPS = 0.5;
 
   private final TalonSRX hoodMotor = new TalonSRX(43); // hood motor
   private final TalonFX masterFiringMotor = new TalonFX(42); // left
@@ -125,18 +129,31 @@ public class Shooter extends SubsystemBase {
     });
   }
 
-  public Command increaseCommand() {
+  public Command increaseBySpeedCommand() {
     return runOnce(() -> {
-
       testingSpeed = MathUtil.clamp(testingSpeed + 0.025, 0.1, 1.0);
       runFiringMotor(testingSpeed);
     });
   }
 
-  public Command decreaseCommand() {
+  public Command decreaseBySpeedCommand() {
     return runOnce(() -> {
       testingSpeed = MathUtil.clamp(testingSpeed - 0.025, 0.1, 1.0);
       runFiringMotor(testingSpeed);
+    });
+  }
+
+  public Command increaseByRPSCommand() {
+    return runOnce(() -> {
+      testingRPS = testingRPS + 1;
+      runFiringMotorByRPS(RevolutionsPerSecond.of(testingRPS));
+    });
+  }
+
+  public Command decreaseByRPSCommand() {
+    return runOnce(() -> {
+      testingRPS = testingRPS - 1;
+      runFiringMotorByRPS(RevolutionsPerSecond.of(testingRPS));
     });
   }
 
@@ -146,7 +163,7 @@ public class Shooter extends SubsystemBase {
     });
   }
 
-  public Command runFiringMotorByRPSCommand(final double rps) {
+  public Command runFiringMotorByRPSCommand(final AngularVelocity rps) {
     return runOnce(() -> {
       runFiringMotorByRPS(rps);
     });
@@ -160,7 +177,15 @@ public class Shooter extends SubsystemBase {
     return 0.167 + (7.31e-03 * x) + (-4.24e-05 * x_2) + (1.11e-07 * x_3);
   }
 
-  public Command aimAndShootCommand() {
+  public static AngularVelocity distanceToRPS(final Distance distance) {
+    final var x = distance.in(Inches);
+    final var x_2 = x * x;
+    final var x_3 = x_2 * x;
+    var rps = 26.6 + (0.369 * x) + (-1.49e-03 * x_2) + (4.02e-06 * x_3);
+    return RotationsPerSecond.of(rps);
+  }
+
+  public Command shootBySpeedCommand() {
     return runEnd(() -> {
       final var newDistanceToHub = vision.getDistanceToHub();
       if (newDistanceToHub.isPresent()) {
@@ -172,6 +197,25 @@ public class Shooter extends SubsystemBase {
         final var speed = distanceToFiringSpeed(distance);
         SmartDashboard.putNumber("Calculated Shooter Speed", speed);
         runFiringMotor(speed);
+      }, this::runAtIdle);
+    }, () -> {
+      cachedHubDistance = Optional.empty();
+      runAtIdle();
+    });
+  }
+
+  public Command shootByRPSCommand() {
+    return runEnd(() -> {
+      final var newDistanceToHub = vision.getDistanceToHub();
+      if (newDistanceToHub.isPresent()) {
+        cachedHubDistance = newDistanceToHub;
+      }
+
+      cachedHubDistance.ifPresentOrElse(distance -> {
+        SmartDashboard.putString("Distance to Hub ", distance.toString());
+        final AngularVelocity rps = distanceToRPS(distance);
+        SmartDashboard.putString("Calculated Shooter RPS", rps.toString());
+        runFiringMotorByRPS(rps);
       }, this::runAtIdle);
     }, () -> {
       cachedHubDistance = Optional.empty();
@@ -198,18 +242,22 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Shooter Speed %", masterFiringMotor.getDutyCycle().getValueAsDouble() * 100);
-    SmartDashboard.putString("Shooter Velocity", masterFiringMotor.getVelocity().getValue().toString());
-    // SmartDashboard.putNumber("external encoder units", hoodEncoder.getPosition().getValueAsDouble());
-    // SmartDashboard.putNumber("Hood Motor pos: ", hoodMotor.getSelectedSensorPosition());
+    SmartDashboard.putString("Shooter Velocity", masterFiringMotor.getVelocity().getValue().toLongString());
+    // SmartDashboard.putNumber("external encoder units",
+    // hoodEncoder.getPosition().getValueAsDouble());
+    // SmartDashboard.putNumber("Hood Motor pos: ",
+    // hoodMotor.getSelectedSensorPosition());
     // SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
     // SmartDashboard.putBoolean("limit switch: ", hoodLimitSwitch.get());
 
-    // var pos = MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(), hoodSetPoint), -1.0, 1.0);
+    // var pos =
+    // MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(),
+    // hoodSetPoint), -1.0, 1.0);
     // this.hoodMotor.set(TalonSRXControlMode.PercentOutput, pos);
-    //SmartDashboard.putNumber("Hood Motor Output: ", pos);
+    // SmartDashboard.putNumber("Hood Motor Output: ", pos);
 
     // if (isHoodAtHome()) {
-    //   zeroHoodEncoder();
+    // zeroHoodEncoder();
     // }
   }
 
@@ -222,8 +270,8 @@ public class Shooter extends SubsystemBase {
     this.masterFiringMotor.setControl(firingMotorControl.withOutput(percent));
   }
 
-  private void runFiringMotorByRPS(final double rps) {
-    this.masterFiringMotor.setControl(velocityControl.withFeedForward(0.1).withVelocity(RotationsPerSecond.of(rps)));
+  private void runFiringMotorByRPS(final AngularVelocity rps) {
+    this.masterFiringMotor.setControl(velocityControl.withFeedForward(0.1).withVelocity(rps));
   }
 
   private void moveHoodMotorRotations(final double rotations) {
