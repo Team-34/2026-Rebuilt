@@ -42,11 +42,11 @@ import frc.robot.subsystems.Turret;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Game game = new DriverStationGame();
-  // private final Climber climber = new Climber();
-  // private final Intake intake = new Intake();
-  // private final Shooter shooter = new Shooter();
-  // private final Spindexer spindexer = new Spindexer();
-  // private final Turret turret = new Turret();
+  private final Climber climber = new Climber();
+  private final Intake intake = new Intake();
+  private final Shooter shooter = new Shooter();
+  private final Spindexer spindexer = new Spindexer();
+  private final Turret turret = new Turret();
   private final LEDs leds = new LEDs(game);
 
   private final SlewRateLimiter forwardFilter = new SlewRateLimiter(1.7);
@@ -125,25 +125,25 @@ public class RobotContainer {
 
     // ==== OUR SUBSYSTEM BINDINGS ====
 
-    // joystick.y().onTrue(climber.toggleCommand());
-    // joystick.povLeft().whileTrue(climber.extendCommand());
-    // joystick.povRight().whileTrue(climber.retractCommand());
+    joystick.y().onTrue(climber.toggleCommand());
+    joystick.povLeft().whileTrue(climber.extendCommand());
+    joystick.povRight().whileTrue(climber.retractCommand());
 
-    // joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
-    // joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
-    // joystick.x().onTrue(intake.toggle());
+    joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
+    joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
+    joystick.x().onTrue(intake.toggle());
 
-    // joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
+    joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
 
-    // joystick.rightTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
-    // joystick.a().onTrue(spindexer.spin()).onFalse(spindexer.stop());
-    // joystick.b().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
+    joystick.rightTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+    joystick.a().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+    joystick.b().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
 
-    // joystick.leftBumper().whileTrue(turret.turretByPowerCommand(-0.5));
-    // joystick.rightBumper().whileTrue(turret.turretByPowerCommand(0.5));
-    // // For now, it will have an imaginary setpoint of 10.0, but this will be changed 
-    // // to a more accurate value in the future.
-    // joystick.leftTrigger().onTrue(turret.turretByPositionCommand(10.0)); 
+    joystick.leftBumper().whileTrue(turret.turretByPowerCommand(-0.5));
+    joystick.rightBumper().whileTrue(turret.turretByPowerCommand(0.5));
+    // For now, it will have an imaginary setpoint of 10.0, but this will be changed 
+    // to a more accurate value in the future.
+    joystick.leftTrigger().onTrue(turret.turretByPositionCommand(10.0)); 
 
     }
         
@@ -166,7 +166,7 @@ public class RobotContainer {
     leds.turnOff();
   }
   public void enable() {
-    leds.allianceColor();
+    // leds.allianceColor();
   }
   /**
    * Called in Robot.teleopPeriodic().
@@ -174,7 +174,7 @@ public class RobotContainer {
    *
    */
   public void subsystemPeriodic() {
-    leds.animatedMask(leds.allianceColor());
+    leds.allianceColor();
   }
 }
 
