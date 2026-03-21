@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
   enum Speed {
-    STOP(0.0), HALF(0.5), FULL(1.0); // enum for flywheel speeds
+    STOP(0.0), HALF(0.5), FULL(0.75); // enum for flywheel speeds
 
     public final double value;
 
@@ -35,21 +35,21 @@ public class Shooter extends SubsystemBase {
 
   private Speed speed = Speed.STOP;
 
-  private final TalonSRX hoodMotor = new TalonSRX(23); // hood motor
-  private final TalonFX masterFiringMotor = new TalonFX(22); // left
-  private final TalonFX padawanFiringMotor = new TalonFX(21); // right
+  private final TalonSRX hoodMotor = new TalonSRX(43); // hood motor
+  private final TalonFX masterFiringMotor = new TalonFX(42); // left
+  private final TalonFX padawanFiringMotor = new TalonFX(41); // right
 
-  private final CANcoder hoodEncoder = new CANcoder(25); // external CTRE encoder
+  private final CANcoder hoodEncoder = new CANcoder(45); // external CTRE encoder
 
-  private final DigitalInput hoodLimitSwitch = new DigitalInput(4); // limit switch for hood (obvi)
+  private final DigitalInput hoodLimitSwitch = new DigitalInput(8); // limit switch for hood (obvi)
 
   private final PIDController hoodPID = new PIDController(2.5, 0.0, 0.0); // PID for hood
 
   private double hoodSetPoint = 0.0; // setpoint for hood position in rotations
 
   public Shooter() {
-    TalonFXConfiguration masterConfig = new TalonFXConfiguration();
-    masterConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    final TalonFXConfiguration masterConfig = new TalonFXConfiguration();
+    masterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
     masterFiringMotor.getConfigurator().apply(masterConfig);
     padawanFiringMotor.setControl(new Follower(masterFiringMotor.getDeviceID(), MotorAlignmentValue.Opposed));
@@ -80,18 +80,17 @@ public class Shooter extends SubsystemBase {
       runFiringMotor(this.speed.value);
     });
   }
-
   
-  public Command setHoodPosition(double position) {
-    return runOnce(() -> {
-      moveHoodMotorRotations(position);
-    });
+  public Command fireByPercentCommand(final double speed) {
+    return runEnd(() -> runFiringMotor(speed), masterFiringMotor::stopMotor);
   }
   
-  public Command setHoodMotorPercent(double speed) {
-    return runOnce(() -> {
-      moveHoodMotorPercent(speed);
-    });
+  public Command setHoodPosition(final double position) {
+    return runOnce(() -> moveHoodMotorRotations(position));
+  }
+  
+  public Command setHoodMotorPercent(final double speed) {
+    return runOnce(() -> moveHoodMotorPercent(speed));
   }
 
   /**
@@ -100,7 +99,7 @@ public class Shooter extends SubsystemBase {
    * @return if the hood is in its home position.
    */
   public boolean isHoodAtHome() {
-    return hoodLimitSwitch.get();
+    return !hoodLimitSwitch.get();
   }
 
   @Override
@@ -111,7 +110,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
     SmartDashboard.putBoolean("limit switch: ", hoodLimitSwitch.get());
 
-    var pos = MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(), hoodSetPoint), -1.0, 1.0);
+    final var pos = MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(), hoodSetPoint), -1.0, 1.0);
     this.hoodMotor.set(TalonSRXControlMode.PercentOutput, pos);
     SmartDashboard.putNumber("Hood Motor Output: ", pos);
     
@@ -126,20 +125,20 @@ public class Shooter extends SubsystemBase {
     // This method will be called once per scheduler run during simulation
   }
 
-  private void runFiringMotor(double speed) {
+  private void runFiringMotor(final double speed) {
     this.masterFiringMotor.set(speed);
   }
 
-  private void moveHoodMotorRotations(double rotations) {
+  private void moveHoodMotorRotations(final double rotations) {
     this.hoodSetPoint = rotations;
   }
 
-  private void moveHoodMotorPercent(double speed) {
+  private void moveHoodMotorPercent(final double speed) {
     this.hoodMotor.set(TalonSRXControlMode.PercentOutput, speed);
   }
 
   private void zeroHoodEncoder() {
-    hoodEncoder.setPosition(0.0);
+    this.hoodEncoder.setPosition(0.0);
     this.hoodSetPoint = 0.0;
   }
 }

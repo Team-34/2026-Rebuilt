@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot-Pickup"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "FromShoot-Climb"
+            "pathName": "ShootPreLoad-LoadDepot-Shoot"
           }
         }
       ]
