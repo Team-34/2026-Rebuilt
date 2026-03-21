@@ -37,7 +37,7 @@ public class Turret extends SubsystemBase {
     final var config = new TalonFXSConfiguration();
     config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    config.Slot0.kP = 3.5;
+    config.Slot0.kP = 8;
     config.Slot0.kI = 0;
     config.Slot0.kD = 0.1;
     config.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
