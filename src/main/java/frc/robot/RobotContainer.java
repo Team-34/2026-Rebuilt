@@ -16,13 +16,9 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -53,7 +49,7 @@ public class RobotContainer {
   private final Turret turret = new Turret();
   private final LEDs leds = new LEDs(game);
 
-  private DriveCoefficient driveCoefficient = DriveCoefficient.FULL;
+  private final DriveCoefficient driveCoefficient = DriveCoefficient.FULL;
 
   private final SlewRateLimiter forwardFilter = new SlewRateLimiter(3.0);
   private final SlewRateLimiter turnFilter = new SlewRateLimiter(3.5);
@@ -77,7 +73,7 @@ public class RobotContainer {
   }
   
   // @formatter:off
-  private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+  private final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
 
