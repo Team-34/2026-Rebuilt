@@ -14,6 +14,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
 
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -158,7 +159,9 @@ public class RobotContainer {
     joystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
     joystick.x().onTrue(intake.toggle());
 
-    joystick.y().whileTrue(Commands.parallel(shooter.aimAndShootCommand(), turret.pointAtHubCommand()));
+    //joystick.y().whileTrue(Commands.parallel(shooter.aimAndShootCommand(), turret.pointAtHubCommand()));
+    joystick.y().onTrue(shooter.runFiringMotorByRPSCommand(69)).onFalse(shooter.stop());
+
     joystick.povUp().onTrue(shooter.increaseCommand()).onFalse(shooter.stop());
     joystick.povDown().onTrue(shooter.decreaseCommand()).onFalse(shooter.stop());
 

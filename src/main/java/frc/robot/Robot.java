@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import com.ctre.phoenix6.HootAutoReplay;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -29,7 +31,6 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     this.m_robotContainer = new RobotContainer();
-
   }
 
   @Override

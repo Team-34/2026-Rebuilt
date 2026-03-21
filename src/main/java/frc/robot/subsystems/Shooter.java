@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Volts;
 
 import java.util.Optional;
 
@@ -15,6 +17,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.VelocityDutyCycle;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -60,6 +64,8 @@ public class Shooter extends SubsystemBase {
 
   private final Vision vision;
 
+  private final VelocityVoltage velocityControl = new VelocityVoltage(0).withSlot(0);
+
   private Optional<Distance> cachedHubDistance = Optional.empty();
 
   public Shooter(final Vision vision) {
@@ -67,7 +73,10 @@ public class Shooter extends SubsystemBase {
     masterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     masterConfig.Slot0.kV = 0.12;
     masterConfig.Slot0.kP = 0.11;
-
+    masterConfig.Slot0.kI = 0.0;
+    masterConfig.Slot0.kD = 0.0;
+    masterConfig.Slot0.kS = 0.1;
+    masterConfig.Voltage.withPeakForwardVoltage(Volts.of(8)).withPeakReverseVoltage(Volts.of(-8));
     masterFiringMotor.getConfigurator().apply(masterConfig);
     padawanFiringMotor.setControl(new Follower(masterFiringMotor.getDeviceID(), MotorAlignmentValue.Opposed));
 
@@ -80,6 +89,7 @@ public class Shooter extends SubsystemBase {
     hoodPID.setSetpoint(hoodSetPoint);
 
     this.vision = vision;
+
     hoodAtHome.onTrue(runOnce(this::zeroHoodEncoder));
   }
 
@@ -128,6 +138,12 @@ public class Shooter extends SubsystemBase {
     return runOnce(() -> moveHoodMotorPercent(speed));
   }
 
+  public Command runFiringMotorByRPSCommand(final double rps) {
+    return runOnce(() -> {
+      runFiringMotorByRPS(rps);
+    });
+  }
+
   public static double distanceToFiringSpeed(final Distance distance) {
     final var x = distance.in(Inches);
     final var x_2 = x * x;
@@ -173,7 +189,8 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // SmartDashboard.putNumber("Shooter Speed %: ", masterFiringMotor.getDutyCycle().getValueAsDouble() * 100);
+    SmartDashboard.putNumber("Shooter Speed %", masterFiringMotor.getDutyCycle().getValueAsDouble() * 100);
+    SmartDashboard.putString("Shooter Velocity", masterFiringMotor.getVelocity().getValue().toString());
     // SmartDashboard.putNumber("external encoder units", hoodEncoder.getPosition().getValueAsDouble());
     // SmartDashboard.putNumber("Hood Motor pos: ", hoodMotor.getSelectedSensorPosition());
     // SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
@@ -195,6 +212,10 @@ public class Shooter extends SubsystemBase {
 
   private void runFiringMotor(final double percent) {
     this.masterFiringMotor.setControl(firingMotorControl.withOutput(percent));
+  }
+
+  private void runFiringMotorByRPS(final double rps) {
+    this.masterFiringMotor.setControl(velocityControl.withFeedForward(0.1).withVelocity(RotationsPerSecond.of(rps)));
   }
 
   private void moveHoodMotorRotations(final double rotations) {
