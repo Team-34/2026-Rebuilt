@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Seconds;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -19,6 +20,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -98,12 +100,21 @@ public class RobotContainer {
   // @formatter:on
 
   public RobotContainer() {
-    NamedCommands.registerCommand("Toggle Intake", intake.toggle());
-    NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
-    NamedCommands.registerCommand("RunIntake", intake.runIn());
+    // NamedCommands.registerCommand("Toggle Intake", intake.toggle());
+    // NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
+    // NamedCommands.registerCommand("RunIntake", intake.runIn());
+    NamedCommands.registerCommand("shooterAtIdle", shooter.runAtIdleCommand());
     NamedCommands.registerCommand("Run Spindexer", spindexer.spin());
-    //NamedCommands.registerCommand("Aim At A.T", turret.pointAtHubCommand(0));
-    NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)));
+    NamedCommands.registerCommand(
+      "aimAndShoot", 
+      Commands.parallel(
+        Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()).repeatedly(),
+        Commands.waitSeconds(0.5).andThen(spindexer.spin())
+      ).withTimeout(Seconds.of(5))
+    );
+    NamedCommands.registerCommand("Stop All", Commands.parallel(shooter.stop(), spindexer.stop(), turret.stop()));
+    // NamedCommands.registerCommand("Aim At A.T", turret.pointAtHubCommand(0));
+    // NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)));
 
     this.configureBindings();
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -196,5 +207,6 @@ public class RobotContainer {
    */
   public void disable() {
     leds.turnOff();
+    CommandScheduler.getInstance().schedule(shooter.stop(), turret.stop(), spindexer.stop());
   }
 }

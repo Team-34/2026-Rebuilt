@@ -129,6 +129,12 @@ public class Shooter extends SubsystemBase {
     });
   }
 
+  public Command runAtIdleCommand() {
+    return runOnce(() -> {
+      runAtIdle();
+    });
+  }
+
   public Command increaseBySpeedCommand() {
     return runOnce(() -> {
       testingSpeed = MathUtil.clamp(testingSpeed + 0.025, 0.1, 1.0);
