@@ -1,18 +1,14 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.LimelightHelpers;
-import frc.robot.LimelightHelpers.RawFiducial;
 import frc.robot.util.Maths;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import static edu.wpi.first.units.Units.Degrees;
 
-import java.util.List;
 import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
@@ -21,15 +17,6 @@ import com.ctre.phoenix6.hardware.TalonFXS;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-
-import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.LimelightHelpers;
-import frc.robot.util.Maths;
 
 public class Turret extends SubsystemBase {
   private static final double GEAR_RATIO = 99.0 / 18.0; // turret : motor
@@ -40,8 +27,6 @@ public class Turret extends SubsystemBase {
   private final TalonFXS motor = new TalonFXS(50);
   private final PositionVoltage positionControl = new PositionVoltage(0);
   private final DigitalInput limitSwitch = new DigitalInput(9);
-
-  private final Game game;
 
   private final Vision vision;
 
@@ -58,7 +43,6 @@ public class Turret extends SubsystemBase {
     config.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
     motor.getConfigurator().apply(config);
 
-    this.game = game;
     this.vision = vision;
   }
 
