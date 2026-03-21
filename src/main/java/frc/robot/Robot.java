@@ -32,49 +32,29 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotPeriodic() {
-    // SmartDashboard.putData("Swerve Drive", builder -> {
-    // builder.setSmartDashboardType("SwerveDrive");
-
-    // builder.addDoubleProperty("Front Left Angle", () ->
-    // m_robotContainer.drivetrain.getModule(1).getSteerMotor().getPosition().getValueAsDouble()
-    // % 360, null);
-    // builder.addDoubleProperty("Front Left Velocity", () ->
-    // m_robotContainer.drivetrain.getModule(1).getDriveMotor().getVelocity().getValueAsDouble(),
-    // null);
-
-    // builder.addDoubleProperty("Front Right Angle", () ->
-    // m_robotContainer.drivetrain.getModule(2).getSteerMotor().getPosition().getValueAsDouble()
-    // % 360, null);
-    // builder.addDoubleProperty("Front Right Velocity", () ->
-    // m_robotContainer.drivetrain.getModule(2).getDriveMotor().getVelocity().getValueAsDouble(),
-    // null);
-
-    // builder.addDoubleProperty("Back Left Angle", () ->
-    // m_robotContainer.drivetrain.getModule(3).getSteerMotor().getPosition().getValueAsDouble()
-    // % 360, null);
-    // builder.addDoubleProperty("Back Left Velocity", () ->
-    // m_robotContainer.drivetrain.getModule(3).getDriveMotor().getVelocity().getValueAsDouble(),
-    // null);
-
-    // builder.addDoubleProperty("Back Right Angle", () ->
-    // m_robotContainer.drivetrain.getModule(4).getSteerMotor().getPosition().getValueAsDouble()
-    // % 360, null);
-    // builder.addDoubleProperty("Back Right Velocity", () ->
-    // m_robotContainer.drivetrain.getModule(4).getDriveMotor().getVelocity().getValueAsDouble(),
-    // null);
-
-    // builder.addDoubleProperty("Robot Angle", () ->
-    // m_robotContainer.drivetrain.getPigeon2().getYaw().getValueAsDouble(), null);
-    // });
+    //  SmartDashboard.putData("Swerve Drive", builder -> {
+    //   builder.setSmartDashboardType("SwerveDrive");
+      
+    //   builder.addDoubleProperty("Front Left Angle", () -> m_robotContainer.drivetrain.getModule(1).getSteerMotor().getPosition().getValueAsDouble() % 360, null);
+    //   builder.addDoubleProperty("Front Left Velocity", () -> m_robotContainer.drivetrain.getModule(1).getDriveMotor().getVelocity().getValueAsDouble(), null);
+      
+    //   builder.addDoubleProperty("Front Right Angle",  () -> m_robotContainer.drivetrain.getModule(2).getSteerMotor().getPosition().getValueAsDouble() % 360, null);
+    //   builder.addDoubleProperty("Front Right Velocity",  () -> m_robotContainer.drivetrain.getModule(2).getDriveMotor().getVelocity().getValueAsDouble(), null);
+      
+    //   builder.addDoubleProperty("Back Left Angle", () -> m_robotContainer.drivetrain.getModule(3).getSteerMotor().getPosition().getValueAsDouble() % 360, null);
+    //   builder.addDoubleProperty("Back Left Velocity", () -> m_robotContainer.drivetrain.getModule(3).getDriveMotor().getVelocity().getValueAsDouble(), null);
+      
+    //   builder.addDoubleProperty("Back Right Angle", () -> m_robotContainer.drivetrain.getModule(4).getSteerMotor().getPosition().getValueAsDouble() % 360, null);
+    //   builder.addDoubleProperty("Back Right Velocity", () -> m_robotContainer.drivetrain.getModule(4).getDriveMotor().getVelocity().getValueAsDouble(), null);
+      
+    //   builder.addDoubleProperty("Robot Angle", () -> m_robotContainer.drivetrain.getPigeon2().getYaw().getValueAsDouble(), null);
+      // });
     // SmartDashboard.putData("Field", m_field);
     this.m_timeAndJoystickReplay.update();
     // m_field.setRobotPose(m_robotContainer.limelightHelpers.getBotPose2d(""));
-    // Runs the Scheduler. This is responsible for polling buttons, adding
-    // newly-scheduled
-    // commands, running already-scheduled commands, removing finished or
-    // interrupted commands,
-    // and running subsystem periodic() methods. This must be called from the
-    // robot's periodic
+    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+    // commands, running already-scheduled commands, removing finished or interrupted commands,
+    // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
   }
@@ -116,7 +96,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    NetworkTableInstance.getDefault().getTable("limelight").getEntry("throttle_set").setNumber(0);
+    m_robotContainer.enable();
     if (this.m_autonomousCommand != null) {
       CommandScheduler.getInstance().cancel(this.m_autonomousCommand);
     }
@@ -124,7 +104,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
+    m_robotContainer.subsystemPeriodic();
   }
 
   @Override
