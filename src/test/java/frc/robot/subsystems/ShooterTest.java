@@ -2,19 +2,13 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
 import java.util.stream.Stream;
 
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import frc.robot.subsystems.Game.Shift;
 
 public class ShooterTest {
   static Stream<Arguments> distanceToFiringSpeed_testCases() {

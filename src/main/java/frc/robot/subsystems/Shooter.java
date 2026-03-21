@@ -18,7 +18,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -114,19 +113,13 @@ public class Shooter extends SubsystemBase {
       runFiringMotor(this.speed.value);
     });
   }
-
-  public Command shooterByPercentCommand(final double speed) {
-    return runEnd(() -> {
-      runFiringMotor(speed);
-    }, () -> {
-      masterFiringMotor.stopMotor();
-    });
+  
+  public Command fireByPercentCommand(final double speed) {
+    return runEnd(() -> runFiringMotor(speed), masterFiringMotor::stopMotor);
   }
-
+  
   public Command setHoodPosition(final double position) {
-    return runOnce(() -> {
-      moveHoodMotorRotations(position);
-    });
+    return runOnce(() -> moveHoodMotorRotations(position));
   }
 
   public Command increaseBySpeedCommand() {
@@ -158,9 +151,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command setHoodMotorPercent(final double speed) {
-    return runOnce(() -> {
-      moveHoodMotorPercent(speed);
-    });
+    return runOnce(() -> moveHoodMotorPercent(speed));
   }
 
   public Command runFiringMotorByRPSCommand(final AngularVelocity rps) {
@@ -283,7 +274,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private void zeroHoodEncoder() {
-    hoodEncoder.setPosition(0.0);
+    this.hoodEncoder.setPosition(0.0);
     this.hoodSetPoint = 0.0;
   }
 

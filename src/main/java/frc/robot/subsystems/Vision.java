@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.LimelightHelpers;
-import frc.robot.LimelightHelpers.RawFiducial;
 
 public class Vision extends SubsystemBase {
 
@@ -28,7 +27,7 @@ public class Vision extends SubsystemBase {
 
   private final Game game;
 
-  public Vision(Game game) {
+  public Vision(final Game game) {
     this.game = game;
   }
 
@@ -50,12 +49,12 @@ public class Vision extends SubsystemBase {
    *         API, in degrees)</li>
    *         </ul>
    */
-  public double getTargetPose_CameraSpaceArrayElement(int index) {
-    double[] data = LimelightHelpers.getTargetPose_CameraSpace("");
+  public double getTargetPose_CameraSpaceArrayElement(final int index) {
+    final double[] data = LimelightHelpers.getTargetPose_CameraSpace("");
     return data[index];
   }
 
-  public void setPriorityTag(int tag) {
+  public void setPriorityTag(final int tag) {
     LimelightHelpers.setPriorityTagID("", tag);
   }
 
@@ -82,18 +81,18 @@ public class Vision extends SubsystemBase {
   //   LimelightHelpers.SetRobotOrientation("limelight", yawInDegrees, 0, 0, 0, 0, 0);
   // }
 
-  public boolean isTargetLocked(int tag) {
+  public boolean isTargetLocked(final int tag) {
     final double TY_TOLERANCE = 0.5;
     final double TX_TOLERANCE = 0.5;
-    boolean isCorrectTag = LimelightHelpers.getFiducialID("") == tag;
-    boolean isWithinTolerance = MathUtil.isNear(0, getTX(), TX_TOLERANCE) && MathUtil.isNear(0, getTY(), TY_TOLERANCE);
+    final boolean isCorrectTag = LimelightHelpers.getFiducialID("") == tag;
+    final boolean isWithinTolerance = MathUtil.isNear(0, getTX(), TX_TOLERANCE) && MathUtil.isNear(0, getTY(), TY_TOLERANCE);
     return isCorrectTag && isWithinTolerance;
   }
 
   public Optional<Angle> getAzimuthToHub() {
-    var tags = game.getHubTagIDs();
-    var fiducials = LimelightHelpers.getRawFiducials("");
-    for(var fiducial : fiducials) {
+    final var tags = game.getHubTagIDs();
+    final var fiducials = LimelightHelpers.getRawFiducials("");
+    for(final var fiducial : fiducials) {
       if (tags.contains(fiducial.id)) {
         return Optional.of(Degrees.of(fiducial.txnc));
       }
@@ -104,21 +103,21 @@ public class Vision extends SubsystemBase {
   public Optional<Distance> getDistanceToHub() {
     return game.getAlliance().flatMap(alliance -> getAzimuthToHub().map(_az -> {
       SmartDashboard.putString("Alliance from distance method", alliance.toString());
-      var botPosition = LimelightHelpers.getBotPose2d_wpiBlue("");
-      var botXInches = botPosition.getMeasureX().in(Inches);
-      var botYInches = botPosition.getMeasureY().in(Inches);
+      final var botPosition = LimelightHelpers.getBotPose2d_wpiBlue("");
+      final var botXInches = botPosition.getMeasureX().in(Inches);
+      final var botYInches = botPosition.getMeasureY().in(Inches);
       SmartDashboard.putString("Bot Pos", LimelightHelpers.getBotPose2d("").toString());
       if (alliance == Alliance.Blue) {
-        var hubXInches = blueHubPos.getMeasureX().in(Inches);
-        var hubYInches = blueHubPos.getMeasureY().in(Inches);
-        var deltaX = hubXInches - botXInches;
-        var deltaY = hubYInches - botYInches;
+        final var hubXInches = blueHubPos.getMeasureX().in(Inches);
+        final var hubYInches = blueHubPos.getMeasureY().in(Inches);
+        final var deltaX = hubXInches - botXInches;
+        final var deltaY = hubYInches - botYInches;
         return Inches.of(Math.sqrt((deltaX * deltaX) + (deltaY * deltaY)));
       } else {
-        var hubXInches = redHubPos.getMeasureX().in(Inches);
-        var hubYInches = redHubPos.getMeasureY().in(Inches);
-        var deltaX = hubXInches - botXInches;
-        var deltaY = hubYInches - botYInches;
+        final var hubXInches = redHubPos.getMeasureX().in(Inches);
+        final var hubYInches = redHubPos.getMeasureY().in(Inches);
+        final var deltaX = hubXInches - botXInches;
+        final var deltaY = hubYInches - botYInches;
         return Inches.of(Math.sqrt((deltaX * deltaX) + (deltaY * deltaY)));
       }
     }));

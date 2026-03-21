@@ -15,17 +15,10 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
-
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -58,7 +51,8 @@ public class RobotContainer {
   private final LEDs leds = new LEDs(game);
   private final Shooter shooter = new Shooter(vision);
 
-  private DriveCoefficient driveCoefficient = DriveCoefficient.FULL;
+  private final DriveCoefficient driveCoefficient = DriveCoefficient.FULL;
+
   private final SlewRateLimiter forwardFilter = new SlewRateLimiter(3.0);
   private final SlewRateLimiter turnFilter = new SlewRateLimiter(3.5);
   private final SlewRateLimiter rotateFilter = new SlewRateLimiter(1.8);
@@ -81,7 +75,7 @@ public class RobotContainer {
   }
   
   // @formatter:off
-  private double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+  private final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
 
@@ -103,13 +97,12 @@ public class RobotContainer {
   // @formatter:on
 
   public RobotContainer() {
-    
     NamedCommands.registerCommand("Toggle Intake", intake.toggle());
     NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
     NamedCommands.registerCommand("RunIntake", intake.runIn());
     NamedCommands.registerCommand("Run Spindexer", spindexer.spin());
     //NamedCommands.registerCommand("Aim At A.T", turret.pointAtHubCommand(0));
-    NamedCommands.registerCommand("Turret to 90", turret.swivelToPositionCommand(Degree.of(90)));
+    NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)));
 
     this.configureBindings();
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -174,12 +167,12 @@ public class RobotContainer {
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
     joystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
     
-    joystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.1)).onFalse(turret.stopMotor());
-    joystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.1)).onFalse(turret.stopMotor());
+    joystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.1)).onFalse(turret.stop());
+    joystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.1)).onFalse(turret.stop());
     
     
-    joystick.povRight().onTrue(turret.swivelToPositionCommand(Degree.of(90))); 
-    joystick.povLeft().onTrue(turret.findZeroCommand(0.1));
+    joystick.povRight().onTrue(turret.swivelToCommand(Degree.of(90))); 
+    // joystick.povLeft().onTrue(turret.findZeroCommand(0.1));
 
     //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
     //joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
