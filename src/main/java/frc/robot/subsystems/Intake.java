@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.DoubleSolenoid; 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.PneumaticsControlModule;
 
 public class Intake extends SubsystemBase {
   private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.REVPH, 15, 14);
@@ -36,19 +35,11 @@ public class Intake extends SubsystemBase {
   }
 
   public Command runIn() {
-    return runOnce(() -> {
-     
-        motor.setControl(motorControl.withOutput(0.5));
-      
-    });
+    return runOnce(() -> activate(0.5));
   }
 
   public Command runOut() {
-    return runOnce(() -> {
-    
-        motor.setControl(motorControl.withOutput(-0.5));
-      
-    });
+    return runOnce(() -> activate(-0.5));
   }
 
   public Command stop() {

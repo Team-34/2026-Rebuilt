@@ -100,19 +100,13 @@ public class Shooter extends SubsystemBase {
       runFiringMotor(this.speed.value);
     });
   }
-
-  public Command shooterByPercentCommand(final double speed) {
-    return runEnd(() -> {
-      runFiringMotor(speed);
-    }, () -> {
-      masterFiringMotor.stopMotor();
-    });
+  
+  public Command fireByPercentCommand(final double speed) {
+    return runEnd(() -> runFiringMotor(speed), masterFiringMotor::stopMotor);
   }
-
+  
   public Command setHoodPosition(final double position) {
-    return runOnce(() -> {
-      moveHoodMotorRotations(position);
-    });
+    return runOnce(() -> moveHoodMotorRotations(position));
   }
 
   public Command increaseCommand() {
@@ -131,9 +125,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command setHoodMotorPercent(final double speed) {
-    return runOnce(() -> {
-      moveHoodMotorPercent(speed);
-    });
+    return runOnce(() -> moveHoodMotorPercent(speed));
   }
 
   public static double distanceToFiringSpeed(final Distance distance) {
@@ -214,7 +206,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private void zeroHoodEncoder() {
-    hoodEncoder.setPosition(0.0);
+    this.hoodEncoder.setPosition(0.0);
     this.hoodSetPoint = 0.0;
   }
 
