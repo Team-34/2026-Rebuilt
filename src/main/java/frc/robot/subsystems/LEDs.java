@@ -91,17 +91,14 @@ public void animatedMask(Color color) {
    * Does not change the color if {@code alliance} is empty.
    * 
    */
-  public Color allianceColor() {
+  public void allianceColor() {
     game.getAlliance().ifPresent(a -> {
       if (a == Alliance.Blue) {
         blue();
-        colorHere = Color.kBlue;
       } else {
         red();
-        colorHere = Color.kRed;
       }
     });
-    return colorHere; // Default color if alliance is not available
   }
 
   @Override

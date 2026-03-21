@@ -162,9 +162,9 @@ public class RobotContainer {
 
     // ==== OUR SUBSYSTEM BINDINGS ====
 
-    // joystick.y().onTrue(climber.toggleCommand());
-    // joystick.povLeft().whileTrue(climber.extendCommand());
-    // joystick.povRight().whileTrue(climber.retractCommand());
+    joystick.y().onTrue(climber.toggleCommand());
+    joystick.povLeft().whileTrue(climber.extendCommand());
+    joystick.povRight().whileTrue(climber.retractCommand());
 
     joystick.a().onTrue(intake.runIn()).onFalse(intake.stop());
     joystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
