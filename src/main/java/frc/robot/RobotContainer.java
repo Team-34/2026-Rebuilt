@@ -14,11 +14,11 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
-
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -33,6 +33,7 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Spindexer; 
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Vision;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -44,10 +45,11 @@ public class RobotContainer {
   private final Game game = new DriverStationGame();
  // private final Climber climber = new Climber();
   private final Intake intake = new Intake();
-  private final Shooter shooter = new Shooter();
   private final Spindexer spindexer = new Spindexer();
-  private final Turret turret = new Turret();
+  private final Vision vision = new Vision(game);
+  private final Turret turret = new Turret(game, vision);
   private final LEDs leds = new LEDs(game);
+  private final Shooter shooter = new Shooter(vision);
 
   private final DriveCoefficient driveCoefficient = DriveCoefficient.FULL;
 
@@ -95,12 +97,11 @@ public class RobotContainer {
   // @formatter:on
 
   public RobotContainer() {
-    
     NamedCommands.registerCommand("Toggle Intake", intake.toggle());
     NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
     NamedCommands.registerCommand("RunIntake", intake.runIn());
     NamedCommands.registerCommand("Run Spindexer", spindexer.spin());
-    NamedCommands.registerCommand("Aim At A.T", turret.pointAtFiducial(0));
+    //NamedCommands.registerCommand("Aim At A.T", turret.pointAtHubCommand(0));
     NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)));
 
     this.configureBindings();
@@ -156,6 +157,13 @@ public class RobotContainer {
     joystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
     joystick.x().onTrue(intake.toggle());
 
+    //joystick.y().whileTrue(Commands.parallel(shooter.shootCommand(), turret.pointAtHubCommand()));
+    joystick.y().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
+    //joystick.y().onTrue(shooter.runFiringMotorByRPSCommand(RevolutionsPerSecond.of(47)));
+
+    joystick.povUp().onTrue(shooter.increaseByRPSCommand()).onFalse(shooter.stop());
+    joystick.povDown().onTrue(shooter.decreaseByRPSCommand()).onFalse(shooter.stop());
+
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
     joystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
     
@@ -164,17 +172,16 @@ public class RobotContainer {
     
     
     joystick.povRight().onTrue(turret.swivelToCommand(Degree.of(90))); 
-    joystick.povLeft().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
+    // joystick.povLeft().onTrue(turret.findZeroCommand(0.1));
 
-    joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
-    joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
-    }
-     
+    //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
+    //joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
+  }
+    
 
-    public Command getAutonomousCommand() {
-      return autoChooser.getSelected();
-    }
-  // The robot's subsystems and commands are defined here...
+  public Command getAutonomousCommand() {
+    return autoChooser.getSelected();
+  }
    
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
@@ -183,7 +190,6 @@ public class RobotContainer {
   /**
    * Called in Robot.disabledInit().
    * Used by subsystems to disable what they need turned off when the robot is disabled.
-   * 
    */
   public void disable() {
     leds.turnOff();
