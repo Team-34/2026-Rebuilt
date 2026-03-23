@@ -7,11 +7,12 @@ import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid; 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Intake extends SubsystemBase {
-  private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
+  private final DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.REVPH, 15, 14);
 
   public final TalonFXS motor = new TalonFXS(60);
   public final DutyCycleOut motorControl = new DutyCycleOut(0);
@@ -22,31 +23,23 @@ public class Intake extends SubsystemBase {
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     motor.getConfigurator().apply(config);
 
-    piston.set(DoubleSolenoid.Value.kReverse);
+    piston.set(DoubleSolenoid.Value.kForward);
   }
 
   public boolean isDeployed() {
-    return piston.get() == DoubleSolenoid.Value.kForward;
-  }
-
-  public boolean isRetracted() {
     return piston.get() == DoubleSolenoid.Value.kReverse;
   }
 
+  public boolean isRetracted() {
+    return piston.get() == DoubleSolenoid.Value.kForward;
+  }
+
   public Command runIn() {
-    return runOnce(() -> {
-      if (isDeployed()) {
-        motor.setControl(motorControl.withOutput(0.5));
-      }
-    });
+    return runOnce(() -> activate(0.5));
   }
 
   public Command runOut() {
-    return runOnce(() -> {
-      if (isDeployed()) {
-        motor.setControl(motorControl.withOutput(-0.5));
-      }
-    });
+    return runOnce(() -> activate(-0.5));
   }
 
   public Command stop() {
@@ -64,5 +57,10 @@ public class Intake extends SubsystemBase {
 
   public void activate(final double speed) {
     motor.setControl(motorControl.withOutput(isDeployed() ? speed : 0));
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putBoolean("Intake Deployed", isDeployed());
   }
 }

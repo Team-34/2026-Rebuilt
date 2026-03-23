@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -11,10 +12,9 @@ import static edu.wpi.first.units.Units.RotationsPerSecond;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
-
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Climber;
+//import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.DriverStationGame;
 import frc.robot.subsystems.Game;
@@ -33,6 +33,7 @@ import frc.robot.subsystems.LEDs;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Spindexer; 
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Vision;
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -42,20 +43,41 @@ import frc.robot.subsystems.Turret;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Game game = new DriverStationGame();
-  private final Climber climber = new Climber();
+ // private final Climber climber = new Climber();
   private final Intake intake = new Intake();
-  private final Shooter shooter = new Shooter();
   private final Spindexer spindexer = new Spindexer();
-  private final Turret turret = new Turret();
+  private final Vision vision = new Vision(game);
+  private final Turret turret = new Turret(game, vision);
   private final LEDs leds = new LEDs(game);
+  private final Shooter shooter = new Shooter(vision);
 
-  private final SlewRateLimiter forwardFilter = new SlewRateLimiter(1.7);
-  private final SlewRateLimiter turnFilter = new SlewRateLimiter(2.0);
+  private final DriveCoefficient driveCoefficient = DriveCoefficient.FULL;
+
+  private final SlewRateLimiter forwardFilter = new SlewRateLimiter(3.0);
+  private final SlewRateLimiter turnFilter = new SlewRateLimiter(3.5);
   private final SlewRateLimiter rotateFilter = new SlewRateLimiter(1.8);
+
+  enum DriveCoefficient {
+    FULL(1.0), FARIS(0.5);
+
+    public final double value;
+
+    DriveCoefficient(final double coefficient) {
+      this.value = coefficient;
+    }
+
+    public DriveCoefficient next() {
+      return switch(this) {
+        case FULL -> FARIS;
+        case FARIS -> FULL;
+      };
+    }
+  }
   
   // @formatter:off
   private final double MaxSpeed = 1.0 * TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private final double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+
 
   /* Setting up bindings for necessary control of the swerve drive platform */
   private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -75,8 +97,12 @@ public class RobotContainer {
   // @formatter:on
 
   public RobotContainer() {
-    // this.autoChooser = AutoBuilder.buildAutoChooser("Tests");
-    // SmartDashboard.putData("Auto Mode", this.autoChooser);
+    NamedCommands.registerCommand("Toggle Intake", intake.toggle());
+    NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
+    NamedCommands.registerCommand("RunIntake", intake.runIn());
+    NamedCommands.registerCommand("Run Spindexer", spindexer.spin());
+    //NamedCommands.registerCommand("Aim At A.T", turret.pointAtHubCommand(0));
+    NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)));
 
     this.configureBindings();
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -87,15 +113,15 @@ public class RobotContainer {
 
   private void configureBindings() {
     // @formatter:off
-
+    
     // Note that X is defined as forward according to WPILib convention,
     // and Y is defined as to the left according to WPILib convention.
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive
-          .withVelocityX(forwardFilter.calculate(-joystick.getLeftY() * MaxSpeed)) // Drive forward with negative Y (forward)
-          .withVelocityY(turnFilter.calculate(-joystick.getLeftX() * MaxSpeed)) // Drive left with negative X (left)
-          .withRotationalRate(rotateFilter.calculate(-joystick.getRightX() * MaxAngularRate)) // Drive counterclockwise with negative X (left)
+          .withVelocityX(forwardFilter.calculate(joystick.getLeftY() * MaxSpeed )) // Drive forward with negative Y (forward)
+          .withVelocityY(turnFilter.calculate(joystick.getLeftX() * MaxSpeed )) // Drive left with negative X (left)
+          .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         )
     );
 
@@ -114,8 +140,6 @@ public class RobotContainer {
     joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
     joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-    // Reset the field-centric heading on start button press.
-    joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
     // Reset the field-centric heading on back button press.
     joystick.back().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
@@ -125,33 +149,39 @@ public class RobotContainer {
 
     // ==== OUR SUBSYSTEM BINDINGS ====
 
-    joystick.y().onTrue(climber.toggleCommand());
-    joystick.povLeft().whileTrue(climber.extendCommand());
-    joystick.povRight().whileTrue(climber.retractCommand());
+    // joystick.y().onTrue(climber.toggleCommand());
+    // joystick.povLeft().whileTrue(climber.extendCommand());
+    // joystick.povRight().whileTrue(climber.retractCommand());
 
-    joystick.a().whileTrue(intake.runIn()).onFalse(intake.stop());
-    joystick.b().whileTrue(intake.runOut()).onFalse(intake.stop());
+    joystick.a().onTrue(intake.runIn()).onFalse(intake.stop());
+    joystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
     joystick.x().onTrue(intake.toggle());
 
+    //joystick.y().whileTrue(Commands.parallel(shooter.shootCommand(), turret.pointAtHubCommand()));
+    joystick.y().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
+    //joystick.y().onTrue(shooter.runFiringMotorByRPSCommand(RevolutionsPerSecond.of(47)));
+
+    joystick.povUp().onTrue(shooter.increaseByRPSCommand()).onFalse(shooter.stop());
+    joystick.povDown().onTrue(shooter.decreaseByRPSCommand()).onFalse(shooter.stop());
+
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
+    joystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+    
+    joystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.1)).onFalse(turret.stop());
+    joystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.1)).onFalse(turret.stop());
+    
+    
+    joystick.povRight().onTrue(turret.swivelToCommand(Degree.of(90))); 
+    // joystick.povLeft().onTrue(turret.findZeroCommand(0.1));
 
-    joystick.rightTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
-    joystick.a().onTrue(spindexer.spin()).onFalse(spindexer.stop());
-    joystick.b().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
+    //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
+    //joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
+  }
+    
 
-    joystick.leftBumper().whileTrue(turret.turretByPowerCommand(-0.5));
-    joystick.rightBumper().whileTrue(turret.turretByPowerCommand(0.5));
-    // For now, it will have an imaginary setpoint of 10.0, but this will be changed 
-    // to a more accurate value in the future.
-    joystick.leftTrigger().onTrue(turret.turretByPositionCommand(10.0)); 
-
-    }
-        
-
-    public Command getAutonomousCommand() {
-      return autoChooser.getSelected();
-    }
-  // The robot's subsystems and commands are defined here...
+  public Command getAutonomousCommand() {
+    return autoChooser.getSelected();
+  }
    
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
@@ -160,7 +190,6 @@ public class RobotContainer {
   /**
    * Called in Robot.disabledInit().
    * Used by subsystems to disable what they need turned off when the robot is disabled.
-   * 
    */
   public void disable() {
     leds.turnOff();

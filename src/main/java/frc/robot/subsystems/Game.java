@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -8,6 +10,9 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
  * Game information.
  */
 public interface Game {
+  static final List<Integer> redHubTagIDs = List.of(2, 5, 10);
+  static final List<Integer> blueHubTagIDs = List.of(26, 21, 18);
+
   /**
    * Our alliance.
    * 
@@ -28,6 +33,15 @@ public interface Game {
    * @return The current shift, or empty if not in teleop period.
    */
   public Optional<Shift> getShift();
+
+  /**
+   * @return
+   */
+  public default List<Integer> getHubTagIDs() {
+    return getAlliance()
+      .map(alliance -> alliance == Alliance.Blue ? blueHubTagIDs : redHubTagIDs)
+      .orElse(Collections.emptyList());
+  }
 
   /**
    * Teleop shifts with their start & end times (in seconds remaining in teleop).
