@@ -128,9 +128,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command runAtIdleCommand() {
-    return runOnce(() -> {
-      runAtIdle();
-    });
+    return runOnce(this::runAtIdle);
   }
 
   public Command increaseBySpeedCommand() {
