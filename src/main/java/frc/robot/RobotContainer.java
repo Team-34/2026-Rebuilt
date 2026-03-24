@@ -52,6 +52,7 @@ public class RobotContainer {
   private final Vision vision = new Vision(game);
   private final FireControl fireControl = new FireControl(vision, game);
   private final Turret turret = new Turret(game, vision);
+  private final Turret turret = new Turret(game, vision); //check these
   private final LEDs leds = new LEDs(game);
   private final Shooter shooter = new Shooter(vision, fireControl);
 
