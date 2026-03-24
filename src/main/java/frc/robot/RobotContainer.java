@@ -7,7 +7,6 @@ package frc.robot;
 import static edu.wpi.first.units.Units.Degree;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
@@ -188,13 +187,12 @@ public class RobotContainer {
 
     //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
     //joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
-    }
-     
+  }
+    
 
-    public Command getAutonomousCommand() {
-      return autoChooser.getSelected();
-    }
-  // The robot's subsystems and commands are defined here...
+  public Command getAutonomousCommand() {
+    return autoChooser.getSelected();
+  }
    
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController driverController =
@@ -203,7 +201,6 @@ public class RobotContainer {
   /**
    * Called in Robot.disabledInit().
    * Used by subsystems to disable what they need turned off when the robot is disabled.
-   * 
    */
   public void disable() {
     leds.turnOff();

@@ -18,7 +18,6 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.VelocityDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -27,7 +26,6 @@ import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.units.measure.AngularAcceleration;
 import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -187,7 +185,7 @@ public class Shooter extends SubsystemBase {
     final var x = distance.in(Inches);
     final var x_2 = x * x;
     final var x_3 = x_2 * x;
-    var rps = 26.6 + (0.369 * x) + (-1.49e-03 * x_2) + (4.02e-06 * x_3);
+    final var rps = 26.6 + (0.369 * x) + (-1.49e-03 * x_2) + (4.02e-06 * x_3);
     return RotationsPerSecond.of(rps);
   }
 
