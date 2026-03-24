@@ -20,7 +20,6 @@ public class LEDs extends SubsystemBase {
   private final AddressableLEDBufferView backLedBufferView = ledBuffer.createView(42, 83).reversed();
   private final AddressableLEDBufferView leftLedBufferView = ledBuffer.createView(84, 123);
   private final AddressableLEDBufferView rightLedBufferView = ledBuffer.createView(124, 163).reversed();
-  Color colorHere = new Color();
   private final Game game;
   
   /**
