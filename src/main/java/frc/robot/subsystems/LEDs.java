@@ -95,8 +95,4 @@ public void animatedMask(Color color) {
       animatedMask(a == Alliance.Blue ? Color.kBlue : Color.kRed);
     });
   }
-
-  @Override
-  public void periodic() {
-  }
 }
