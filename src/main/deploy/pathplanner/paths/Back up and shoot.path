@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.755,
-        "y": 5.994
+        "x": 3.4510554561717353,
+        "y": 3.9782110912343462
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.119366953623741,
-        "y": 5.069720399391263
+        "x": 2.0534330527484137,
+        "y": 3.878570409217706
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.5755666666666666,
-        "y": 3.7036888888888884
+        "x": 1.7636135957066186,
+        "y": 3.8159570661896245
       },
       "prevControl": {
-        "x": 2.0996769344825545,
-        "y": 4.777913679609903
+        "x": 3.1888776917384867,
+        "y": 3.9856936568622787
       },
       "nextControl": null,
       "isLocked": false,
@@ -31,19 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": null
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -54,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "Enid - Paths",
+  "folder": "Practice&Testing - Paths",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -38.88664733415643
+    "rotation": 180.0
   },
   "useDefaultConstraints": true
 }

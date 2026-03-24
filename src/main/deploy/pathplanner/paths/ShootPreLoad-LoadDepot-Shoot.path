@@ -71,7 +71,7 @@
     },
     {
       "waypointRelativePos": 2.4690831556503126,
-      "rotationDegrees": -179.67207079397446
+      "rotationDegrees": -179.67207079397448
     }
   ],
   "constraintZones": [
@@ -105,49 +105,49 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Turret To 90",
+      "name": "",
       "waypointRelativePos": 0.15395003376097274,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "Run Spindexer",
+      "name": "",
       "waypointRelativePos": 0.3160027008778101,
       "endWaypointRelativePos": 1.0695476029709698,
       "command": null
     },
     {
-      "name": "Cycle Shooter Speed",
+      "name": "",
       "waypointRelativePos": 0.37272113436866716,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "Cycle Shooter Speed",
+      "name": "",
       "waypointRelativePos": 0.45374746792709514,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "Toggle Intake",
+      "name": "",
       "waypointRelativePos": 1.7015530047265337,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "RunIntake",
+      "name": "",
       "waypointRelativePos": 1.8392977717758598,
       "endWaypointRelativePos": 2.2039162727886605,
       "command": null
     },
     {
-      "name": "Toggle Intake",
+      "name": "",
       "waypointRelativePos": 2.3659689399054753,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "Run Spindexer",
+      "name": "",
       "waypointRelativePos": 2.7954085077650235,
       "endWaypointRelativePos": 3.0,
       "command": null
@@ -163,10 +163,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 41.976310525310616
+    "rotation": 41.97631052531062
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Enid - Paths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

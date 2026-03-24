@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "shooterAtIdle"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Back up and shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "aimAndShoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Run Spindexer"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Practice&Testing - Autos",
+  "choreoAuto": false
+}
