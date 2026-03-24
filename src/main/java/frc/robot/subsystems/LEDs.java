@@ -93,11 +93,7 @@ public void animatedMask(Color color) {
    */
   public void allianceColor() {
     game.getAlliance().ifPresent(a -> {
-      if (a == Alliance.Blue) {
-        blue();
-      } else {
-        red();
-      }
+      animatedMask(a == Alliance.Blue ? Color.kBlue : Color.kRed);
     });
   }
 
