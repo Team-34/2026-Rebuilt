@@ -33,13 +33,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "Climb",
+      "name": "",
       "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "Climb"
+          "name": null
         }
       }
     }
@@ -57,7 +57,7 @@
     "rotation": 0.0
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Enid - Paths",
   "idealStartingState": {
     "velocity": 0,
     "rotation": -38.88664733415643
