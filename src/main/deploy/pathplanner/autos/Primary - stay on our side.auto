@@ -7,25 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DoubleLoad&Shoot"
+            "pathName": "Primary - stay on our side"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Load&Shoot"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "FromShoot-Climb"
+            "name": "Stop All"
           }
         }
       ]
     }
   },
-  "resetOdom": false,
-  "folder": null,
+  "resetOdom": true,
+  "folder": "Rocket City - Autos",
   "choreoAuto": false
 }

@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot-Pickup"
+            "pathName": "Primary"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "FromShoot-Climb"
+            "name": "Stop All"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Rocket City - Autos",
   "choreoAuto": false
 }
