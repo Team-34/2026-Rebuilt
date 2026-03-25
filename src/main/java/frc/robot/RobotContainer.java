@@ -207,7 +207,7 @@ public class RobotContainer {
     CommandScheduler.getInstance().schedule(shooter.stop(), turret.stop(), spindexer.stop());
   }
   public void enable() {
-    // leds.allianceColor();
+    leds.allianceColor();
   }
   /**
    * Called in Robot.teleopPeriodic().
@@ -215,7 +215,7 @@ public class RobotContainer {
    *
    */
   public void subsystemPeriodic() {
-    leds.allianceColor();
+    // leds.allianceColor();
   }
 }
 

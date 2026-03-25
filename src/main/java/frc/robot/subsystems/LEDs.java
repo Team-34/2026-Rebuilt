@@ -21,6 +21,7 @@ public class LEDs extends SubsystemBase {
   private final AddressableLEDBufferView leftLedBufferView = ledBuffer.createView(84, 123);
   private final AddressableLEDBufferView rightLedBufferView = ledBuffer.createView(124, 163).reversed();
   private final Game game;
+  private LEDPattern pattern = LEDPattern.solid(Color.kGreen);
   
   /**
    * Constructs a new LEDs subsystem, 
@@ -31,7 +32,6 @@ public class LEDs extends SubsystemBase {
   public LEDs(final Game game) {
     this.game = game;
     ledStrip.setLength(ledBuffer.getLength());
-    solidColor(Color.kGreen);
     ledStrip.start();
   }
 
@@ -41,9 +41,8 @@ public class LEDs extends SubsystemBase {
    * @param color the color to set the LED strip to.
    */
   public void solidColor(Color color) {
-    LEDPattern solidPattern = LEDPattern.solid(color);
-    solidPattern.applyTo(ledBuffer);
-    ledStrip.setData(ledBuffer);
+    final var solid = LEDPattern.solid(color);
+    pattern = solid;
   }
 
 /**
@@ -52,15 +51,16 @@ public class LEDs extends SubsystemBase {
  * @param color the color to set the LED strip to.
  */
 public void animatedMask(Color color) {
-    Map<Number, Color> maskSteps = Map.of(0, Color.kWhite,0.25, Color.kBlack, 0.5, Color.kWhite, 0.75, Color.kBlack, 1.0, Color.kWhite);
-    LEDPattern base = LEDPattern.solid(color);
-    LEDPattern mask = LEDPattern.steps(maskSteps).scrollAtRelativeSpeed(Percent.per(Second).of(50));
-    LEDPattern maskPattern = base.mask(mask);
-    maskPattern.applyTo(frontLedBufferView);
-    maskPattern.applyTo(backLedBufferView);
-    maskPattern.applyTo(leftLedBufferView);
-    maskPattern.applyTo(rightLedBufferView);
-    ledStrip.setData(ledBuffer);    
+    final var maskSteps = Map.of(
+      0.00, Color.kWhite,
+      0.25, Color.kBlack,
+      0.50, Color.kWhite,
+      0.75, Color.kBlack,
+      1.00, Color.kWhite
+    );
+    final var base = LEDPattern.solid(color);
+    final var mask = LEDPattern.steps(maskSteps).scrollAtRelativeSpeed(Percent.per(Second).of(50));
+    pattern = base.mask(mask);
   }
 
   /**
@@ -94,5 +94,15 @@ public void animatedMask(Color color) {
     game.getAlliance().ifPresent(a -> {
       animatedMask(a == Alliance.Blue ? Color.kBlue : Color.kRed);
     });
+  }
+
+  @Override
+  public void periodic() {
+    pattern.applyTo(frontLedBufferView);
+    pattern.applyTo(backLedBufferView);
+    pattern.applyTo(leftLedBufferView);
+    pattern.applyTo(rightLedBufferView);
+
+    ledStrip.setData(ledBuffer);
   }
 }
