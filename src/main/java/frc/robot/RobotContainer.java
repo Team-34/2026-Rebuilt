@@ -210,4 +210,16 @@ public class RobotContainer {
     leds.turnOff();
     CommandScheduler.getInstance().schedule(shooter.stop(), turret.stop(), spindexer.stop());
   }
+  public void enable() {
+    leds.allianceColor();
+  }
+  /**
+   * Called in Robot.teleopPeriodic().
+   * Used for any periodic subsystem updates that need to be run during teleop.
+   *
+   */
+  public void subsystemPeriodic() {
+    // leds.allianceColor();
+  }
 }
+
