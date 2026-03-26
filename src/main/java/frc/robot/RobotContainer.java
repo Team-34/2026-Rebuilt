@@ -206,4 +206,8 @@ public class RobotContainer {
     leds.turnOff();
     CommandScheduler.getInstance().schedule(shooter.stop(), turret.stop(), spindexer.stop());
   }
+  public void enable() {
+    leds.allianceColor();
+  }
 }
+

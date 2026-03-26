@@ -117,6 +117,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     NetworkTableInstance.getDefault().getTable("limelight").getEntry("throttle_set").setNumber(0);
+    m_robotContainer.enable();
     if (this.m_autonomousCommand != null) {
       CommandScheduler.getInstance().cancel(this.m_autonomousCommand);
     }
@@ -124,7 +125,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-
   }
 
   @Override
