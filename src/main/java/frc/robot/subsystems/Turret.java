@@ -52,7 +52,7 @@ public class Turret extends SubsystemBase {
         final var turretAngle = motorAngleToTurretAngle(motor.getPosition().getValue());
         final var newTurretAngle = Maths.clamp(az.unaryMinus().plus(turretAngle), SWIVEL_LOWER_LIMIT, SWIVEL_UPPER_LIMIT);
         final var newMotorAngle = turretAngleToMotorAngle(newTurretAngle);
-        motor.setControl(positionControl.withPosition(newMotorAngle));
+        motor.setControl(positionControl.withPosition(newMotorAngle.plus(wrapAround())));
       }, motor::stopMotor);
     }, motor::stopMotor);
   }
@@ -67,6 +67,9 @@ public class Turret extends SubsystemBase {
     return rotations * GEAR_RATIO;
   }
 
+  public double getTurretSetpoint() {
+    return positionControl.getPositionMeasure().magnitude();
+  }
   /**
    * Converts motor position (in rotations) to the equivalent turret position.
    * 
@@ -179,6 +182,28 @@ public class Turret extends SubsystemBase {
       final var targetMotorAngle = turretAngleToMotorAngle(clampedTurretAngle);
       motor.setControl(positionControl.withPosition(targetMotorAngle));
     });
+  }
+
+  /**
+   * Turret azimuth wraparound method.
+   * <p>
+   * Designed so, when the current angle of the turret is greater than 180 or less than -180, 
+   * the turret will be given a new setpoint of the current angle modulo 180 (to get the remaining portion to move by)
+   * plus or minus 180, depending on what the current turret angle is.
+   * </p>
+   * Designed to be called repeatedly in periodic.
+   */
+  public Angle wrapAround() {
+    final Angle turretAngle = motorAngleToTurretAngle(motor.getPosition().getValue());
+    final Angle upperLimit = Degrees.of(180);
+    final Angle lowerLimit = Degrees.of(-180);
+    if (turretAngle.gte(upperLimit)) {
+      return Degrees.of((turretAngle.magnitude() % 180) + -180);
+    }
+    if (turretAngle.lte(lowerLimit)) {
+      return Degrees.of((turretAngle.magnitude() % 180) - 180);
+    }
+    return Degrees.zero();
   }
 
   /**
