@@ -38,7 +38,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class Shooter extends SubsystemBase {
   enum Speed {
-    STOP(0.0), HALF(0.5), FULL(0.75); // enum for flywheel speeds
+    STOP(0.0), HALF(0.5), FULL(0.85); // enum for flywheel speeds
 
     public final double value;
 
@@ -250,15 +250,15 @@ public class Shooter extends SubsystemBase {
     // SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
     // SmartDashboard.putBoolean("limit switch: ", hoodLimitSwitch.get());
 
-    // var pos =
-    // MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(),
-    // hoodSetPoint), -1.0, 1.0);
-    // this.hoodMotor.set(TalonSRXControlMode.PercentOutput, pos);
-    // SmartDashboard.putNumber("Hood Motor Output: ", pos);
+    var pos =
+    MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(),
+    hoodSetPoint), -1.0, 1.0);
+    this.hoodMotor.set(TalonSRXControlMode.PercentOutput, pos);
+    SmartDashboard.putNumber("Hood Motor Output: ", pos);
 
-    // if (isHoodAtHome()) {
-    // zeroHoodEncoder();
-    // }
+    if (isHoodAtHome()) {
+    zeroHoodEncoder();
+    }
   }
 
   @Override
