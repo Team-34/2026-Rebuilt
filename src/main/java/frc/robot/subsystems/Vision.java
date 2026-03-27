@@ -59,9 +59,9 @@ public class Vision extends SubsystemBase {
   }
 
   // public double getDistanceToTarget() {
-  //   final int tzToInchesScalar = 65;
-  //   final int tzIndex = 2;
-  //   return getTargetPose_CameraSpaceArrayElement(tzIndex) * tzToInchesScalar;
+  // final int tzToInchesScalar = 65;
+  // final int tzIndex = 2;
+  // return getTargetPose_CameraSpaceArrayElement(tzIndex) * tzToInchesScalar;
   // }
 
   public boolean isTargetValid() {
@@ -76,23 +76,33 @@ public class Vision extends SubsystemBase {
     return getTargetPose_CameraSpaceArrayElement(1);
   }
 
+  public double getTotalCameraLatency() {
+    var captureLatency = LimelightHelpers.getLatency_Capture("");
+    var pipelineLatency = LimelightHelpers.getLatency_Pipeline("");
+    var totalLatency = captureLatency + pipelineLatency;
+
+    return totalLatency;
+  }
+
   // public void updatePosition() {
-  //   double yawInDegrees = gyro.getYaw().getValueAsDouble() % 360;
-  //   LimelightHelpers.SetRobotOrientation("limelight", yawInDegrees, 0, 0, 0, 0, 0);
+  // double yawInDegrees = gyro.getYaw().getValueAsDouble() % 360;
+  // LimelightHelpers.SetRobotOrientation("limelight", yawInDegrees, 0, 0, 0, 0,
+  // 0);
   // }
 
   public boolean isTargetLocked(final int tag) {
     final double TY_TOLERANCE = 0.5;
     final double TX_TOLERANCE = 0.5;
     final boolean isCorrectTag = LimelightHelpers.getFiducialID("") == tag;
-    final boolean isWithinTolerance = MathUtil.isNear(0, getTX(), TX_TOLERANCE) && MathUtil.isNear(0, getTY(), TY_TOLERANCE);
+    final boolean isWithinTolerance = MathUtil.isNear(0, getTX(), TX_TOLERANCE)
+        && MathUtil.isNear(0, getTY(), TY_TOLERANCE);
     return isCorrectTag && isWithinTolerance;
   }
 
   public Optional<Angle> getAzimuthToHub() {
     final var tags = game.getHubTagIDs();
     final var fiducials = LimelightHelpers.getRawFiducials("");
-    for(final var fiducial : fiducials) {
+    for (final var fiducial : fiducials) {
       if (tags.contains(fiducial.id)) {
         return Optional.of(Degrees.of(fiducial.txnc));
       }
@@ -126,8 +136,10 @@ public class Vision extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putString("Distance to Hub", getDistanceToHub().toString());
-    // SmartDashboard.putNumber("Limelight Tx", getTargetPose_CameraSpaceArrayElement(0));
-    // SmartDashboard.putNumber("Limelight Ty", getTargetPose_CameraSpaceArrayElement(1));
+    // SmartDashboard.putNumber("Limelight Tx",
+    // getTargetPose_CameraSpaceArrayElement(0));
+    // SmartDashboard.putNumber("Limelight Ty",
+    // getTargetPose_CameraSpaceArrayElement(1));
 
     SmartDashboard.putString("bot pos - blue", LimelightHelpers.getBotPose2d_wpiBlue("").toString());
     SmartDashboard.putString("bot pos - red", LimelightHelpers.getBotPose2d_wpiRed("").toString());
