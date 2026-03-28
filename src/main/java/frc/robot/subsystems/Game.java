@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
@@ -33,6 +35,14 @@ public interface Game {
    * @return The current shift, or empty if not in teleop period.
    */
   public Optional<Shift> getShift();
+
+  public Pose2d getRedHubPos();
+
+  public Pose2d getBlueHubPos();
+
+  public Translation2d getHubPosition();
+
+  public Translation2d getHubForward();
 
   /**
    * @return

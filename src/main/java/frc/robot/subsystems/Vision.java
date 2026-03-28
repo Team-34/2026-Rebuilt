@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -20,16 +22,14 @@ public class Vision extends SubsystemBase {
 
   Pigeon2 gyro = new Pigeon2(10);
 
-  private final Pose2d redHubPos = new Pose2d(Inches.of(469.11), Inches.of(158.84), Rotation2d.kZero);
-  // private final Pose2d blueHubPos = new Pose2d(Inches.of(469.11),
-  // Inches.of(158.84), Rotation2d.kZero);
-  private final Pose2d blueHubPos = new Pose2d(Inches.of(182.11), Inches.of(158.84), Rotation2d.kZero);
-
   private final Game game;
+  private final Translation2d hubPos;
 
   public Vision(final Game game) {
     this.game = game;
+    this.hubPos = game.getHubPosition();
   }
+  
 
   /**
    * Returns a value from the Targetpose_CameraSpace array.
@@ -111,26 +111,10 @@ public class Vision extends SubsystemBase {
   }
 
   public Optional<Distance> getDistanceToHub() {
-    return game.getAlliance().flatMap(alliance -> getAzimuthToHub().map(_az -> {
-      SmartDashboard.putString("Alliance from distance method", alliance.toString());
+    return getAzimuthToHub().map(_az -> {
       final var botPosition = LimelightHelpers.getBotPose2d_wpiBlue("");
-      final var botXInches = botPosition.getMeasureX().in(Inches);
-      final var botYInches = botPosition.getMeasureY().in(Inches);
-      SmartDashboard.putString("Bot Pos", LimelightHelpers.getBotPose2d("").toString());
-      if (alliance == Alliance.Blue) {
-        final var hubXInches = blueHubPos.getMeasureX().in(Inches);
-        final var hubYInches = blueHubPos.getMeasureY().in(Inches);
-        final var deltaX = hubXInches - botXInches;
-        final var deltaY = hubYInches - botYInches;
-        return Inches.of(Math.sqrt((deltaX * deltaX) + (deltaY * deltaY)));
-      } else {
-        final var hubXInches = redHubPos.getMeasureX().in(Inches);
-        final var hubYInches = redHubPos.getMeasureY().in(Inches);
-        final var deltaX = hubXInches - botXInches;
-        final var deltaY = hubYInches - botYInches;
-        return Inches.of(Math.sqrt((deltaX * deltaX) + (deltaY * deltaY)));
-      }
-    }));
+      return Meters.of(botPosition.getTranslation().getDistance(hubPos));
+    });
   }
 
   @Override

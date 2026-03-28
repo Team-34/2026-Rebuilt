@@ -50,7 +50,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Spindexer spindexer = new Spindexer();
   private final Vision vision = new Vision(game);
-  private final FireControl fireControl = new FireControl(vision);
+  private final FireControl fireControl = new FireControl(vision, game);
   private final Turret turret = new Turret(game, vision);
   private final LEDs leds = new LEDs(game);
   private final Shooter shooter = new Shooter(vision);
