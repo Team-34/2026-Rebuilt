@@ -53,7 +53,7 @@ public class RobotContainer {
   private final FireControl fireControl = new FireControl(vision, game);
   private final Turret turret = new Turret(game, vision);
   private final LEDs leds = new LEDs(game);
-  private final Shooter shooter = new Shooter(vision);
+  private final Shooter shooter = new Shooter(vision, fireControl);
 
   private final DriveCoefficient driveCoefficient = DriveCoefficient.FULL;
 
@@ -171,8 +171,9 @@ public class RobotContainer {
     joystick.x().onTrue(intake.toggle());
 
     //joystick.y().whileTrue(Commands.parallel(shooter.shootCommand(), turret.pointAtHubCommand()));
-    joystick.y().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
+    // joystick.y().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
     //joystick.y().onTrue(shooter.runFiringMotorByRPSCommand(RevolutionsPerSecond.of(47)));
+    joystick.y().whileTrue(Commands.parallel(shooter.moveAndShootCommand(), turret.pointAtHubCommand()));
 
     joystick.povUp().onTrue(shooter.increaseByRPSCommand()).onFalse(shooter.stop());
     joystick.povDown().onTrue(shooter.decreaseByRPSCommand()).onFalse(shooter.stop());

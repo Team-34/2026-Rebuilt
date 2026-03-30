@@ -70,7 +70,9 @@ public class Shooter extends SubsystemBase {
 
   private Optional<Distance> cachedHubDistance = Optional.empty();
 
-  public Shooter(final Vision vision) {
+  private FireControl fireControl;
+
+  public Shooter(final Vision vision, final FireControl fireControl) {
     final TalonFXConfiguration masterConfig = new TalonFXConfiguration();
     masterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     masterConfig.Slot0.kV = 0.12;
@@ -91,6 +93,7 @@ public class Shooter extends SubsystemBase {
     hoodPID.setSetpoint(hoodSetPoint);
 
     this.vision = vision;
+    this.fireControl = fireControl;
 
     hoodAtHome.onTrue(runOnce(this::zeroHoodEncoder));
   }
@@ -169,6 +172,10 @@ public class Shooter extends SubsystemBase {
     return runOnce(() -> {
       runFiringMotorByRPS(rps);
     });
+  }
+
+  public Command moveAndShootCommand() {
+    return runOnce(this::moveAndShoot);
   }
 
   public static double distanceToFiringSpeed(final Distance distance) {
@@ -291,5 +298,11 @@ public class Shooter extends SubsystemBase {
 
   private void runAtIdle() {
     this.masterFiringMotor.set(0.1);
+  }
+
+  private void moveAndShoot() {
+    fireControl.getCalculatedRPM().ifPresentOrElse(rps -> {
+      runFiringMotorByRPS(rps);
+    }, this::runAtIdle);
   }
 }

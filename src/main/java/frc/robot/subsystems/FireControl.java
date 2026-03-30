@@ -7,6 +7,9 @@ import static edu.wpi.first.units.Units.RPM;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.lang.StackWalker.Option;
+import java.util.Optional;
+
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.AngularVelocity;
@@ -72,10 +75,10 @@ public class FireControl extends SubsystemBase {
    *         0 {@code RPS} if the shot is not valid and if the shot is not
    *         confident.
    */
-  public AngularVelocity getCalculatedRPM() {
+  public Optional<AngularVelocity> getCalculatedRPM() {
     if (shot.isValid() && shot.confidence() > 50) {
-      return RPM.of(shot.rpm());
+      return Optional.of(RPM.of(shot.rpm()));
     }
-    return RPM.of(0);
+    return Optional.empty();
   }
 }
