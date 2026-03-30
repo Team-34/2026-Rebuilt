@@ -43,25 +43,21 @@ public class StubGame implements Game {
 
   @Override
   public Pose2d getRedHubPos() {
-    // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'getRedHubPos'");
   }
 
   @Override
   public Pose2d getBlueHubPos() {
-    // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'getBlueHubPos'");
   }
 
   @Override
   public Translation2d getHubPosition() {
-    // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'getHubPosition'");
   }
 
   @Override
   public Translation2d getHubForward() {
-    // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'getHubForward'");
   }
 }
