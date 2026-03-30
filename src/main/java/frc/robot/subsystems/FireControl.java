@@ -1,13 +1,5 @@
 package frc.robot.subsystems;
 
-import frc.firecontrol.FuelPhysicsSim;
-import frc.firecontrol.ProjectileSimulator;
-import frc.firecontrol.ShotCalculator;
-import frc.firecontrol.ShotLUT;
-
-import frc.robot.RobotContainer;
-import frc.robot.generated.TunerConstants;
-
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
@@ -18,10 +10,9 @@ import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.AngularVelocity;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
-import frc.robot.subsystems.Vision;
+import frc.firecontrol.ShotCalculator;
+import frc.robot.generated.TunerConstants;
 
 public class FireControl extends SubsystemBase {
 
