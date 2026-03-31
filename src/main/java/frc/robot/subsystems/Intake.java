@@ -44,7 +44,7 @@ public class Intake extends SubsystemBase {
   public Intake() {
     final TalonFXSConfiguration config = new TalonFXSConfiguration();
     config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
-    config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     rollerMotor.getConfigurator().apply(config);
   }
 
@@ -62,11 +62,13 @@ public class Intake extends SubsystemBase {
     });
   }
 
-  public Command moveToInches(double inches) {
+  public Command moveToInchesCommand(Distance inches) {
     return runOnce(() -> {
-      //
+      moveToInches(inches);
     });
   }
+
+  // 2 3/4 rotations of encoder to deployment, motor to encoder gr is 22/12
 
   public Command cycleDeploymentCommand() {
     return runOnce(() -> {
@@ -76,10 +78,15 @@ public class Intake extends SubsystemBase {
         case DEPLOYED -> DeploymentState.RETRACTED;
         default -> DeploymentState.RETRACTED;
       };
+      moveToInches(this.deploymentState.value);
     });
   }
 
   public void activate(final double speed) {
     rollerMotor.setControl(motorControl.withOutput(speed));
+  }
+
+  private void moveToInches(final Distance inches) {
+    deployMotor.setControl(positionControl.withPosition(inches.in(Inches)));
   }
 }
