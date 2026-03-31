@@ -28,17 +28,18 @@ public class Intake extends SubsystemBase {
   }
 
   public final TalonFXS rollerMotor = new TalonFXS(60);
-  public final DutyCycleOut motorControl = new DutyCycleOut(0);
+  public final DutyCycleOut rollerMotorControl = new DutyCycleOut(0);
+
   public final TalonFXS deployMotor = new TalonFXS(61);
-  public final PositionVoltage positionControl = new PositionVoltage(0);
-  public final double GEAR_RATIO = 2.0 / 5.0;
-  public final double GEAR_CIRCUMFERENCE = (3.5) * Math.PI;
-  public final Distance MAX_EXTENSION = Inches.of(10.7);
+  public final PositionVoltage deployPositionControl = new PositionVoltage(0);
+  public final double DEPLOY_GEAR_RATIO = 2.0 / 5.0;
+  public final double DEPLOY_GEAR_CIRCUMFERENCE = (3.5) * Math.PI;
+  public final Distance DEPLOY_MAX_EXTENSION = Inches.of(10.7);
 
   private DeploymentState deploymentState = DeploymentState.RETRACTED;
 
   private double MotorUnitToBigGearUnits(double encoderUnits) {
-    return encoderUnits * GEAR_RATIO;
+    return encoderUnits * DEPLOY_GEAR_RATIO;
   }
 
   public Intake() {
@@ -58,7 +59,7 @@ public class Intake extends SubsystemBase {
 
   public Command stop() {
     return runOnce(() -> {
-      rollerMotor.setControl(motorControl.withOutput(0));
+      rollerMotor.setControl(rollerMotorControl.withOutput(0));
     });
   }
 
@@ -83,10 +84,10 @@ public class Intake extends SubsystemBase {
   }
 
   public void activate(final double speed) {
-    rollerMotor.setControl(motorControl.withOutput(speed));
+    rollerMotor.setControl(rollerMotorControl.withOutput(speed));
   }
 
   private void moveToInches(final Distance inches) {
-    deployMotor.setControl(positionControl.withPosition(inches.in(Inches)));
+    deployMotor.setControl(deployPositionControl.withPosition(inches.in(Inches)));
   }
 }
