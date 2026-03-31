@@ -17,21 +17,23 @@ import edu.wpi.first.units.measure.Distance;
 
 public class Intake extends SubsystemBase {
 
-    enum DeploymentState {
-      DEPLOYED(Inches.of(10.7)), RETRACTED(Inches.of(0)), BUMPER(Inches.of(4));
-      
-      public final Distance value;
-      
-      DeploymentState(final Distance value) {
-        this.value = value;
-      }
-    }
+  enum DeploymentState {
+    DEPLOYED(Inches.of(10.7)), RETRACTED(Inches.zero()), BUMPER(Inches.of(4));
 
-  public final TalonFXS motor = new TalonFXS(60);
+    public final Distance value;
+
+    DeploymentState(final Distance value) {
+      this.value = value;
+    }
+  }
+
+  public final TalonFXS rollerMotor = new TalonFXS(60);
   public final DutyCycleOut motorControl = new DutyCycleOut(0);
-  public final TalonFXS motor2 = new TalonFXS(61);
+  public final TalonFXS deployMotor = new TalonFXS(61);
   public final PositionVoltage positionControl = new PositionVoltage(0);
   public final double GEAR_RATIO = 2.0 / 5.0;
+  public final double GEAR_CIRCUMFERENCE = (3.5) * Math.PI;
+  public final Distance MAX_EXTENSION = Inches.of(10.7);
 
   private DeploymentState deploymentState = DeploymentState.RETRACTED;
 
@@ -43,7 +45,7 @@ public class Intake extends SubsystemBase {
     final TalonFXSConfiguration config = new TalonFXSConfiguration();
     config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-    motor.getConfigurator().apply(config);
+    rollerMotor.getConfigurator().apply(config);
   }
 
   public Command runIn() {
@@ -56,7 +58,7 @@ public class Intake extends SubsystemBase {
 
   public Command stop() {
     return runOnce(() -> {
-      motor.setControl(motorControl.withOutput(0));
+      rollerMotor.setControl(motorControl.withOutput(0));
     });
   }
 
@@ -66,7 +68,7 @@ public class Intake extends SubsystemBase {
     });
   }
 
-    public Command toggle() {
+  public Command cycleDeploymentCommand() {
     return runOnce(() -> {
       this.deploymentState = switch (this.deploymentState) {
         case RETRACTED -> DeploymentState.BUMPER;
@@ -78,6 +80,6 @@ public class Intake extends SubsystemBase {
   }
 
   public void activate(final double speed) {
-    motor.setControl(motorControl.withOutput(speed));
+    rollerMotor.setControl(motorControl.withOutput(speed));
   }
 }

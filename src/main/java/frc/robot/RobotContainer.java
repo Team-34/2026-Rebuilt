@@ -166,7 +166,7 @@ public class RobotContainer {
 
     joystick.a().onTrue(intake.runIn()).onFalse(intake.stop());
     joystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
-    joystick.x().onTrue(intake.toggle());
+    joystick.x().onTrue(intake.cycleDeploymentCommand());
 
     //joystick.y().whileTrue(Commands.parallel(shooter.shootCommand(), turret.pointAtHubCommand()));
     joystick.y().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
