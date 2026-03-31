@@ -1,19 +1,17 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.hardware.TalonFXS;
-
 import static edu.wpi.first.units.Units.Inches;
 
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.MotorArrangementValue;
 
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.units.measure.Distance;
 
 public class Intake extends SubsystemBase {
 
@@ -32,7 +30,7 @@ public class Intake extends SubsystemBase {
 
   public final TalonFXS deployMotor = new TalonFXS(61);
   public final PositionVoltage deployPositionControl = new PositionVoltage(0);
-  public final double DEPLOY_GEAR_RATIO = 2.0 / 5.0;
+  public final double DEPLOY_GEAR_RATIO = 22.0 / 12.0;
   public final double DEPLOY_GEAR_CIRCUMFERENCE = (3.5) * Math.PI;
   public final Distance DEPLOY_MAX_EXTENSION = Inches.of(10.7);
 
