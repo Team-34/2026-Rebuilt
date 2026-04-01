@@ -41,10 +41,15 @@ public class Intake extends SubsystemBase {
   }
 
   public Intake() {
-    final TalonFXSConfiguration config = new TalonFXSConfiguration();
-    config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
-    config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-    rollerMotor.getConfigurator().apply(config);
+    final TalonFXSConfiguration rollerConfig = new TalonFXSConfiguration();
+    rollerConfig.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
+    rollerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    rollerMotor.getConfigurator().apply(rollerConfig);
+    
+    final TalonFXSConfiguration deployConfig = new TalonFXSConfiguration();
+    deployConfig.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
+    deployConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    deployMotor.getConfigurator().apply(deployConfig);
   }
 
   public Command runIn() {
