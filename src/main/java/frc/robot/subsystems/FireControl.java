@@ -13,6 +13,7 @@ import java.util.Optional;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.units.measure.AngularVelocity;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.firecontrol.ShotCalculator;
 import frc.robot.generated.TunerConstants;
@@ -70,6 +71,14 @@ public class FireControl extends SubsystemBase {
     shot = shotCalc.calculate(inputs);
   }
 
+  public Command trimShooterSpeedCommand(double trim) {
+    return runOnce(() -> trimShooterSpeed(trim));
+  }
+
+  public Command resetTrimCommand() {
+    return runOnce(this::resetTrim);
+  }
+
   /**
    * @return {@code RPS} based on the calculation from the {@code ShotCalculator}.
    *         0 {@code RPS} if the shot is not valid and if the shot is not
@@ -80,5 +89,13 @@ public class FireControl extends SubsystemBase {
       return Optional.of(RPM.of(shot.rpm()));
     }
     return Optional.empty();
+  }
+
+  private void trimShooterSpeed(final double trim) {
+    shotCalc.adjustOffset(trim);
+  }
+
+  private void resetTrim() {
+    shotCalc.resetOffset();
   }
 }
