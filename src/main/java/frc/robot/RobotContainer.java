@@ -52,7 +52,6 @@ public class RobotContainer {
   private final Vision vision = new Vision(game);
   private final FireControl fireControl = new FireControl(vision, game);
   private final Turret turret = new Turret(game, vision);
-  private final Turret turret = new Turret(game, vision);
   private final LEDs leds = new LEDs(game);
   private final Shooter shooter = new Shooter(vision, fireControl);
 
@@ -163,9 +162,9 @@ public class RobotContainer {
 
     // ==== OUR SUBSYSTEM BINDINGS ====
 
-    joystick.y().onTrue(climber.toggleCommand());
-    joystick.povLeft().whileTrue(climber.extendCommand());
-    joystick.povRight().whileTrue(climber.retractCommand());
+    // joystick.y().onTrue(climber.toggleCommand());
+    // joystick.povLeft().whileTrue(climber.extendCommand());
+    // joystick.povRight().whileTrue(climber.retractCommand());
 
     joystick.a().onTrue(intake.runIn()).onFalse(intake.stop());
     joystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
