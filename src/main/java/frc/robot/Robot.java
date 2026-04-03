@@ -85,7 +85,7 @@ public class Robot extends TimedRobot {
       CommandScheduler.getInstance().cancel(this.m_autonomousCommand);
     }
     this.m_robotContainer.disable();
-    NetworkTableInstance.getDefault().getTable("static_limelight").getEntry("throttle_set").setNumber(200);
+    NetworkTableInstance.getDefault().getTable("limelight-chassis").getEntry("throttle_set").setNumber(200);
   }
 
   @Override
@@ -100,7 +100,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     this.m_autonomousCommand = this.m_robotContainer.getAutonomousCommand();
-    NetworkTableInstance.getDefault().getTable("static_limelight").getEntry("throttle_set").setNumber(0);
+    NetworkTableInstance.getDefault().getTable("limelight-chassis").getEntry("throttle_set").setNumber(0);
     if (this.m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(this.m_autonomousCommand);
     }
@@ -116,7 +116,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    NetworkTableInstance.getDefault().getTable("static_limelight").getEntry("throttle_set").setNumber(0);
+    NetworkTableInstance.getDefault().getTable("limelight-chassis").getEntry("throttle_set").setNumber(0);
     m_robotContainer.enable();
     if (this.m_autonomousCommand != null) {
       CommandScheduler.getInstance().cancel(this.m_autonomousCommand);
