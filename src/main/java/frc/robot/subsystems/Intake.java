@@ -1,50 +1,47 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Inches;
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.hardware.CANcoder;
-import com.ctre.phoenix6.signals.InvertedValue;
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.ctre.phoenix6.configs.TalonFXSConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFXS;
+import com.ctre.phoenix6.signals.ExternalFeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorArrangementValue;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.units.measure.Distance;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.Maths;
 
 public class Intake extends SubsystemBase {
 
   enum DeploymentState {
-    DEPLOYED(Inches.of(10.7)), RETRACTED(Inches.zero()), BUMPER(Inches.of(4));
+    DEPLOYED(Rotations.of(2.4)), 
+    RETRACTED(DEPLOY_MIN_ROTATIONS), 
+    BUMPER(Rotations.of(0.914));
 
-    public final Distance value;
+    public final Angle rotations;
 
-    DeploymentState(final Distance value) {
-      this.value = value;
+    DeploymentState(final Angle rotations) {
+      this.rotations = rotations;
     }
   }
 
-  public final TalonFXS rollerMotor = new TalonFXS(60);
-  public final DutyCycleOut rollerMotorControl = new DutyCycleOut(0);
+  private final TalonFXS rollerMotor = new TalonFXS(60);
+  private final DutyCycleOut rollerMotorControl = new DutyCycleOut(0);
 
-  public final TalonFXS deployMotor = new TalonFXS(61);
-  public final PositionVoltage deployPositionControl = new PositionVoltage(0);
-  public final DutyCycleOut deployMotorControl = new DutyCycleOut(0);
-  public final double DEPLOY_GEAR_RATIO = 22.0 / 12.0;
-  public final double DEPLOY_GEAR_CIRCUMFERENCE = (3.5) * Math.PI;
-  public final Distance DEPLOY_MAX_EXTENSION = Inches.of(10.7);
-  private final PIDController intakePID = new PIDController(1, 0.0, 0.0);
-  private double intakeSetPoint = 0.0;
-  private final CANcoder intakeEncoder = new CANcoder(62);
-
+  private static final Angle DEPLOY_MIN_ROTATIONS = Rotations.zero();
+  private static final Angle DEPLOY_MAX_ROTATIONS = Rotations.of(2.7);
+  private final TalonFXS deployMotor = new TalonFXS(61);
+  private final PositionVoltage deployPositionControl = new PositionVoltage(0);
+  private final DutyCycleOut deployMotorControl = new DutyCycleOut(0);
+  private final CANcoder deployEncoder = new CANcoder(62);
   private DeploymentState deploymentState = DeploymentState.RETRACTED;
-
-  private double MotorUnitToBigGearUnits(final double encoderUnits) {
-    return encoderUnits * DEPLOY_GEAR_RATIO;
-  }
 
   public Intake() {
     final TalonFXSConfiguration rollerConfig = new TalonFXSConfiguration();
@@ -52,79 +49,85 @@ public class Intake extends SubsystemBase {
     rollerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     rollerMotor.getConfigurator().apply(rollerConfig);
     
+    deployEncoder.setPosition(Rotations.zero());
+
     final TalonFXSConfiguration deployConfig = new TalonFXSConfiguration();
     deployConfig.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
-    deployConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    deployConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    deployConfig.CurrentLimits
+      .withStatorCurrentLimit(Amps.of(70))
+      .withStatorCurrentLimitEnable(true);
+    deployConfig.ExternalFeedback
+      .withExternalFeedbackSensorSource(ExternalFeedbackSensorSourceValue.RemoteCANcoder)
+      .withFeedbackRemoteSensorID(62);
+    deployConfig.Slot0.withKP(10).withKI(0.0).withKD(0.2);
     deployMotor.getConfigurator().apply(deployConfig);
-
-    //deployMotor.configRemoteFeedbackFilter(intakeEncoder.getDeviceID(), RemoteSensorSource.CANCoder, 0, 10);
-
-    intakeSetPoint = intakeEncoder.getPosition().getValueAsDouble();
-
-    intakePID.setSetpoint(intakeSetPoint);
   }
 
   public Command runIn() {
-    return runOnce(() -> activate(0.5));
+    return runOnce(() -> runRollerMotorAt(0.5));
   }
 
   public Command runOut() {
-    return runOnce(() -> activate(-0.5));
+    return runOnce(() -> runRollerMotorAt(-0.5));
   }
 
   public Command stop() {
-    return runOnce(() -> {
-      rollerMotor.setControl(rollerMotorControl.withOutput(0));
-    });
+    return runOnce(rollerMotor::stopMotor);
   }
 
-  public Command moveToInchesCommand(final Distance inches) {
-    return runOnce(() -> {
-      moveToInches(inches);
-    });
+  public Command haltDeployment() {
+    return runOnce(deployMotor::stopMotor);
   }
 
   // 2 3/4 rotations of encoder to deployment, motor to encoder gr is 22/12
 
-  public Command cycleDeploymentCommand() {
+  public Command cycleDeployment() {
     return runOnce(() -> {
       this.deploymentState = switch (this.deploymentState) {
         case RETRACTED -> DeploymentState.BUMPER;
         case BUMPER -> DeploymentState.DEPLOYED;
-        case DEPLOYED -> DeploymentState.RETRACTED;
+        case DEPLOYED -> DeploymentState.BUMPER;
         default -> DeploymentState.RETRACTED;
       };
-      moveToInches(this.deploymentState.value);
+      rotateDeployMotorTo(this.deploymentState.rotations);
     });
   }
 
-  public Command runByPower(final double power) {
+  public Command deployByPower(final double power) {
     return runOnce(() -> {
       deployMotor.setControl(deployMotorControl.withOutput(power));
       SmartDashboard.putNumber("intake deploy motor input", power);
     });
   }
 
-  public void activate(final double speed) {
-    rollerMotor.setControl(rollerMotorControl.withOutput(speed));
+  public void runRollerMotorAt(final double speed) {
+    if (deploymentState == DeploymentState.DEPLOYED) {
+      rollerMotor.setControl(rollerMotorControl.withOutput(speed));
+    }
   }
 
-  public void deploy(final double power) {
-    //deployMotor.setControl(deployMotorControl.withOutput(1));
-  }
+  private void rotateDeployMotorTo(final Angle rotations) {
+    rollerMotor.stopMotor();
 
-  private void moveToInches(final Distance inches) {
-    //deployMotor.setControl(deployPositionControl.withPosition(inches.in(Inches)));
+    final var safeRotations = Maths.clamp(rotations, DEPLOY_MIN_ROTATIONS, DEPLOY_MAX_ROTATIONS);
+
+    SmartDashboard.putString("intake deploy commanded rotations", rotations.toLongString());
+    SmartDashboard.putString("intake deploy commanded SAFE rotations", safeRotations.toLongString());
+
+    deployMotor.setControl(deployPositionControl.withPosition(safeRotations));
   }
 
   @Override
   public void periodic() {
-    //var pos =
-    //MathUtil.clamp(intakePID.calculate(intakeEncoder.getPosition().getValueAsDouble(),
-    //intakeSetPoint), -1.0, 1.0);
-    //this.deployMotor.set(TalonFXSConfiguration.PercentOutput, pos);
-    SmartDashboard.putString("intake deploy encoder position", intakeEncoder.getPosition().getValue().toLongString());
+    // var pos =
+    // MathUtil.clamp(deployPID.calculate(intakeEncoder.getPosition().getValue(),
+    // intakeSetPoint), -1.0, 1.0);
+    // this.deployMotor.set(TalonFXSConfiguration.PercentOutput, pos);
+    SmartDashboard.putString("intake deployment state", deploymentState.toString());
+    SmartDashboard.putString("intake deploy encoder position", deployEncoder.getPosition().getValue().toLongString());
     SmartDashboard.putNumber("intake deploy motor output", deployMotor.get());
+    SmartDashboard.putString("intake deploy motor position", deployMotor.getPosition().getValue().toLongString());
     SmartDashboard.putString("intake deploy motor voltage", deployMotor.getMotorVoltage().getValue().toLongString());
   }
 }

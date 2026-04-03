@@ -166,8 +166,9 @@ public class RobotContainer {
 
     joystick.a().onTrue(intake.runIn()).onFalse(intake.stop());
     joystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
-    //joystick.x().onTrue(intake.cycleDeploymentCommand());
-    joystick.x().onTrue(intake.runByPower(0.15)).onFalse(intake.stop());
+    joystick.x().onTrue(intake.cycleDeployment());
+    // joystick.x().onTrue(intake.deployByPower(0.1)).onFalse(intake.haltDeployment());
+    // joystick.y().onTrue(intake.deployByPower(-0.2)).onFalse(intake.haltDeployment());
 
     //joystick.y().whileTrue(Commands.parallel(shooter.shootCommand(), turret.pointAtHubCommand()));
     joystick.y().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
@@ -207,6 +208,7 @@ public class RobotContainer {
     leds.turnOff();
     CommandScheduler.getInstance().schedule(shooter.stop(), turret.stop(), spindexer.stop());
   }
+
   public void enable() {
     leds.allianceColor();
   }
