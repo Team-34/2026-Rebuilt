@@ -49,13 +49,13 @@ public class Vision extends SubsystemBase {
    *         API, in degrees)</li>
    *         </ul>
    */
-  public double getTargetPose_CameraSpaceArrayElement(final int index) {
-    final double[] data = LimelightHelpers.getTargetPose_CameraSpace("");
+  public double getTargetPose_CameraSpaceArrayElementTurret(final int index) {
+    final double[] data = LimelightHelpers.getTargetPose_CameraSpace("turret_limelight");
     return data[index];
   }
 
   public void setPriorityTag(final int tag) {
-    LimelightHelpers.setPriorityTagID("", tag);
+    LimelightHelpers.setPriorityTagID("turret_limelight", tag);
   }
 
   // public double getDistanceToTarget() {
@@ -65,15 +65,15 @@ public class Vision extends SubsystemBase {
   // }
 
   public boolean isTargetValid() {
-    return LimelightHelpers.getTV("");
+    return LimelightHelpers.getTV("turret_limelight");
   }
 
   public double getTX() {
-    return getTargetPose_CameraSpaceArrayElement(0);
+    return getTargetPose_CameraSpaceArrayElementTurret(0);
   }
 
   public double getTY() {
-    return getTargetPose_CameraSpaceArrayElement(1);
+    return getTargetPose_CameraSpaceArrayElementTurret(1);
   }
 
   // public void updatePosition() {
@@ -84,14 +84,14 @@ public class Vision extends SubsystemBase {
   public boolean isTargetLocked(final int tag) {
     final double TY_TOLERANCE = 0.5;
     final double TX_TOLERANCE = 0.5;
-    final boolean isCorrectTag = LimelightHelpers.getFiducialID("") == tag;
+    final boolean isCorrectTag = LimelightHelpers.getFiducialID("turret_limelight") == tag;
     final boolean isWithinTolerance = MathUtil.isNear(0, getTX(), TX_TOLERANCE) && MathUtil.isNear(0, getTY(), TY_TOLERANCE);
     return isCorrectTag && isWithinTolerance;
   }
 
   public Optional<Angle> getAzimuthToHub() {
     final var tags = game.getHubTagIDs();
-    final var fiducials = LimelightHelpers.getRawFiducials("");
+    final var fiducials = LimelightHelpers.getRawFiducials("turret_limelight");
     for(final var fiducial : fiducials) {
       if (tags.contains(fiducial.id)) {
         return Optional.of(Degrees.of(fiducial.txnc));
@@ -103,10 +103,10 @@ public class Vision extends SubsystemBase {
   public Optional<Distance> getDistanceToHub() {
     return game.getAlliance().flatMap(alliance -> getAzimuthToHub().map(_az -> {
       SmartDashboard.putString("Alliance from distance method", alliance.toString());
-      final var botPosition = LimelightHelpers.getBotPose2d_wpiBlue("");
+      final var botPosition = LimelightHelpers.getBotPose2d_wpiBlue("static_limelight");
       final var botXInches = botPosition.getMeasureX().in(Inches);
       final var botYInches = botPosition.getMeasureY().in(Inches);
-      SmartDashboard.putString("Bot Pos", LimelightHelpers.getBotPose2d("").toString());
+      SmartDashboard.putString("Bot Pos", LimelightHelpers.getBotPose2d("static_limelight").toString());
       if (alliance == Alliance.Blue) {
         final var hubXInches = blueHubPos.getMeasureX().in(Inches);
         final var hubYInches = blueHubPos.getMeasureY().in(Inches);
@@ -129,8 +129,8 @@ public class Vision extends SubsystemBase {
     // SmartDashboard.putNumber("Limelight Tx", getTargetPose_CameraSpaceArrayElement(0));
     // SmartDashboard.putNumber("Limelight Ty", getTargetPose_CameraSpaceArrayElement(1));
 
-    SmartDashboard.putString("bot pos - blue", LimelightHelpers.getBotPose2d_wpiBlue("").toString());
-    SmartDashboard.putString("bot pos - red", LimelightHelpers.getBotPose2d_wpiRed("").toString());
+    SmartDashboard.putString("bot pos - blue", LimelightHelpers.getBotPose2d_wpiBlue("static_limelight").toString());
+    SmartDashboard.putString("bot pos - red", LimelightHelpers.getBotPose2d_wpiRed("static_limelight").toString());
     // updatePosition();
   }
 }
