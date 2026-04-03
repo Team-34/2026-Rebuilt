@@ -58,7 +58,7 @@ public class Intake extends SubsystemBase {
 
   private DeploymentState deploymentState = DeploymentState.RETRACTED;
 
-  private double MotorUnitToBigGearUnits(double encoderUnits) {
+  private double MotorUnitToBigGearUnits(final double encoderUnits) {
     return encoderUnits * DEPLOY_GEAR_RATIO;
   }
 
@@ -94,7 +94,7 @@ public class Intake extends SubsystemBase {
     });
   }
 
-  public Command moveToInchesCommand(Distance inches) {
+  public Command moveToInchesCommand(final Distance inches) {
     return runOnce(() -> {
       moveToInches(inches);
     });
@@ -114,7 +114,7 @@ public class Intake extends SubsystemBase {
     });
   }
 
-  public Command runByPower(double power) {
+  public Command runByPower(final double power) {
     return runOnce(() -> {
     deployMotor.setControl(deployMotorControl.withOutput(0.15));
     SmartDashboard.putNumber("intake deploy motor input", power);
@@ -125,7 +125,7 @@ public class Intake extends SubsystemBase {
     rollerMotor.setControl(rollerMotorControl.withOutput(speed));
   }
 
-  public void deploy(double power) {
+  public void deploy(final double power) {
     //deployMotor.setControl(deployMotorControl.withOutput(1));
   }
 
@@ -133,13 +133,14 @@ public class Intake extends SubsystemBase {
     //deployMotor.setControl(deployPositionControl.withPosition(inches.in(Inches)));
   }
 
+  @Override
   public void periodic() {
     //var pos =
     //MathUtil.clamp(intakePID.calculate(intakeEncoder.getPosition().getValueAsDouble(),
     //intakeSetPoint), -1.0, 1.0);
     //this.deployMotor.set(TalonFXSConfiguration.PercentOutput, pos);
-    SmartDashboard.putData("is deploy motor running", runByPower(0.15));
-    SmartDashboard.putNumber("intake encoder position", intakeEncoder.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("motor output", deployMotor.get());
+    SmartDashboard.putString("intake deploy encoder position", intakeEncoder.getPosition().getValue().toLongString());
+    SmartDashboard.putNumber("intake deploy motor output", deployMotor.get());
+    SmartDashboard.putString("intake deploy motor voltage", deployMotor.getMotorVoltage().getValue().toLongString());
   }
 }
