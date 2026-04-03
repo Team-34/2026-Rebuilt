@@ -21,7 +21,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 public class Turret extends SubsystemBase {
   private static final double GEAR_RATIO = 99.0 / 18.0; // turret : motor
 
-  private static final Angle SWIVEL_LOWER_LIMIT = Degrees.zero();
+  private static final Angle SWIVEL_LOWER_LIMIT = Degrees.of(-180);
   private static final Angle SWIVEL_UPPER_LIMIT = Degrees.of(180);
 
   private final TalonFXS motor = new TalonFXS(50);
