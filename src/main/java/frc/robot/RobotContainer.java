@@ -101,7 +101,7 @@ public class RobotContainer {
   public RobotContainer() {
     // NamedCommands.registerCommand("Toggle Intake", intake.toggle());
     // NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
-    NamedCommands.registerCommand("RunIntake", Commands.parallel(intake.runIn(), intake.cycleDeploymentCommand()));
+    //NamedCommands.registerCommand("RunIntake", Commands.parallel(intake.runIn(), intake.cycleDeploymentCommand()));
     NamedCommands.registerCommand("shooterAtIdle", shooter.runAtIdleCommand());
     NamedCommands.registerCommand("Run Spindexer", spindexer.spin());
     NamedCommands.registerCommand(
@@ -166,7 +166,8 @@ public class RobotContainer {
 
     joystick.a().onTrue(intake.runIn()).onFalse(intake.stop());
     joystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
-    joystick.x().onTrue(intake.cycleDeploymentCommand());
+    //joystick.x().onTrue(intake.cycleDeploymentCommand());
+    joystick.x().onTrue(intake.runByPower(0.15)).onFalse(intake.stop());
 
     //joystick.y().whileTrue(Commands.parallel(shooter.shootCommand(), turret.pointAtHubCommand()));
     joystick.y().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
