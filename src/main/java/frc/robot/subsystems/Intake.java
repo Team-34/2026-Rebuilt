@@ -21,7 +21,7 @@ import frc.robot.util.Maths;
 public class Intake extends SubsystemBase {
 
   enum DeploymentState {
-    DEPLOYED(Rotations.of(2.4)), 
+    DEPLOYED(Rotations.of(2.65)), 
     RETRACTED(DEPLOY_MIN_ROTATIONS), 
     BUMPER(Rotations.of(0.914));
 
