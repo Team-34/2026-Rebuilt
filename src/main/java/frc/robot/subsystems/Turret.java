@@ -50,7 +50,7 @@ public class Turret extends SubsystemBase {
     return runEnd(() -> {
       vision.getAzimuthToHub().ifPresentOrElse(az -> {
         final var turretAngle = motorAngleToTurretAngle(motor.getPosition().getValue());
-        final var newTurretAngle = Maths.clamp(az.unaryMinus().plus(turretAngle), SWIVEL_LOWER_LIMIT, SWIVEL_UPPER_LIMIT);
+        final var newTurretAngle = Maths.normalizeAngle(turretAngle.minus(az).in(Degrees));
         final var newMotorAngle = turretAngleToMotorAngle(newTurretAngle);
         motor.setControl(positionControl.withPosition(newMotorAngle.plus(wrapAround())));
       }, motor::stopMotor);
