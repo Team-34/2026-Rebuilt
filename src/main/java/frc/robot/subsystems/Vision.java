@@ -50,12 +50,12 @@ public class Vision extends SubsystemBase {
    *         </ul>
    */
   public double getTargetPose_CameraSpaceArrayElement(final int index) {
-    final double[] data = LimelightHelpers.getTargetPose_CameraSpace("");
+    final double[] data = LimelightHelpers.getTargetPose_CameraSpace("limelight-turret");
     return data[index];
   }
 
   public void setPriorityTag(final int tag) {
-    LimelightHelpers.setPriorityTagID("", tag);
+    LimelightHelpers.setPriorityTagID("limelight-turret", tag);
   }
 
   // public double getDistanceToTarget() {
@@ -65,7 +65,7 @@ public class Vision extends SubsystemBase {
   // }
 
   public boolean isTargetValid() {
-    return LimelightHelpers.getTV("");
+    return LimelightHelpers.getTV("limelight-turret");
   }
 
   public double getTX() {
@@ -84,14 +84,14 @@ public class Vision extends SubsystemBase {
   public boolean isTargetLocked(final int tag) {
     final double TY_TOLERANCE = 0.5;
     final double TX_TOLERANCE = 0.5;
-    final boolean isCorrectTag = LimelightHelpers.getFiducialID("") == tag;
+    final boolean isCorrectTag = LimelightHelpers.getFiducialID("limelight-turret") == tag;
     final boolean isWithinTolerance = MathUtil.isNear(0, getTX(), TX_TOLERANCE) && MathUtil.isNear(0, getTY(), TY_TOLERANCE);
     return isCorrectTag && isWithinTolerance;
   }
 
   public Optional<Angle> getAzimuthToHub() {
     final var tags = game.getHubTagIDs();
-    final var fiducials = LimelightHelpers.getRawFiducials("");
+    final var fiducials = LimelightHelpers.getRawFiducials("limelight-turret");
     for(final var fiducial : fiducials) {
       if (tags.contains(fiducial.id)) {
         return Optional.of(Degrees.of(fiducial.txnc));
@@ -103,10 +103,10 @@ public class Vision extends SubsystemBase {
   public Optional<Distance> getDistanceToHub() {
     return game.getAlliance().flatMap(alliance -> getAzimuthToHub().map(_az -> {
       SmartDashboard.putString("Alliance from distance method", alliance.toString());
-      final var botPosition = LimelightHelpers.getBotPose2d_wpiBlue("");
+      final var botPosition = LimelightHelpers.getBotPose2d_wpiBlue("limelight-turret");
       final var botXInches = botPosition.getMeasureX().in(Inches);
       final var botYInches = botPosition.getMeasureY().in(Inches);
-      SmartDashboard.putString("Bot Pos", LimelightHelpers.getBotPose2d("").toString());
+      SmartDashboard.putString("Bot Pos", LimelightHelpers.getBotPose2d("limelight-turret").toString());
       if (alliance == Alliance.Blue) {
         final var hubXInches = blueHubPos.getMeasureX().in(Inches);
         final var hubYInches = blueHubPos.getMeasureY().in(Inches);
@@ -129,8 +129,8 @@ public class Vision extends SubsystemBase {
     // SmartDashboard.putNumber("Limelight Tx", getTargetPose_CameraSpaceArrayElement(0));
     // SmartDashboard.putNumber("Limelight Ty", getTargetPose_CameraSpaceArrayElement(1));
 
-    SmartDashboard.putString("bot pos - blue", LimelightHelpers.getBotPose2d_wpiBlue("").toString());
-    SmartDashboard.putString("bot pos - red", LimelightHelpers.getBotPose2d_wpiRed("").toString());
+    SmartDashboard.putString("bot pos - blue", LimelightHelpers.getBotPose2d_wpiBlue("limelight-turret").toString());
+    SmartDashboard.putString("bot pos - red", LimelightHelpers.getBotPose2d_wpiRed("limelight-turret").toString());
     // updatePosition();
   }
 }
