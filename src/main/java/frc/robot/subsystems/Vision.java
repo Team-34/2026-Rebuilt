@@ -33,55 +33,24 @@ public class Vision extends SubsystemBase {
     this.game = game;
   }
 
-  /**
-   * Returns a value from the Targetpose_CameraSpace array.
-   * 
-   * @param index the index of the array to return as a double.
-   * @return Returns data from the Targetpose_CameraSpace array. The index is as
-   *         follows:
-   *         <ul>
-   *         <li>0: Tx (degree measure left or right from the center crosshair)
-   *         <li>1: Ty (degree measure up or down from the center crosshair)
-   *         <li>2: Tz (distance from target, with each unit being 65 inches)
-   *         <li>3: Pitch (static pitch value of the Limelight as set in the web
-   *         API, in degrees)
-   *         <li>4: Yaw (static yaw value of the Limelight as set in the web API,
-   *         in degrees)
-   *         <li>5: Roll (static roll value of the Limelight as set in the web
-   *         API, in degrees)</li>
-   *         </ul>
-   */
-  public double getTargetPose_CameraSpaceArrayElement(final int index) {
-    final double[] data = LimelightHelpers.getTargetPose_CameraSpace("");
-    return data[index];
-  }
-
-  public void setPriorityTag(final int tag) {
-    LimelightHelpers.setPriorityTagID("", tag);
-  }
-
-  public boolean isTargetValid() {
-    return LimelightHelpers.getTV("");
-  }
-
   public Trigger robotPoseUpdated() {
     return robotPoseUpdatedTrigger;
   }
   
+  /**
+   * Gets latest robot pose from the chassis camera.
+   * @return latest robot pose from the chassis camera
+   */
   public Pose2d getRobotPose() {
     return robotPose;
   }
 
+  /**
+   * Gets timestamp of the latest robot pose from the chassis camera.
+   * @return timestamp of the latest robot pose from the chassis camera
+   */
   public double getRobotPoseTimestamp() { 
     return currentRobotPoseTimestampSeconds;
-  }
-
-  public double getTX() {
-    return getTargetPose_CameraSpaceArrayElement(0);
-  }
-
-  public double getTY() {
-    return getTargetPose_CameraSpaceArrayElement(1);
   }
 
   public Optional<Angle> getAzimuthToHub() {
