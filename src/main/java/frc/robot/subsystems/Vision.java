@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.LimelightHelpers;
 
 public class Vision extends SubsystemBase {
-
   private final Trigger robotPoseUpdatedTrigger = new Trigger(this::hasNewRobotPose);
 
   private Pose2d robotPose = Pose2d.kZero;
@@ -63,13 +62,19 @@ public class Vision extends SubsystemBase {
   }
 
   public Optional<Distance> getDistanceToHub() {
-    return getAzimuthToHub().map(_az -> {
-      return Meters.of(robotPose.getTranslation().getDistance(hubPos));
-    });
+    return getAzimuthToHub().map(_az -> Meters.of(robotPose.getTranslation().getDistance(hubPos)));
   }
 
   private boolean hasNewRobotPose() {
     return currentRobotPoseTimestampSeconds != lastRobotPoseTimestampSeconds;
+  }
+
+  public double getTotalCameraLatency() {
+    final var captureLatency = LimelightHelpers.getLatency_Capture("");
+    final var pipelineLatency = LimelightHelpers.getLatency_Pipeline("");
+    final var totalLatency = captureLatency + pipelineLatency;
+
+    return totalLatency;
   }
 
   @Override
