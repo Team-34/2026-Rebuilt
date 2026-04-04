@@ -103,7 +103,7 @@ public class RobotContainer {
   public RobotContainer() {
     // NamedCommands.registerCommand("Toggle Intake", intake.toggle());
     // NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
-    // NamedCommands.registerCommand("RunIntake", Commands.parallel(intake.runIn(), intake.toggle()));
+    //NamedCommands.registerCommand("RunIntake", Commands.parallel(intake.runIn(), intake.cycleDeploymentCommand()));
     NamedCommands.registerCommand("shooterAtIdle", shooter.runAtIdleCommand());
     NamedCommands.registerCommand("Run Spindexer", spindexer.spin());
     NamedCommands.registerCommand(
@@ -168,7 +168,9 @@ public class RobotContainer {
 
     joystick.a().onTrue(intake.runIn()).onFalse(intake.stop());
     joystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
-    joystick.x().onTrue(intake.toggle());
+    joystick.x().onTrue(intake.cycleDeployment());
+    // joystick.x().onTrue(intake.deployByPower(0.1)).onFalse(intake.haltDeployment());
+    // joystick.y().onTrue(intake.deployByPower(-0.2)).onFalse(intake.haltDeployment());
 
     //joystick.y().whileTrue(Commands.parallel(shooter.shootCommand(), turret.pointAtHubCommand()));
     // joystick.y().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
@@ -190,6 +192,12 @@ public class RobotContainer {
 
     //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
     //joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
+
+    vision.robotPoseUpdated().onTrue(
+      Commands.runOnce(() -> 
+        drivetrain.addVisionMeasurement(vision.getRobotPose(), vision.getRobotPoseTimestamp())
+      )
+    );
   }
     
 
@@ -209,4 +217,9 @@ public class RobotContainer {
     leds.turnOff();
     CommandScheduler.getInstance().schedule(shooter.stop(), turret.stop(), spindexer.stop());
   }
+
+  public void enable() {
+    leds.allianceColor();
+  }
 }
+
