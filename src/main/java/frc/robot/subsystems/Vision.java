@@ -32,8 +32,8 @@ public class Vision extends SubsystemBase {
 
   private Pose2d robotPose = new Pose2d();
 
-  private double lastTS = -1;
-  private double currentTS = -1;
+  private double lastTimeStampSeconds = -1;
+  private double currentTimeStampSeconds = -1;
 
   private final Game game;
 
@@ -87,7 +87,7 @@ public class Vision extends SubsystemBase {
   }
 
   public double getTimestamp() { 
-    return currentTS;
+    return currentTimeStampSeconds;
   }
 
   public double getTX() {
@@ -147,23 +147,15 @@ public class Vision extends SubsystemBase {
   }
 
   private boolean hasUpdatedPosition() {
-    currentTS = LimelightHelpers.getBotPoseEstimate_wpiBlue("").timestampSeconds;
-
-    if (currentTS == lastTS) {
-      return false;
-    }
-    else {
-      lastTS = currentTS;
-      return true;
-    }
+    return !(currentTimeStampSeconds == lastTimeStampSeconds);
   }
 
   @Override
   public void periodic() {
-    currentTS = lastTS;
+    currentTimeStampSeconds = lastTimeStampSeconds;
     var result = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
     robotPose = result.pose;
-    currentTS = result.timestampSeconds;
+    currentTimeStampSeconds = result.timestampSeconds;
 
     SmartDashboard.putString("Distance to Hub", getDistanceToHub().toString());
     // SmartDashboard.putNumber("Limelight Tx",
