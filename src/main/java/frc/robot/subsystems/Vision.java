@@ -6,6 +6,8 @@ import static edu.wpi.first.units.Units.Inches;
 import java.util.Optional;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.fasterxml.jackson.databind.util.RootNameLookup;
+
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -14,16 +16,24 @@ import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.LimelightHelpers;
 
 public class Vision extends SubsystemBase {
 
   Pigeon2 gyro = new Pigeon2(10);
 
+  private final Trigger hasPositionTrigger = new Trigger(this::hasUpdatedPosition);
+
   private final Pose2d redHubPos = new Pose2d(Inches.of(469.11), Inches.of(158.84), Rotation2d.kZero);
   // private final Pose2d blueHubPos = new Pose2d(Inches.of(469.11),
   // Inches.of(158.84), Rotation2d.kZero);
   private final Pose2d blueHubPos = new Pose2d(Inches.of(182.11), Inches.of(158.84), Rotation2d.kZero);
+
+  private Pose2d robotPose = new Pose2d();
+
+  private double lastTS = -1;
+  private double currentTS = -1;
 
   private final Game game;
 
@@ -59,13 +69,25 @@ public class Vision extends SubsystemBase {
   }
 
   // public double getDistanceToTarget() {
-  //   final int tzToInchesScalar = 65;
-  //   final int tzIndex = 2;
-  //   return getTargetPose_CameraSpaceArrayElement(tzIndex) * tzToInchesScalar;
+  // final int tzToInchesScalar = 65;
+  // final int tzIndex = 2;
+  // return getTargetPose_CameraSpaceArrayElement(tzIndex) * tzToInchesScalar;
   // }
 
   public boolean isTargetValid() {
     return LimelightHelpers.getTV("");
+  }
+
+  public Trigger hasPosition() {
+    return hasPositionTrigger;
+  }
+  
+  public Pose2d getRobotPose() {
+    return robotPose;
+  }
+
+  public double getTimestamp() { 
+    return currentTS;
   }
 
   public double getTX() {
@@ -77,22 +99,24 @@ public class Vision extends SubsystemBase {
   }
 
   // public void updatePosition() {
-  //   double yawInDegrees = gyro.getYaw().getValueAsDouble() % 360;
-  //   LimelightHelpers.SetRobotOrientation("limelight", yawInDegrees, 0, 0, 0, 0, 0);
+  // double yawInDegrees = gyro.getYaw().getValueAsDouble() % 360;
+  // LimelightHelpers.SetRobotOrientation("limelight", yawInDegrees, 0, 0, 0, 0,
+  // 0);
   // }
 
   public boolean isTargetLocked(final int tag) {
     final double TY_TOLERANCE = 0.5;
     final double TX_TOLERANCE = 0.5;
     final boolean isCorrectTag = LimelightHelpers.getFiducialID("") == tag;
-    final boolean isWithinTolerance = MathUtil.isNear(0, getTX(), TX_TOLERANCE) && MathUtil.isNear(0, getTY(), TY_TOLERANCE);
+    final boolean isWithinTolerance = MathUtil.isNear(0, getTX(), TX_TOLERANCE)
+        && MathUtil.isNear(0, getTY(), TY_TOLERANCE);
     return isCorrectTag && isWithinTolerance;
   }
 
   public Optional<Angle> getAzimuthToHub() {
     final var tags = game.getHubTagIDs();
     final var fiducials = LimelightHelpers.getRawFiducials("");
-    for(final var fiducial : fiducials) {
+    for (final var fiducial : fiducials) {
       if (tags.contains(fiducial.id)) {
         return Optional.of(Degrees.of(fiducial.txnc));
       }
@@ -103,10 +127,9 @@ public class Vision extends SubsystemBase {
   public Optional<Distance> getDistanceToHub() {
     return game.getAlliance().flatMap(alliance -> getAzimuthToHub().map(_az -> {
       SmartDashboard.putString("Alliance from distance method", alliance.toString());
-      final var botPosition = LimelightHelpers.getBotPose2d_wpiBlue("");
-      final var botXInches = botPosition.getMeasureX().in(Inches);
-      final var botYInches = botPosition.getMeasureY().in(Inches);
-      SmartDashboard.putString("Bot Pos", LimelightHelpers.getBotPose2d("").toString());
+      final var botXInches = robotPose.getX();
+      final var botYInches = robotPose.getY();
+      SmartDashboard.putString("Bot Pos", robotPose.toString());
       if (alliance == Alliance.Blue) {
         final var hubXInches = blueHubPos.getMeasureX().in(Inches);
         final var hubYInches = blueHubPos.getMeasureY().in(Inches);
@@ -123,11 +146,32 @@ public class Vision extends SubsystemBase {
     }));
   }
 
+  private boolean hasUpdatedPosition() {
+    currentTS = LimelightHelpers.getBotPoseEstimate_wpiBlue("").timestampSeconds;
+
+    if (currentTS == lastTS) {
+      return false;
+    }
+    else {
+      lastTS = currentTS;
+      return true;
+    }
+  }
+
   @Override
   public void periodic() {
+    currentTS = lastTS;
+    var result = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
+    robotPose = result.pose;
+    currentTS = result.timestampSeconds;
+
     SmartDashboard.putString("Distance to Hub", getDistanceToHub().toString());
-    // SmartDashboard.putNumber("Limelight Tx", getTargetPose_CameraSpaceArrayElement(0));
-    // SmartDashboard.putNumber("Limelight Ty", getTargetPose_CameraSpaceArrayElement(1));
+    // SmartDashboard.putNumber("Limelight Tx",
+    // getTargetPose_CameraSpaceArrayElement(0));
+    // SmartDashboard.putNumber("Limelight Ty",
+    // getTargetPose_CameraSpaceArrayElement(1));
+
+
 
     SmartDashboard.putString("bot pos - blue", LimelightHelpers.getBotPose2d_wpiBlue("").toString());
     SmartDashboard.putString("bot pos - red", LimelightHelpers.getBotPose2d_wpiRed("").toString());
