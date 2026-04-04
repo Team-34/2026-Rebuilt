@@ -101,8 +101,8 @@ public class Vision extends SubsystemBase {
     robotPose = result.pose;
     currentRobotPoseTimestampSeconds = result.timestampSeconds;
 
-    SmartDashboard.putString("Distance to Hub", getDistanceToHub().toString());
-    SmartDashboard.putString("bot pos - blue", LimelightHelpers.getBotPose2d_wpiBlue(CHASSIS_LIMELIGHT_NAME).toString());
-    SmartDashboard.putString("bot pos - red", LimelightHelpers.getBotPose2d_wpiRed(CHASSIS_LIMELIGHT_NAME).toString());
+    SmartDashboard.putString("Vision: Robot Pose", robotPose.toString());
+    SmartDashboard.putNumber("Vision: Timestamp of Robot Pose (seconds)", currentRobotPoseTimestampSeconds);
+    SmartDashboard.putString("Vision: Distance to Hub", getDistanceToHub().toString());
   }
 }
