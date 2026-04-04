@@ -21,7 +21,7 @@ public class Vision extends SubsystemBase {
 
   Pigeon2 gyro = new Pigeon2(10);
 
-  private final Trigger hasPositionTrigger = new Trigger(this::hasNewRobotPose);
+  private final Trigger robotPoseUpdatedTrigger = new Trigger(this::hasNewRobotPose);
 
   private final Pose2d redHubPos = new Pose2d(Inches.of(469.11), Inches.of(158.84), Rotation2d.kZero);
   private final Pose2d blueHubPos = new Pose2d(Inches.of(182.11), Inches.of(158.84), Rotation2d.kZero);
@@ -75,7 +75,7 @@ public class Vision extends SubsystemBase {
   }
 
   public Trigger robotPoseUpdated() {
-    return hasPositionTrigger;
+    return robotPoseUpdatedTrigger;
   }
   
   public Pose2d getRobotPose() {
