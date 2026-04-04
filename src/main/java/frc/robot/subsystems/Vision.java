@@ -6,8 +6,6 @@ import static edu.wpi.first.units.Units.Inches;
 import java.util.Optional;
 
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.fasterxml.jackson.databind.util.RootNameLookup;
-
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,14 +24,12 @@ public class Vision extends SubsystemBase {
   private final Trigger hasPositionTrigger = new Trigger(this::hasUpdatedPosition);
 
   private final Pose2d redHubPos = new Pose2d(Inches.of(469.11), Inches.of(158.84), Rotation2d.kZero);
-  // private final Pose2d blueHubPos = new Pose2d(Inches.of(469.11),
-  // Inches.of(158.84), Rotation2d.kZero);
   private final Pose2d blueHubPos = new Pose2d(Inches.of(182.11), Inches.of(158.84), Rotation2d.kZero);
 
   private Pose2d robotPose = new Pose2d();
 
-  private double lastTimeStampSeconds = -1;
-  private double currentTimeStampSeconds = -1;
+  private double lastRobotPoseTimestampSeconds = -1;
+  private double currentRobotPoseTimestampSeconds = -1;
 
   private final Game game;
 
@@ -78,7 +74,7 @@ public class Vision extends SubsystemBase {
     return LimelightHelpers.getTV("");
   }
 
-  public Trigger hasPosition() {
+  public Trigger robotPoseUpdated() {
     return hasPositionTrigger;
   }
   
@@ -86,8 +82,8 @@ public class Vision extends SubsystemBase {
     return robotPose;
   }
 
-  public double getTimestamp() { 
-    return currentTimeStampSeconds;
+  public double getRobotPoseTimestamp() { 
+    return currentRobotPoseTimestampSeconds;
   }
 
   public double getTX() {
@@ -147,15 +143,15 @@ public class Vision extends SubsystemBase {
   }
 
   private boolean hasUpdatedPosition() {
-    return !(currentTimeStampSeconds == lastTimeStampSeconds);
+    return currentRobotPoseTimestampSeconds != lastRobotPoseTimestampSeconds;
   }
 
   @Override
   public void periodic() {
-    currentTimeStampSeconds = lastTimeStampSeconds;
-    var result = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
+    lastRobotPoseTimestampSeconds = currentRobotPoseTimestampSeconds;
+    final var result = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
     robotPose = result.pose;
-    currentTimeStampSeconds = result.timestampSeconds;
+    currentRobotPoseTimestampSeconds = result.timestampSeconds;
 
     SmartDashboard.putString("Distance to Hub", getDistanceToHub().toString());
     // SmartDashboard.putNumber("Limelight Tx",

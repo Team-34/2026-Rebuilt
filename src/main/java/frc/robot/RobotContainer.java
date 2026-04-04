@@ -190,9 +190,9 @@ public class RobotContainer {
     //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
     //joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
 
-    vision.hasPosition().onTrue(
+    vision.robotPoseUpdated().onTrue(
       Commands.runOnce(() -> 
-        drivetrain.addVisionMeasurement(vision.getRobotPose(), vision.getTimestamp())
+        drivetrain.addVisionMeasurement(vision.getRobotPose(), vision.getRobotPoseTimestamp())
       )
     );
   }
