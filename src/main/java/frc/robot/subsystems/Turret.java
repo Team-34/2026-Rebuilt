@@ -24,7 +24,7 @@ public class Turret extends SubsystemBase {
   private static final Angle SWIVEL_LOWER_LIMIT = Degrees.of(-180);
   private static final Angle SWIVEL_UPPER_LIMIT = Degrees.of(180);
 
-  private final TalonFXS motor = new TalonFXS(50);
+  private final TalonFXS motor = new TalonFXS(51);
   private final PositionVoltage positionControl = new PositionVoltage(0);
   private final DigitalInput limitSwitch = new DigitalInput(9);
 
