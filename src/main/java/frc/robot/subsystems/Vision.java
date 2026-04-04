@@ -50,12 +50,12 @@ public class Vision extends SubsystemBase {
    *         </ul>
    */
   public double getTargetPose_CameraSpaceArrayElement(final int index) {
-    final double[] data = LimelightHelpers.getTargetPose_CameraSpace("limelight-turret");
+    final double[] data = LimelightHelpers.getTargetPose_CameraSpace("limelight_turret");
     return data[index];
   }
 
   public void setPriorityTag(final int tag) {
-    LimelightHelpers.setPriorityTagID("limelight-turret", tag);
+    LimelightHelpers.setPriorityTagID("limelight_turret", tag);
   }
 
   // public double getDistanceToTarget() {
@@ -65,7 +65,7 @@ public class Vision extends SubsystemBase {
   // }
 
   public boolean isTargetValid() {
-    return LimelightHelpers.getTV("limelight-turret");
+    return LimelightHelpers.getTV("limelight_turret");
   }
 
   public double getTX() {
@@ -84,14 +84,14 @@ public class Vision extends SubsystemBase {
   public boolean isTargetLocked(final int tag) {
     final double TY_TOLERANCE = 0.5;
     final double TX_TOLERANCE = 0.5;
-    final boolean isCorrectTag = LimelightHelpers.getFiducialID("limelight-turret") == tag;
+    final boolean isCorrectTag = LimelightHelpers.getFiducialID("limelight_turret") == tag;
     final boolean isWithinTolerance = MathUtil.isNear(0, getTX(), TX_TOLERANCE) && MathUtil.isNear(0, getTY(), TY_TOLERANCE);
     return isCorrectTag && isWithinTolerance;
   }
 
   public Optional<Angle> getAzimuthToHub() {
     final var tags = game.getHubTagIDs();
-    final var fiducials = LimelightHelpers.getRawFiducials("limelight-turret");
+    final var fiducials = LimelightHelpers.getRawFiducials("limelight_turret");
     for(final var fiducial : fiducials) {
       if (tags.contains(fiducial.id)) {
         return Optional.of(Degrees.of(fiducial.txnc));
@@ -103,10 +103,10 @@ public class Vision extends SubsystemBase {
   public Optional<Distance> getDistanceToHub() {
     return game.getAlliance().flatMap(alliance -> getAzimuthToHub().map(_az -> {
       SmartDashboard.putString("Alliance from distance method", alliance.toString());
-      final var botPosition = LimelightHelpers.getBotPose2d_wpiBlue("limelight-turret");
+      final var botPosition = LimelightHelpers.getBotPose2d_wpiBlue("limelight_turret");
       final var botXInches = botPosition.getMeasureX().in(Inches);
       final var botYInches = botPosition.getMeasureY().in(Inches);
-      SmartDashboard.putString("Bot Pos", LimelightHelpers.getBotPose2d("limelight-turret").toString());
+      SmartDashboard.putString("Bot Pos", LimelightHelpers.getBotPose2d("limelight_turret").toString());
       if (alliance == Alliance.Blue) {
         final var hubXInches = blueHubPos.getMeasureX().in(Inches);
         final var hubYInches = blueHubPos.getMeasureY().in(Inches);
