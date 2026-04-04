@@ -162,9 +162,6 @@ public class Vision extends SubsystemBase {
     // getTargetPose_CameraSpaceArrayElement(0));
     // SmartDashboard.putNumber("Limelight Ty",
     // getTargetPose_CameraSpaceArrayElement(1));
-
-
-
     SmartDashboard.putString("bot pos - blue", LimelightHelpers.getBotPose2d_wpiBlue("").toString());
     SmartDashboard.putString("bot pos - red", LimelightHelpers.getBotPose2d_wpiRed("").toString());
     // updatePosition();
