@@ -16,18 +16,21 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.LimelightHelpers;
 
 public class Vision extends SubsystemBase {
+  public static final String CHASSIS_LIMELIGHT_NAME = "limelight-chassis";
+  public static final String TURRET_LIMELIGHT_NAME  = "limelight-turret";
+
+  private static final Pose2d redHubPos = new Pose2d(Inches.of(469.11), Inches.of(158.84), Rotation2d.kZero);
+  private static final Pose2d blueHubPos = new Pose2d(Inches.of(182.11), Inches.of(158.84), Rotation2d.kZero);
 
   private final Trigger robotPoseUpdatedTrigger = new Trigger(this::hasNewRobotPose);
 
-  private final Pose2d redHubPos = new Pose2d(Inches.of(469.11), Inches.of(158.84), Rotation2d.kZero);
-  private final Pose2d blueHubPos = new Pose2d(Inches.of(182.11), Inches.of(158.84), Rotation2d.kZero);
+  private final Game game;
 
   private Pose2d robotPose = new Pose2d();
 
   private double lastRobotPoseTimestampSeconds = -1;
   private double currentRobotPoseTimestampSeconds = -1;
 
-  private final Game game;
 
   public Vision(final Game game) {
     this.game = game;
@@ -55,7 +58,7 @@ public class Vision extends SubsystemBase {
 
   public Optional<Angle> getAzimuthToHub() {
     final var tags = game.getHubTagIDs();
-    final var fiducials = LimelightHelpers.getRawFiducials("turret_limelight");
+    final var fiducials = LimelightHelpers.getRawFiducials(TURRET_LIMELIGHT_NAME);
     for (final var fiducial : fiducials) {
       if (tags.contains(fiducial.id)) {
         return Optional.of(Degrees.of(fiducial.txnc));
@@ -94,12 +97,12 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     lastRobotPoseTimestampSeconds = currentRobotPoseTimestampSeconds;
 
-    final var result = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
+    final var result = LimelightHelpers.getBotPoseEstimate_wpiBlue(CHASSIS_LIMELIGHT_NAME);
     robotPose = result.pose;
     currentRobotPoseTimestampSeconds = result.timestampSeconds;
 
     SmartDashboard.putString("Distance to Hub", getDistanceToHub().toString());
-    SmartDashboard.putString("bot pos - blue", LimelightHelpers.getBotPose2d_wpiBlue("").toString());
-    SmartDashboard.putString("bot pos - red", LimelightHelpers.getBotPose2d_wpiRed("").toString());
+    SmartDashboard.putString("bot pos - blue", LimelightHelpers.getBotPose2d_wpiBlue(CHASSIS_LIMELIGHT_NAME).toString());
+    SmartDashboard.putString("bot pos - red", LimelightHelpers.getBotPose2d_wpiRed(CHASSIS_LIMELIGHT_NAME).toString());
   }
 }
