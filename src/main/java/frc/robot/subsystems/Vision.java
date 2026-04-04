@@ -71,8 +71,7 @@ public class Vision extends SubsystemBase {
 
   public Optional<Distance> getDistanceToHub() {
     return getAzimuthToHub().map(_az -> {
-      final var botPosition = LimelightHelpers.getBotPose2d_wpiBlue("");
-      return Meters.of(botPosition.getTranslation().getDistance(hubPos));
+      return Meters.of(robotPose.getTranslation().getDistance(hubPos));
     });
   }
 
