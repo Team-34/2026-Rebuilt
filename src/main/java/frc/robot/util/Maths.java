@@ -43,4 +43,22 @@ public final class Maths {
   public static <T extends Comparable<? super T>> T clamp(final T value, final T low, final T high) {
     return min(max(value, low), high);
   }
+
+  /**
+   * Normalizes an angle for the turret to be within the range [-180, 180] degrees.
+   *
+   * @param angle
+   * @return the normalized angle for the turret
+   */
+  public static double normalizeAngle(double angle) {
+      if (angle <= -180) {
+        return  angle += 360;
+      }
+      if (angle >= 180) {
+        return  angle -= 360;
+      }
+      else {
+        return angle;
+      }
+  }
 }

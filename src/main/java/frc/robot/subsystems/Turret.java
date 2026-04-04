@@ -195,15 +195,8 @@ public class Turret extends SubsystemBase {
    */
   public Angle wrapAround() {
     final Angle turretAngle = motorAngleToTurretAngle(motor.getPosition().getValue());
-    final Angle upperLimit = Degrees.of(180);
-    final Angle lowerLimit = Degrees.of(-180);
-    if (turretAngle.gte(upperLimit)) {
-      return Degrees.of((turretAngle.magnitude() % 180) + -180);
-    }
-    if (turretAngle.lte(lowerLimit)) {
-      return Degrees.of((turretAngle.magnitude() % 180) - 180);
-    }
-    return Degrees.zero();
+    return Degrees.of(Maths.normalizeAngle(turretAngle.in(Degrees)));
+
   }
 
   /**
