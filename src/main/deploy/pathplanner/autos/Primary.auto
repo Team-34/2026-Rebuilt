@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ShootPreLoad-LoadDepot-Shoot"
+            "pathName": "Primary"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stop All"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "Enid - Autos",
+  "folder": "Rocket City - Autos",
   "choreoAuto": false
 }
