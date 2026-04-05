@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Maths;
 
 public class Intake extends SubsystemBase {
+  private static final boolean DEBUG = false;
 
   enum DeploymentState {
     DEPLOYED(Rotations.of(2.65)), 
@@ -97,7 +98,10 @@ public class Intake extends SubsystemBase {
   public Command deployByPower(final double power) {
     return runOnce(() -> {
       deployMotor.setControl(deployMotorControl.withOutput(power));
-      SmartDashboard.putNumber("intake deploy motor input", power);
+
+      if (DEBUG) {
+        SmartDashboard.putNumber("intake deploy motor input", power);
+      }
     });
   }
 
@@ -111,23 +115,22 @@ public class Intake extends SubsystemBase {
     rollerMotor.stopMotor();
 
     final var safeRotations = Maths.clamp(rotations, DEPLOY_MIN_ROTATIONS, DEPLOY_MAX_ROTATIONS);
-
-    SmartDashboard.putString("intake deploy commanded rotations", rotations.toLongString());
-    SmartDashboard.putString("intake deploy commanded SAFE rotations", safeRotations.toLongString());
-
     deployMotor.setControl(deployPositionControl.withPosition(safeRotations));
+
+    if (DEBUG) {
+      SmartDashboard.putString("intake deploy commanded rotations", rotations.toLongString());
+      SmartDashboard.putString("intake deploy commanded SAFE rotations", safeRotations.toLongString());
+    }
   }
 
   @Override
   public void periodic() {
-    // var pos =
-    // MathUtil.clamp(deployPID.calculate(intakeEncoder.getPosition().getValue(),
-    // intakeSetPoint), -1.0, 1.0);
-    // this.deployMotor.set(TalonFXSConfiguration.PercentOutput, pos);
-    SmartDashboard.putString("intake deployment state", deploymentState.toString());
-    SmartDashboard.putString("intake deploy encoder position", deployEncoder.getPosition().getValue().toLongString());
-    SmartDashboard.putNumber("intake deploy motor output", deployMotor.get());
-    SmartDashboard.putString("intake deploy motor position", deployMotor.getPosition().getValue().toLongString());
-    SmartDashboard.putString("intake deploy motor voltage", deployMotor.getMotorVoltage().getValue().toLongString());
+    if (DEBUG) {
+      SmartDashboard.putString("intake deployment state", deploymentState.toString());
+      SmartDashboard.putString("intake deploy encoder position", deployEncoder.getPosition().getValue().toLongString());
+      SmartDashboard.putNumber("intake deploy motor output", deployMotor.get());
+      SmartDashboard.putString("intake deploy motor position", deployMotor.getPosition().getValue().toLongString());
+      SmartDashboard.putString("intake deploy motor voltage", deployMotor.getMotorVoltage().getValue().toLongString());
+    }
   }
 }
