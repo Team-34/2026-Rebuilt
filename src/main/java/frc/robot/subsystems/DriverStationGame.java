@@ -1,17 +1,22 @@
 package frc.robot.subsystems;
 
+import java.util.List;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
  * Game information, including cached information given by the Driver Station.
  */
 public class DriverStationGame extends SubsystemBase implements Game {
+  private static final boolean DEBUG = false;
+
   private Optional<Alliance> alliance = Optional.empty();
   private Optional<Alliance> autoWinner = Optional.empty();
+  private List<Integer> hubTagIDs = List.of();
 
   /**
    * The alliance given by the Driver Station.
@@ -25,6 +30,16 @@ public class DriverStationGame extends SubsystemBase implements Game {
       alliance = DriverStation.getAlliance();
     }
     return alliance;
+  }
+
+  @Override
+  public List<Integer> getHubTagIDs() {
+    if (hubTagIDs.isEmpty()) {
+      alliance.ifPresent(a -> {
+        hubTagIDs = a == Alliance.Blue ? blueHubTagIDs : redHubTagIDs;
+      });
+    }
+    return hubTagIDs;
   }
 
   /**
@@ -68,5 +83,14 @@ public class DriverStationGame extends SubsystemBase implements Game {
 
   private double getTime() {
     return DriverStation.getMatchTime();
+  }
+
+  @Override
+  public void periodic() {
+    if (DEBUG) {
+      SmartDashboard.putString("Game: My Alliance", alliance.toString());
+      SmartDashboard.putString("Game: Auto Winner", autoWinner.toString());
+      SmartDashboard.putString("Game: Hub IDs", hubTagIDs.toString());
+    }
   }
 }
