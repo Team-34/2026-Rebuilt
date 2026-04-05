@@ -19,6 +19,8 @@ import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class Turret extends SubsystemBase {
+  private static final boolean DEBUG = false;
+
   private static final double GEAR_RATIO = 99.0 / 18.0; // turret : motor
 
   private static final Angle SWIVEL_LOWER_LIMIT = Degrees.of(-180);
@@ -53,6 +55,12 @@ public class Turret extends SubsystemBase {
         final var newTurretAngle = Degrees.of(Maths.normalizeAngle(turretAngle.minus(az).in(Degrees)));
         final var newMotorAngle = turretAngleToMotorAngle(newTurretAngle);
         motor.setControl(positionControl.withPosition(newMotorAngle));
+
+        if (DEBUG) {
+          SmartDashboard.putString("Turret: Current Turret Angle", turretAngle.toLongString());
+          SmartDashboard.putString("Turret: New Turret Angle", newTurretAngle.toLongString());
+          SmartDashboard.putString("Turret: New Motor Angle", newMotorAngle.toLongString());
+        }
       }, motor::stopMotor);
     }, motor::stopMotor);
   }
@@ -147,10 +155,12 @@ public class Turret extends SubsystemBase {
       final var atUpperLimit = turretAngle.gte(SWIVEL_UPPER_LIMIT);
       final var atLowerLimit = turretAngle.lte(SWIVEL_LOWER_LIMIT);
 
-      SmartDashboard.putString("Motor Voltage", motor.getMotorVoltage().getValue().toShortString());
-      SmartDashboard.putString("Turret Position", turretAngle.toLongString());
-      SmartDashboard.putBoolean("At upper limit?", atUpperLimit);
-      SmartDashboard.putBoolean("At lower limit?", atLowerLimit);
+      if (DEBUG) {
+        SmartDashboard.putString("Turret: Motor Voltage", motor.getMotorVoltage().getValue().toShortString());
+        SmartDashboard.putString("Turret: Position", turretAngle.toLongString());
+        SmartDashboard.putBoolean("Turret: At upper limit?", atUpperLimit);
+        SmartDashboard.putBoolean("Turret: At lower limit?", atLowerLimit);
+      }
 
       return (atUpperLimit && motorVoltage.gt(Volts.zero())) ||
              (atLowerLimit && motorVoltage.lt(Volts.zero()));
@@ -280,14 +290,12 @@ public class Turret extends SubsystemBase {
       resetEncoder();
     }
 
-    // pointAtFiducial(1);
-
-    // Minion motor returns the encoder in full rotations (ex. 1 unit is 1 full
-    // rotation)
-    SmartDashboard.putNumber("Turret Motor Voltage", motor.getMotorVoltage().getValueAsDouble());
-    SmartDashboard.putNumber("Turret Vel", motor.getVelocity().getValueAsDouble());
-    SmartDashboard.putNumber("Encoder", motor.getPosition().getValueAsDouble());
-    SmartDashboard.putNumber("Turret Mechanism Pos", motorAngleToTurretAngle(motor.getPosition().getValue()).in(Degrees));
-    SmartDashboard.putBoolean("Is at zero? ", isAtZeroPosition());
+    if (DEBUG) {
+      SmartDashboard.putString("Turret: Motor Voltage", motor.getMotorVoltage().getValue().toLongString());
+      SmartDashboard.putString("Turret: Velocity", motor.getVelocity().getValue().toLongString());
+      SmartDashboard.putString("Turret: Encoder", motor.getPosition().getValue().toLongString());
+      SmartDashboard.putString("Turret: Position", motorAngleToTurretAngle(motor.getPosition().getValue()).toLongString());
+      SmartDashboard.putBoolean("Turret: Is at zero?", isAtZeroPosition());
+    }
   }
 }
