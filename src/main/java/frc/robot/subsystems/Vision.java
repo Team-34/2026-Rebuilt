@@ -16,6 +16,8 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.LimelightHelpers;
 
 public class Vision extends SubsystemBase {
+  private static final boolean DEBUG = false;
+
   public static final String CHASSIS_LIMELIGHT_NAME = "limelight-chassis";
   public static final String TURRET_LIMELIGHT_NAME  = "limelight-turret";
 
@@ -69,10 +71,14 @@ public class Vision extends SubsystemBase {
 
   public Optional<Distance> getDistanceToHub() {
     return game.getAlliance().flatMap(alliance -> getAzimuthToHub().map(_az -> {
-      SmartDashboard.putString("Alliance from distance method", alliance.toString());
       final var botXInches = robotPose.getX();
       final var botYInches = robotPose.getY();
-      SmartDashboard.putString("Bot Pos", robotPose.toString());
+
+      if (DEBUG) {
+        SmartDashboard.putString("Alliance from distance method", alliance.toString());
+        SmartDashboard.putString("Bot Pos", robotPose.toString());
+      }
+
       if (alliance == Alliance.Blue) {
         final var hubXInches = blueHubPos.getMeasureX().in(Inches);
         final var hubYInches = blueHubPos.getMeasureY().in(Inches);
@@ -101,8 +107,10 @@ public class Vision extends SubsystemBase {
     robotPose = result.pose;
     currentRobotPoseTimestampSeconds = result.timestampSeconds;
 
-    SmartDashboard.putString("Vision: Robot Pose", robotPose.toString());
-    SmartDashboard.putNumber("Vision: Timestamp of Robot Pose (seconds)", currentRobotPoseTimestampSeconds);
-    SmartDashboard.putString("Vision: Distance to Hub", getDistanceToHub().toString());
+    if (DEBUG) {
+      SmartDashboard.putString("Vision: Robot Pose", robotPose.toString());
+      SmartDashboard.putNumber("Vision: Timestamp of Robot Pose (seconds)", currentRobotPoseTimestampSeconds);
+      SmartDashboard.putString("Vision: Distance to Hub", getDistanceToHub().toString());
+    }
   }
 }
