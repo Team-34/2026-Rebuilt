@@ -276,11 +276,6 @@ public class Shooter extends SubsystemBase {
     }
   }
 
-  @Override
-  public void simulationPeriodic() {
-    // This method will be called once per scheduler run during simulation
-  }
-
   private void runFiringMotor(final double percent) {
     this.masterFiringMotor.setControl(firingMotorControl.withOutput(percent));
   }
