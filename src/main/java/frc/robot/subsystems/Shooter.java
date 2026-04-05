@@ -161,15 +161,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command setHoodMotorPercent(final double speed) {
-    return runOnce(() -> {
-      moveHoodMotorPercent(speed);
-    });
+    return runOnce(() -> moveHoodMotorPercent(speed));
   }
 
   public Command runFiringMotorByRPSCommand(final AngularVelocity rps) {
-    return runOnce(() -> {
-      runFiringMotorByRPS(rps);
-    });
+    return runOnce(() -> runFiringMotorByRPS(rps));
   }
 
   public static double distanceToFiringSpeed(final Distance distance) {
