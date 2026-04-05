@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
+import static edu.wpi.first.units.Units.Rotations;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Volts;
 
@@ -64,8 +65,6 @@ public class Shooter extends SubsystemBase {
   private final Trigger hoodAtHome = new Trigger(this::isHoodAtHome);
   private final PIDController hoodPID = new PIDController(2.5, 0.0, 0.0); // PID for hood
 
-  private double hoodSetPoint = 0.0; // setpoint for hood position in rotations
-
   private final Vision vision;
 
   private final VelocityVoltage velocityControl = new VelocityVoltage(0).withSlot(0);
@@ -88,9 +87,7 @@ public class Shooter extends SubsystemBase {
     hoodMotor.configRemoteFeedbackFilter(hoodEncoder.getDeviceID(), RemoteSensorSource.CANCoder, 0, 10);
     hoodMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
 
-    hoodSetPoint = hoodEncoder.getPosition().getValueAsDouble();
-
-    hoodPID.setSetpoint(hoodSetPoint);
+    hoodPID.setSetpoint(hoodEncoder.getPosition().getValueAsDouble());
 
     this.vision = vision;
 
@@ -244,18 +241,11 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    var pos =
-      MathUtil.clamp(
-        hoodPID.calculate(
-          hoodEncoder.getPosition().getValueAsDouble(),
-          hoodSetPoint),
-        -1.0,
-        1.0);
-    this.hoodMotor.set(TalonSRXControlMode.PercentOutput, pos);
-
-    if (isHoodAtHome()) {
-      zeroHoodEncoder();
-    }
+    var percentOutput = MathUtil.clamp(
+      hoodPID.calculate(hoodEncoder.getPosition().getValue().in(Rotations)),
+      -1.0,
+      1.0);
+    this.hoodMotor.set(TalonSRXControlMode.PercentOutput, percentOutput);
 
     if (DEBUG) {
       SmartDashboard.putNumber("Shooter: Speed %", masterFiringMotor.getDutyCycle().getValueAsDouble() * 100);
@@ -267,7 +257,7 @@ public class Shooter extends SubsystemBase {
       // SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
       // SmartDashboard.putBoolean("limit switch: ", hoodLimitSwitch.get());
 
-      SmartDashboard.putNumber("Shooter: Hood Motor Output", pos);
+      SmartDashboard.putNumber("Shooter: Hood Motor Output", percentOutput);
     }
   }
 
@@ -280,7 +270,7 @@ public class Shooter extends SubsystemBase {
   }
 
   private void moveHoodMotorRotations(final double rotations) {
-    this.hoodSetPoint = rotations;
+    this.hoodPID.setSetpoint(rotations);
   }
 
   private void moveHoodMotorPercent(final double speed) {
@@ -288,8 +278,8 @@ public class Shooter extends SubsystemBase {
   }
 
   private void zeroHoodEncoder() {
-    hoodEncoder.setPosition(0.0);
-    this.hoodSetPoint = 0.0;
+    this.hoodEncoder.setPosition(0.0);
+    this.hoodPID.setSetpoint(0.0);
   }
 
   private void runAtIdle() {
