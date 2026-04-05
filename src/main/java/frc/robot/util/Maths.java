@@ -1,5 +1,9 @@
 package frc.robot.util;
 
+import static edu.wpi.first.units.Units.Degrees;
+
+import edu.wpi.first.units.measure.Angle;
+
 /**
  * A collection supplemental mathematical functions.
  */
@@ -45,20 +49,28 @@ public final class Maths {
   }
 
   /**
-   * Normalizes an angle for the turret to be within the range [-180, 180] degrees.
+   * Normalizes an angle to the range [-180°, 180°].
    *
-   * @param angle
-   * @return the normalized angle for the turret
+   * @param degrees Angle to normalize
+   * @return angle normalized to the range [-180°, 180°]
    */
-  public static double normalizeAngle(double angle) {
-      if (angle <= -180) {
-        return  angle += 360;
-      }
-      if (angle >= 180) {
-        return  angle -= 360;
-      }
-      else {
-        return angle;
-      }
+  public static double normalizeAngleNeg180To180(double degrees) {
+    if (degrees < -180) {
+      return  degrees += 360;
+    } else if (degrees > 180) {
+      return  degrees -= 360;
+    } else {
+      return degrees;
+    }
+  }
+
+  /**
+   * Normalizes an angle to the range [-180°, 180°].
+   *
+   * @param angle Angle to normalize
+   * @return angle normalized to the range [-180°, 180°]
+   */
+  public static Angle normalizeNeg180To180(final Angle angle) {
+    return Degrees.of(normalizeAngleNeg180To180(angle.in(Degrees)));
   }
 }
