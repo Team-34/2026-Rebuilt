@@ -102,7 +102,6 @@ public class Shooter extends SubsystemBase {
    *
    * @returns The command that switches the speed to the next in the cycle.
    */
-
   public Command cycleSpeedCommand() {
     return runOnce(() -> {
       this.speed = switch (this.speed) {
