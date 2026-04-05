@@ -35,6 +35,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class Shooter extends SubsystemBase {
+  private static final boolean DEBUG = false;
+
   enum Speed {
     STOP(0.0), HALF(0.5), FULL(0.85); // enum for flywheel speeds
 
@@ -195,10 +197,13 @@ public class Shooter extends SubsystemBase {
       }
 
       cachedHubDistance.ifPresentOrElse(distance -> {
-        SmartDashboard.putString("Distance to Hub", distance.toString());
         final var speed = distanceToFiringSpeed(distance);
-        SmartDashboard.putNumber("Calculated Shooter Speed", speed);
         runFiringMotor(speed);
+
+        if (DEBUG) {
+          SmartDashboard.putString("Shooter: Distance to Hub", distance.toLongString());
+          SmartDashboard.putNumber("Shooter: Calculated Shooter Speed", speed);
+        }
       }, this::runAtIdle);
     }, () -> {
       cachedHubDistance = Optional.empty();
@@ -214,10 +219,13 @@ public class Shooter extends SubsystemBase {
       }
 
       cachedHubDistance.ifPresentOrElse(distance -> {
-        SmartDashboard.putString("Distance to Hub ", distance.toString());
         final AngularVelocity rps = distanceToRPS(distance);
-        SmartDashboard.putString("Calculated Shooter RPS", rps.toString());
         runFiringMotorByRPS(rps);
+
+        if (DEBUG) {
+          SmartDashboard.putString("Shooter: Distance to Hub ", distance.toString());
+          SmartDashboard.putString("Shooter: Calculated Shooter RPS", rps.toString());
+        }
       }, this::runAtIdle);
     }, () -> {
       cachedHubDistance = Optional.empty();
@@ -226,9 +234,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command stop() {
-    return runOnce(() -> {
-      masterFiringMotor.stopMotor();
-    });
+    return runOnce(masterFiringMotor::stopMotor);
   }
 
   /**
@@ -243,23 +249,30 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Shooter Speed %", masterFiringMotor.getDutyCycle().getValueAsDouble() * 100);
-    SmartDashboard.putString("Shooter Velocity", masterFiringMotor.getVelocity().getValue().toLongString());
-    // SmartDashboard.putNumber("external encoder units",
-    // hoodEncoder.getPosition().getValueAsDouble());
-    // SmartDashboard.putNumber("Hood Motor pos: ",
-    // hoodMotor.getSelectedSensorPosition());
-    // SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
-    // SmartDashboard.putBoolean("limit switch: ", hoodLimitSwitch.get());
-
     var pos =
-    MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValueAsDouble(),
-    hoodSetPoint), -1.0, 1.0);
+      MathUtil.clamp(
+        hoodPID.calculate(
+          hoodEncoder.getPosition().getValueAsDouble(),
+          hoodSetPoint),
+        -1.0,
+        1.0);
     this.hoodMotor.set(TalonSRXControlMode.PercentOutput, pos);
-    SmartDashboard.putNumber("Hood Motor Output: ", pos);
 
     if (isHoodAtHome()) {
-    zeroHoodEncoder();
+      zeroHoodEncoder();
+    }
+
+    if (DEBUG) {
+      SmartDashboard.putNumber("Shooter: Speed %", masterFiringMotor.getDutyCycle().getValueAsDouble() * 100);
+      SmartDashboard.putString("Shooter: Velocity", masterFiringMotor.getVelocity().getValue().toLongString());
+      // SmartDashboard.putNumber("external encoder units",
+      // hoodEncoder.getPosition().getValueAsDouble());
+      // SmartDashboard.putNumber("Hood Motor pos: ",
+      // hoodMotor.getSelectedSensorPosition());
+      // SmartDashboard.putNumber("Hood Motor Velocity: ", hoodPID.getSetpoint());
+      // SmartDashboard.putBoolean("limit switch: ", hoodLimitSwitch.get());
+
+      SmartDashboard.putNumber("Shooter: Hood Motor Output", pos);
     }
   }
 
