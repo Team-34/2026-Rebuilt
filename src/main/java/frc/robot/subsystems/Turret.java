@@ -23,8 +23,8 @@ public class Turret extends SubsystemBase {
 
   private static final double GEAR_RATIO = 99.0 / 18.0; // turret : motor
 
-  private static final Angle SWIVEL_LOWER_LIMIT = Degrees.of(-180);
-  private static final Angle SWIVEL_UPPER_LIMIT = Degrees.of(180);
+  private static final Angle SWIVEL_LOWER_LIMIT = Degrees.of(-190);
+  private static final Angle SWIVEL_UPPER_LIMIT = Degrees.of(50);
 
   private final TalonFXS motor = new TalonFXS(51);
   private final PositionVoltage positionControl = new PositionVoltage(0);
@@ -52,7 +52,7 @@ public class Turret extends SubsystemBase {
     return runEnd(() -> {
       vision.getAzimuthToHub().ifPresentOrElse(az -> {
         final var turretAngle = motorAngleToTurretAngle(motor.getPosition().getValue());
-        final var newTurretAngle = Maths.normalizeNeg180To180(turretAngle.minus(az));
+        final var newTurretAngle = Maths.clamp(Maths.normalizeNeg180To180(turretAngle.minus(az)), SWIVEL_LOWER_LIMIT, SWIVEL_UPPER_LIMIT);
         final var newMotorAngle = turretAngleToMotorAngle(newTurretAngle);
         motor.setControl(positionControl.withPosition(newMotorAngle));
 
