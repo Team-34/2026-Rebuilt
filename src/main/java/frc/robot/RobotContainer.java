@@ -90,11 +90,11 @@ public class RobotContainer {
   private final SwerveRequest.SwerveDriveBrake shieldwall = new SwerveRequest.SwerveDriveBrake();
   private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     
-
   private final Telemetry logger = new Telemetry(MaxSpeed);
   public final LimelightHelpers limelightHelpers = new LimelightHelpers();
   private final CommandXboxController PrimaryDriverjoystick = new CommandXboxController(0);
   private final CommandXboxController copilotDriverjoystick = new CommandXboxController(1);
+  private final SendableChooser<Boolean> controllerChooser = new SendableChooser();
   private final SendableChooser<Command> autoChooser;
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   /* Path follower */
@@ -117,7 +117,10 @@ public class RobotContainer {
     NamedCommands.registerCommand("Stop All", Commands.parallel(shooter.stop(), spindexer.stop(), turret.stop()));
     // NamedCommands.registerCommand("Aim At A.T", turret.pointAtHubCommand(0));
     // NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)));
-
+    controllerChooser.addOption("Split Controls", true);
+    controllerChooser.addOption("Single Controls", false);
+    SmartDashboard.putData(controllerChooser);
+    
     this.configureBindings();
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
@@ -163,38 +166,35 @@ public class RobotContainer {
 
     // ==== OUR SUBSYSTEM BINDINGS ====
 
-    // joystick.y().onTrue(climber.toggleCommand());
-    // joystick.povLeft().whileTrue(climber.extendCommand());
-    // joystick.povRight().whileTrue(climber.retractCommand());
-
-    PrimaryDriverjoystick.a().onTrue(intake.runIn()).onFalse(intake.stop());
-    PrimaryDriverjoystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
-    PrimaryDriverjoystick.x().onTrue(intake.toggle());
-
-    //joystick.y().whileTrue(Commands.parallel(shooter.shootCommand(), turret.pointAtHubCommand()));
-    // joystick.y().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
-    //joystick.y().onTrue(shooter.runFiringMotorByRPSCommand(RevolutionsPerSecond.of(47)));
-    PrimaryDriverjoystick.y().whileTrue(Commands.parallel(shooter.moveAndShootCommand(), turret.pointAtHubCommand()));
-
-    // PrimaryDriverjoystick.povUp().onTrue(shooter.increaseByRPSCommand()).onFalse(shooter.stop());
-    // PrimaryDriverjoystick.povDown().onTrue(shooter.decreaseByRPSCommand()).onFalse(shooter.stop());
-
-    PrimaryDriverjoystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
-    PrimaryDriverjoystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
-    
-    PrimaryDriverjoystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.1)).onFalse(turret.stop());
-    PrimaryDriverjoystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.1)).onFalse(turret.stop());
-    
-    
-    PrimaryDriverjoystick.povRight().onTrue(turret.swivelToCommand(Degree.of(90))); 
-    // joystick.povLeft().onTrue(turret.findZeroCommand(0.1));
-
-    //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
-    //joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
-
-    copilotDriverjoystick.povUp().onTrue(fireControl.trimShooterSpeedCommand(0.1));
-    copilotDriverjoystick.povDown().onTrue(fireControl.trimShooterSpeedCommand(-0.1));
-    copilotDriverjoystick.povLeft().onTrue(fireControl.resetTrimCommand());
+    if (controllerChooser.equals(true)) {
+      PrimaryDriverjoystick.a().onTrue(intake.runIn()).onFalse(intake.stop());
+      PrimaryDriverjoystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
+      PrimaryDriverjoystick.x().onTrue(intake.toggle());
+  
+      copilotDriverjoystick.y().whileTrue(Commands.parallel(shooter.moveAndShootCommand(), turret.pointAtHubCommand()));
+      copilotDriverjoystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
+      copilotDriverjoystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+      copilotDriverjoystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.1)).onFalse(turret.stop());
+      copilotDriverjoystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.1)).onFalse(turret.stop());
+      copilotDriverjoystick.povRight().onTrue(turret.swivelToCommand(Degree.of(90))); 
+      copilotDriverjoystick.povUp().onTrue(fireControl.trimShooterSpeedCommand(0.1));
+      copilotDriverjoystick.povDown().onTrue(fireControl.trimShooterSpeedCommand(-0.1));
+      copilotDriverjoystick.povLeft().onTrue(fireControl.resetTrimCommand());
+    } else {
+      PrimaryDriverjoystick.a().onTrue(intake.runIn()).onFalse(intake.stop());
+      PrimaryDriverjoystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
+      PrimaryDriverjoystick.x().onTrue(intake.toggle());
+  
+      PrimaryDriverjoystick.y().whileTrue(Commands.parallel(shooter.moveAndShootCommand(), turret.pointAtHubCommand()));
+      PrimaryDriverjoystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
+      PrimaryDriverjoystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+      PrimaryDriverjoystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.1)).onFalse(turret.stop());
+      PrimaryDriverjoystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.1)).onFalse(turret.stop());
+      PrimaryDriverjoystick.povRight().onTrue(turret.swivelToCommand(Degree.of(90))); 
+      PrimaryDriverjoystick.povUp().onTrue(fireControl.trimShooterSpeedCommand(0.1));
+      PrimaryDriverjoystick.povDown().onTrue(fireControl.trimShooterSpeedCommand(-0.1));
+      PrimaryDriverjoystick.povLeft().onTrue(fireControl.resetTrimCommand());
+    }
   }
     
 
