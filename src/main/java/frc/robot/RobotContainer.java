@@ -94,9 +94,11 @@ public class RobotContainer {
   public final LimelightHelpers limelightHelpers = new LimelightHelpers();
   private final CommandXboxController PrimaryDriverjoystick = new CommandXboxController(0);
   private final CommandXboxController copilotDriverjoystick = new CommandXboxController(1);
-  private final SendableChooser<Boolean> controllerChooser = new SendableChooser();
   private final SendableChooser<Command> autoChooser;
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+  
+  private Boolean splitControls = false;
+
   /* Path follower */
   // private final SendableChooser<Command> autoChooser;
   // @formatter:on
@@ -117,9 +119,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Stop All", Commands.parallel(shooter.stop(), spindexer.stop(), turret.stop()));
     // NamedCommands.registerCommand("Aim At A.T", turret.pointAtHubCommand(0));
     // NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)));
-    controllerChooser.addOption("Split Controls", true);
-    controllerChooser.addOption("Single Controls", false);
-    SmartDashboard.putData(controllerChooser);
+   
+    SmartDashboard.putBoolean("Are Controls Split?", splitControls);
     
     this.configureBindings();
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -166,7 +167,7 @@ public class RobotContainer {
 
     // ==== OUR SUBSYSTEM BINDINGS ====
 
-    if (controllerChooser.equals(true)) {
+    if (splitControls) {
       PrimaryDriverjoystick.a().onTrue(intake.runIn()).onFalse(intake.stop());
       PrimaryDriverjoystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
       PrimaryDriverjoystick.x().onTrue(intake.toggle());
