@@ -1,12 +1,7 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Inches;
-
 import java.util.Optional;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,11 +16,6 @@ public class DriverStationGame extends SubsystemBase implements Game {
   private Optional<Alliance> alliance = Optional.empty();
   private Optional<Alliance> autoWinner = Optional.empty();
   private Optional<Hub> hub = Optional.empty();
-
-  private final Pose2d redHubPos = new Pose2d(Inches.of(469.11), Inches.of(158.84), Rotation2d.kZero);
-  private final Pose2d blueHubPos = new Pose2d(Inches.of(182.11), Inches.of(158.84), Rotation2d.kZero);
-
-  public static record Hub(Translation2d position, Translation2d forward) {}
 
   /**
    * The alliance given by the Driver Station.
@@ -67,34 +57,6 @@ public class DriverStationGame extends SubsystemBase implements Game {
     }
 
     return this.autoWinner;
-  }
-
-  public Translation2d getHubPosition() {
-    return getAlliance().map(alliance -> {
-      if (alliance == Alliance.Blue) {
-        return blueHubPos.getTranslation();
-      } else {
-        return redHubPos.getTranslation();
-      }
-    }).orElse(Translation2d.kZero);
-  }
-
-  public Translation2d getHubForward() {
-    return getAlliance().map(alliance -> {
-      if (alliance == Alliance.Blue) {
-        return new Translation2d(1.0, 0.0);
-      } else {
-        return new Translation2d(-1.0, 0.0);
-      }
-    }).orElse(Translation2d.kZero);
-  }
-
-  public Pose2d getRedHubPos() {
-    return redHubPos;
-  }
-
-  public Pose2d getBlueHubPos() {
-    return blueHubPos;
   }
 
   /**

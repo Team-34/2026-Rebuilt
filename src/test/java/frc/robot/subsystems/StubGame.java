@@ -2,8 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.Optional;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 public class StubGame implements Game {
@@ -39,25 +37,5 @@ public class StubGame implements Game {
   public StubGame withShift(final Shift shift) {
     this.shift = Optional.of(shift);
     return this;
-  }
-
-  @Override
-  public Pose2d getRedHubPos() {
-    throw new UnsupportedOperationException("Unimplemented method 'getRedHubPos'");
-  }
-
-  @Override
-  public Pose2d getBlueHubPos() {
-    throw new UnsupportedOperationException("Unimplemented method 'getBlueHubPos'");
-  }
-
-  @Override
-  public Translation2d getHubPosition() {
-    throw new UnsupportedOperationException("Unimplemented method 'getHubPosition'");
-  }
-
-  @Override
-  public Translation2d getHubForward() {
-    throw new UnsupportedOperationException("Unimplemented method 'getHubForward'");
   }
 }

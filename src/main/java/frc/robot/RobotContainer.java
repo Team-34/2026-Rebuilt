@@ -50,10 +50,10 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Spindexer spindexer = new Spindexer();
   private final Vision vision = new Vision(game);
-  private final FireControl fireControl = new FireControl(vision, game);
+  private final FireControl fireControl;
   private final Turret turret = new Turret(game, vision);
   private final LEDs leds = new LEDs(game);
-  private final Shooter shooter = new Shooter(vision, fireControl);
+  private final Shooter shooter;
 
   private final DriveCoefficient driveCoefficient = DriveCoefficient.FULL;
 
@@ -92,7 +92,6 @@ public class RobotContainer {
     
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
-  public final LimelightHelpers limelightHelpers = new LimelightHelpers();
   private final CommandXboxController joystick = new CommandXboxController(0);
   private final SendableChooser<Command> autoChooser;
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -101,6 +100,9 @@ public class RobotContainer {
   // @formatter:on
 
   public RobotContainer() {
+    this.fireControl = new FireControl(drivetrain, game, vision);
+    this.shooter = new Shooter(vision, fireControl);
+
     // NamedCommands.registerCommand("Toggle Intake", intake.toggle());
     // NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
     //NamedCommands.registerCommand("RunIntake", Commands.parallel(intake.runIn(), intake.cycleDeploymentCommand()));
@@ -193,13 +195,13 @@ public class RobotContainer {
     //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
     //joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
 
-    // vision.robotPoseUpdated().onTrue(
-    //   Commands.runOnce(() -> {
-    //     vision.getRobotPose().ifPresent(pose -> {
-    //       drivetrain.addVisionMeasurement(pose, vision.getRobotPoseTimestamp());
-    //     });
-    //   })
-    // );
+    vision.robotPoseUpdated().onTrue(
+      Commands.runOnce(() -> {
+        vision.getRobotPose().ifPresent(pose -> {
+          drivetrain.addVisionMeasurement(pose, vision.getRobotPoseTimestamp());
+        });
+      })
+    );
   }
     
 

@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.Inches;
 import java.util.List;
 import java.util.Optional;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
@@ -13,7 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
  * Game information.
  */
 public interface Game {
-  public static record Hub(Translation2d position, Translation2d forward, List<Integer> tagIDs) {
+  public static record Hub(Translation2d center, Translation2d forward, List<Integer> tagIDs) {
     public static final Hub blue = new Hub(
         new Translation2d(Inches.of(182.11), Inches.of(158.84)),
         new Translation2d(1.0, 0.0),
@@ -46,14 +45,6 @@ public interface Game {
    * @return The current shift, or empty if not in teleop period.
    */
   public Optional<Shift> getShift();
-
-  public Pose2d getRedHubPos();
-
-  public Pose2d getBlueHubPos();
-
-  public Translation2d getHubPosition();
-
-  public Translation2d getHubForward();
 
   /**
    * Our hub (according to our alliance).
