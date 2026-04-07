@@ -132,8 +132,8 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive
-          .withVelocityX(forwardFilter.calculate(joystick.getLeftY() * MaxSpeed )) // Drive forward with negative Y (forward)
-          .withVelocityY(turnFilter.calculate(joystick.getLeftX() * MaxSpeed )) // Drive left with negative X (left)
+          .withVelocityX(joystick.getLeftY() * MaxSpeed ) // Drive forward with negative Y (forward)
+          .withVelocityY(joystick.getLeftX() * MaxSpeed ) // Drive left with negative X (left)
           .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         )
     );
@@ -154,7 +154,7 @@ public class RobotContainer {
     joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // Reset the field-centric heading on back button press.
-    joystick.back().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+    joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -177,8 +177,8 @@ public class RobotContainer {
     //joystick.y().onTrue(shooter.runFiringMotorByRPSCommand(RevolutionsPerSecond.of(47)));
     joystick.y().whileTrue(Commands.parallel(shooter.moveAndShootCommand(), turret.pointAtHubCommand()));
 
-    joystick.povUp().onTrue(shooter.increaseByRPSCommand()).onFalse(shooter.stop());
-    joystick.povDown().onTrue(shooter.decreaseByRPSCommand()).onFalse(shooter.stop());
+    // joystick.povUp().onTrue(shooter.increaseByRPSCommand()).onFalse(shooter.stop());
+    // joystick.povDown().onTrue(shooter.decreaseByRPSCommand()).onFalse(shooter.stop());
 
     joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
     joystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
@@ -193,11 +193,13 @@ public class RobotContainer {
     //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
     //joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
 
-    vision.robotPoseUpdated().onTrue(
-      Commands.runOnce(() -> 
-        drivetrain.addVisionMeasurement(vision.getRobotPose(), vision.getRobotPoseTimestamp())
-      )
-    );
+    // vision.robotPoseUpdated().onTrue(
+    //   Commands.runOnce(() -> {
+    //     vision.getRobotPose().ifPresent(pose -> {
+    //       drivetrain.addVisionMeasurement(pose, vision.getRobotPoseTimestamp());
+    //     });
+    //   })
+    // );
   }
     
 
@@ -222,4 +224,3 @@ public class RobotContainer {
     leds.allianceColor();
   }
 }
-

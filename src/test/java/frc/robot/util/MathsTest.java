@@ -90,4 +90,27 @@ public class MathsTest {
   ) {
     assertEquals(expected, Maths.min(a, b));
   }
+
+  static Stream<Arguments> normalizeAngleNeg180To180_testCases() {
+    return Stream.of(
+      Arguments.of(0.0, 0.0),
+      Arguments.of(45.0, 45.0),
+      Arguments.of(-133.0, -133.0),
+      Arguments.of(179.0, 179.0),
+      Arguments.of(-179.0, -179.0),
+      Arguments.of(-181.0, 179.0),
+      Arguments.of(181.0, -179.0),
+      Arguments.of(180.0, 180.0),
+      Arguments.of(-180.0, -180.0)
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("normalizeAngleNeg180To180_testCases")
+  public void normalizeAngleNeg180To180_normalizesAnAngleToTheRangeNegative180To180Degrees(
+    final double degrees, 
+    final double expected
+  ) {
+    assertEquals(expected, Maths.normalizeAngleNeg180To180(degrees), 0.01);
+  }
 }
