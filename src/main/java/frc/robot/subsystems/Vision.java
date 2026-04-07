@@ -81,12 +81,12 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     lastRobotPoseTimestampSeconds = currentRobotPoseTimestampSeconds;
 
-    final var result = LimelightHelpers.getBotPoseEstimate_wpiBlue("");
+    final var result = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-chassis");
     robotPose = result.pose;
     currentRobotPoseTimestampSeconds = result.timestampSeconds;
 
     SmartDashboard.putString("Distance to Hub", getDistanceToHub().toString());
-    SmartDashboard.putString("bot pos - blue", LimelightHelpers.getBotPose2d_wpiBlue("").toString());
-    SmartDashboard.putString("bot pos - red", LimelightHelpers.getBotPose2d_wpiRed("").toString());
+    SmartDashboard.putString("bot pos - blue", LimelightHelpers.getBotPose2d_wpiBlue("limelight-chassis").toString());
+    SmartDashboard.putString("bot pos - red", LimelightHelpers.getBotPose2d_wpiRed("limelight-chassis").toString());
   }
 }
