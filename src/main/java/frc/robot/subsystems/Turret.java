@@ -23,8 +23,8 @@ public class Turret extends SubsystemBase {
 
   private static final double GEAR_RATIO = 99.0 / 18.0; // turret : motor
 
-  private static final Angle SWIVEL_LOWER_LIMIT = Degrees.of(-190);
-  private static final Angle SWIVEL_UPPER_LIMIT = Degrees.of(50);
+  private static final Angle SWIVEL_LOWER_LIMIT = Degrees.of(-50);
+  private static final Angle SWIVEL_UPPER_LIMIT = Degrees.of(190);
 
   private final TalonFXS motor = new TalonFXS(51);
   private final PositionVoltage positionControl = new PositionVoltage(0);
@@ -52,7 +52,7 @@ public class Turret extends SubsystemBase {
     return runEnd(() -> {
       vision.getAzimuthToHub().ifPresentOrElse(az -> {
         final var turretAngle = motorAngleToTurretAngle(motor.getPosition().getValue());
-        final var newTurretAngle = Maths.clamp(Maths.normalizeNeg180To180(turretAngle.minus(az)), SWIVEL_LOWER_LIMIT, SWIVEL_UPPER_LIMIT);
+        final var newTurretAngle = Maths.clamp(turretAngle.minus(az), SWIVEL_LOWER_LIMIT, SWIVEL_UPPER_LIMIT);
         final var newMotorAngle = turretAngleToMotorAngle(newTurretAngle);
         motor.setControl(positionControl.withPosition(newMotorAngle));
 
@@ -294,7 +294,7 @@ public class Turret extends SubsystemBase {
       SmartDashboard.putString("Turret: Motor Voltage", motor.getMotorVoltage().getValue().toLongString());
       SmartDashboard.putString("Turret: Velocity", motor.getVelocity().getValue().toLongString());
       SmartDashboard.putString("Turret: Encoder", motor.getPosition().getValue().toLongString());
-      SmartDashboard.putString("Turret: Position", motorAngleToTurretAngle(motor.getPosition().getValue()).toLongString());
+      SmartDashboard.putNumber("Turret: Position (deg)", motorAngleToTurretAngle(motor.getPosition().getValue()).in(Degrees));
       SmartDashboard.putBoolean("Turret: Is at zero?", isAtZeroPosition());
     }
   }

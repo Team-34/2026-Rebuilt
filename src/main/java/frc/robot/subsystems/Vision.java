@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -28,7 +29,7 @@ public class Vision extends SubsystemBase {
 
   private final Game game;
 
-  private Pose2d robotPose = new Pose2d();
+  private Pose2d robotPose = Pose2d.kZero;
 
   private double lastRobotPoseTimestampSeconds = -1;
   private double currentRobotPoseTimestampSeconds = -1;
@@ -95,6 +96,17 @@ public class Vision extends SubsystemBase {
     }));
   }
 
+  private Translation2d getHubPosition(){
+    return game.getAlliance().map(alliance -> {
+      if(alliance == Alliance.Blue){
+        return blueHubPos.getTranslation();
+      }
+      else {
+        return redHubPos.getTranslation();
+      }
+    }).orElse(Translation2d.kZero);
+  }
+
   private boolean hasNewRobotPose() {
     return currentRobotPoseTimestampSeconds != lastRobotPoseTimestampSeconds;
   }
@@ -103,14 +115,15 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     lastRobotPoseTimestampSeconds = currentRobotPoseTimestampSeconds;
 
-    final var result = LimelightHelpers.getBotPoseEstimate_wpiBlue(CHASSIS_LIMELIGHT_NAME);
+    final var result = LimelightHelpers.getBotPoseEstimate_wpiBlue(TURRET_LIMELIGHT_NAME);
     robotPose = result.pose;
     currentRobotPoseTimestampSeconds = result.timestampSeconds;
 
     if (DEBUG) {
       SmartDashboard.putString("Vision: Robot Pose", robotPose.toString());
       SmartDashboard.putNumber("Vision: Timestamp of Robot Pose (seconds)", currentRobotPoseTimestampSeconds);
-      SmartDashboard.putString("Vision: Distance to Hub", getDistanceToHub().toString());
+      SmartDashboard.putString("Vision: Distance to Hub", getDistanceToHub().map(x -> x.toLongString()).toString());
+      SmartDashboard.putString("Vision: Hub Position", getHubPosition().toString());
     }
   }
 }
