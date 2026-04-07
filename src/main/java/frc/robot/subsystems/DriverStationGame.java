@@ -1,8 +1,13 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Inches;
+
 import java.util.List;
 import java.util.Optional;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -13,6 +18,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class DriverStationGame extends SubsystemBase implements Game {
   private static final boolean DEBUG = false;
+
+  private static final Pose2d redHubPos = new Pose2d(Inches.of(469.11), Inches.of(158.84), Rotation2d.kZero);
+  private static final Pose2d blueHubPos = new Pose2d(Inches.of(182.11), Inches.of(158.84), Rotation2d.kZero);
+
+  public static record Hub(Translation2d position, Translation2d forward) {}
 
   private Optional<Alliance> alliance = Optional.empty();
   private Optional<Alliance> autoWinner = Optional.empty();
