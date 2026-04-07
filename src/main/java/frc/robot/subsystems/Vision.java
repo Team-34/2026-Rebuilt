@@ -68,7 +68,7 @@ public class Vision extends SubsystemBase {
 
   public Optional<Distance> getDistanceToHub() {
     return robotPose.flatMap(pose -> game.getHub().map(hub -> {
-      final var meters = pose.getTranslation().getDistance(hub.position());
+      final var meters = pose.getTranslation().getDistance(hub.center());
       return Meters.of(meters);
     }));
   }
@@ -77,11 +77,19 @@ public class Vision extends SubsystemBase {
     return currentRobotPoseTimestampSeconds != lastRobotPoseTimestampSeconds;
   }
 
+  public double getTotalCameraLatency() {
+    final var captureLatency = LimelightHelpers.getLatency_Capture(CHASSIS_LIMELIGHT_NAME);
+    final var pipelineLatency = LimelightHelpers.getLatency_Pipeline(CHASSIS_LIMELIGHT_NAME);
+    final var totalLatency = captureLatency + pipelineLatency;
+
+    return totalLatency;
+  }
+
   @Override
   public void periodic() {
     lastRobotPoseTimestampSeconds = currentRobotPoseTimestampSeconds;
 
-    final var estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(TURRET_LIMELIGHT_NAME);
+    final var estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(CHASSIS_LIMELIGHT_NAME);
     robotPose = estimate.pose.equals(Pose2d.kZero) ?
         Optional.empty() : 
         Optional.of(estimate.pose);

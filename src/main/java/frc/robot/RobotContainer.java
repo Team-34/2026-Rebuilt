@@ -29,6 +29,7 @@ import frc.robot.generated.TunerConstants;
 //import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.DriverStationGame;
+import frc.robot.subsystems.FireControl;
 import frc.robot.subsystems.Game;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
@@ -49,9 +50,10 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Spindexer spindexer = new Spindexer();
   private final Vision vision = new Vision(game);
+  private final FireControl fireControl;
   private final Turret turret = new Turret(game, vision);
   private final LEDs leds = new LEDs(game);
-  private final Shooter shooter = new Shooter(vision);
+  private final Shooter shooter;
 
   private final DriveCoefficient driveCoefficient = DriveCoefficient.FULL;
 
@@ -90,7 +92,6 @@ public class RobotContainer {
     
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
-  public final LimelightHelpers limelightHelpers = new LimelightHelpers();
   private final CommandXboxController joystick = new CommandXboxController(0);
   private final SendableChooser<Command> autoChooser;
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -99,6 +100,9 @@ public class RobotContainer {
   // @formatter:on
 
   public RobotContainer() {
+    this.fireControl = new FireControl(drivetrain, game, vision);
+    this.shooter = new Shooter(vision, fireControl);
+
     // NamedCommands.registerCommand("Toggle Intake", intake.toggle());
     // NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
     //NamedCommands.registerCommand("RunIntake", Commands.parallel(intake.runIn(), intake.cycleDeploymentCommand()));
@@ -119,7 +123,7 @@ public class RobotContainer {
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
     // Warmup PathPlanner to avoid Java pauses
-    FollowPathCommand.warmupCommand().schedule();
+    CommandScheduler.getInstance().schedule(FollowPathCommand.warmupCommand());
   }
 
   private void configureBindings() {
@@ -171,8 +175,9 @@ public class RobotContainer {
     // joystick.y().onTrue(intake.deployByPower(-0.2)).onFalse(intake.haltDeployment());
 
     //joystick.y().whileTrue(Commands.parallel(shooter.shootCommand(), turret.pointAtHubCommand()));
-    joystick.y().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
+    // joystick.y().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
     //joystick.y().onTrue(shooter.runFiringMotorByRPSCommand(RevolutionsPerSecond.of(47)));
+    joystick.y().whileTrue(Commands.parallel(shooter.moveAndShootCommand(), turret.pointAtHubCommand()));
 
     // joystick.povUp().onTrue(shooter.increaseByRPSCommand()).onFalse(shooter.stop());
     // joystick.povDown().onTrue(shooter.decreaseByRPSCommand()).onFalse(shooter.stop());
@@ -190,13 +195,13 @@ public class RobotContainer {
     //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
     //joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
 
-    // vision.robotPoseUpdated().onTrue(
-    //   Commands.runOnce(() -> {
-    //     vision.getRobotPose().ifPresent(pose -> {
-    //       drivetrain.addVisionMeasurement(pose, vision.getRobotPoseTimestamp());
-    //     });
-    //   })
-    // );
+    vision.robotPoseUpdated().onTrue(
+      Commands.runOnce(() -> {
+        vision.getRobotPose().ifPresent(pose -> {
+          drivetrain.addVisionMeasurement(pose, vision.getRobotPoseTimestamp());
+        });
+      })
+    );
   }
     
 

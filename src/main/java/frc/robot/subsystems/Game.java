@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
  * Game information.
  */
 public interface Game {
-  public static record Hub(Translation2d position, Translation2d forward, List<Integer> tagIDs) {
+  public static record Hub(Translation2d center, Translation2d forward, List<Integer> tagIDs) {
     public static final Hub blue = new Hub(
         new Translation2d(Inches.of(182.11), Inches.of(158.84)),
         new Translation2d(1.0, 0.0),

@@ -70,8 +70,14 @@ public class Shooter extends SubsystemBase {
   private final VelocityVoltage velocityControl = new VelocityVoltage(0).withSlot(0);
 
   private Optional<Distance> cachedHubDistance = Optional.empty();
+  private Optional<AngularVelocity> cachedFlywheelSpeed = Optional.empty();
 
-  public Shooter(final Vision vision) {
+  private final FireControl fireControl;
+
+  public Shooter(final Vision vision, final FireControl fireControl) {
+    this.vision = vision;
+    this.fireControl = fireControl;
+
     final TalonFXConfiguration masterConfig = new TalonFXConfiguration();
     masterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     masterConfig.Slot0.kV = 0.12;
@@ -88,8 +94,6 @@ public class Shooter extends SubsystemBase {
     hoodMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
 
     hoodPID.setSetpoint(hoodEncoder.getPosition().getValueAsDouble());
-
-    this.vision = vision;
 
     hoodAtHome.onTrue(runOnce(this::zeroHoodEncoder));
   }
@@ -112,17 +116,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public Command shooterByPercentCommand(final double speed) {
-    return runEnd(() -> {
-      runFiringMotor(speed);
-    }, () -> {
-      masterFiringMotor.stopMotor();
-    });
+    return runEnd(() -> runFiringMotor(speed), masterFiringMotor::stopMotor);
   }
 
   public Command setHoodPosition(final double position) {
-    return runOnce(() -> {
-      moveHoodMotorRotations(position);
-    });
+    return runOnce(() -> moveHoodMotorRotations(position));
   }
 
   public Command runAtIdleCommand() {
@@ -165,6 +163,10 @@ public class Shooter extends SubsystemBase {
     return runOnce(() -> runFiringMotorByRPS(rps));
   }
 
+  public Command moveAndShootCommand() {
+    return runOnce(this::moveAndShoot);
+  }
+
   public static double distanceToFiringSpeed(final Distance distance) {
     final var x = distance.in(Inches);
     final var x_2 = x * x;
@@ -205,22 +207,14 @@ public class Shooter extends SubsystemBase {
 
   public Command shootByRPSCommand() {
     return runEnd(() -> {
-      final var newDistanceToHub = vision.getDistanceToHub();
-      if (newDistanceToHub.isPresent()) {
-        cachedHubDistance = newDistanceToHub;
+      final var newFlywheelSpeed = fireControl.getCalculatedRPM();
+      if (newFlywheelSpeed.isPresent()) {
+        cachedFlywheelSpeed = newFlywheelSpeed;
       }
 
-      cachedHubDistance.ifPresentOrElse(distance -> {
-        final AngularVelocity rps = distanceToRPS(distance);
-        runFiringMotorByRPS(rps);
-
-        if (DEBUG) {
-          SmartDashboard.putString("Shooter: Distance to Hub ", distance.toString());
-          SmartDashboard.putString("Shooter: Calculated Shooter RPS", rps.toString());
-        }
-      }, this::runAtIdle);
+      cachedFlywheelSpeed.ifPresentOrElse(this::runFiringMotorByRPS, this::runAtIdle);
     }, () -> {
-      cachedHubDistance = Optional.empty();
+      cachedFlywheelSpeed = Optional.empty();
       runAtIdle();
     });
   }
@@ -248,6 +242,7 @@ public class Shooter extends SubsystemBase {
     this.hoodMotor.set(TalonSRXControlMode.PercentOutput, percentOutput);
 
     if (DEBUG) {
+      SmartDashboard.putString("Shooter: Cached Flywheel Speed", cachedFlywheelSpeed.map(AngularVelocity::toLongString).toString());
       SmartDashboard.putNumber("Shooter: Speed %", masterFiringMotor.getDutyCycle().getValueAsDouble() * 100);
       SmartDashboard.putString("Shooter: Velocity", masterFiringMotor.getVelocity().getValue().toLongString());
       // SmartDashboard.putNumber("external encoder units",
@@ -284,5 +279,9 @@ public class Shooter extends SubsystemBase {
 
   private void runAtIdle() {
     this.masterFiringMotor.set(0.1);
+  }
+
+  private void moveAndShoot() {
+    fireControl.getCalculatedRPM().ifPresentOrElse(this::runFiringMotorByRPS, this::runAtIdle);
   }
 }
