@@ -2,14 +2,15 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
 
 import java.util.Optional;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -28,17 +29,20 @@ public class Vision extends SubsystemBase {
   private double currentRobotPoseTimestampSeconds = -1;
 
   private final Game game;
+  private final Translation2d hubPos;
 
   public Vision(final Game game) {
     this.game = game;
+    this.hubPos = game.getHubPosition();
   }
 
   public Trigger robotPoseUpdated() {
     return robotPoseUpdatedTrigger;
   }
-  
+
   /**
    * Gets latest robot pose from the chassis camera.
+   * 
    * @return latest robot pose from the chassis camera
    */
   public Pose2d getRobotPose() {
@@ -47,9 +51,10 @@ public class Vision extends SubsystemBase {
 
   /**
    * Gets timestamp of the latest robot pose from the chassis camera.
+   * 
    * @return timestamp of the latest robot pose from the chassis camera
    */
-  public double getRobotPoseTimestamp() { 
+  public double getRobotPoseTimestamp() {
     return currentRobotPoseTimestampSeconds;
   }
 
@@ -65,29 +70,21 @@ public class Vision extends SubsystemBase {
   }
 
   public Optional<Distance> getDistanceToHub() {
-    return game.getAlliance().flatMap(alliance -> getAzimuthToHub().map(_az -> {
-      SmartDashboard.putString("Alliance from distance method", alliance.toString());
-      final var botXInches = robotPose.getX();
-      final var botYInches = robotPose.getY();
-      SmartDashboard.putString("Bot Pos", robotPose.toString());
-      if (alliance == Alliance.Blue) {
-        final var hubXInches = blueHubPos.getMeasureX().in(Inches);
-        final var hubYInches = blueHubPos.getMeasureY().in(Inches);
-        final var deltaX = hubXInches - botXInches;
-        final var deltaY = hubYInches - botYInches;
-        return Inches.of(Math.sqrt((deltaX * deltaX) + (deltaY * deltaY)));
-      } else {
-        final var hubXInches = redHubPos.getMeasureX().in(Inches);
-        final var hubYInches = redHubPos.getMeasureY().in(Inches);
-        final var deltaX = hubXInches - botXInches;
-        final var deltaY = hubYInches - botYInches;
-        return Inches.of(Math.sqrt((deltaX * deltaX) + (deltaY * deltaY)));
-      }
-    }));
+    return getAzimuthToHub().map(_az -> {
+      return Meters.of(robotPose.getTranslation().getDistance(hubPos));
+    });
   }
 
   private boolean hasNewRobotPose() {
     return currentRobotPoseTimestampSeconds != lastRobotPoseTimestampSeconds;
+  }
+
+  public double getTotalCameraLatency() {
+    final var captureLatency = LimelightHelpers.getLatency_Capture("");
+    final var pipelineLatency = LimelightHelpers.getLatency_Pipeline("");
+    final var totalLatency = captureLatency + pipelineLatency;
+
+    return totalLatency;
   }
 
   @Override
