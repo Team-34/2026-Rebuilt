@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.subsystems.Vision;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -85,7 +86,15 @@ public class Robot extends TimedRobot {
       CommandScheduler.getInstance().cancel(this.m_autonomousCommand);
     }
     this.m_robotContainer.disable();
-    NetworkTableInstance.getDefault().getTable("limelight-chassis").getEntry("throttle_set").setNumber(200);
+
+    NetworkTableInstance.getDefault()
+      .getTable(Vision.CHASSIS_LIMELIGHT_NAME)
+      .getEntry("throttle_set")
+      .setNumber(200);
+    NetworkTableInstance.getDefault()
+      .getTable(Vision.TURRET_LIMELIGHT_NAME)
+      .getEntry("throttle_set")
+      .setNumber(200);
   }
 
   @Override
@@ -99,8 +108,16 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
+    NetworkTableInstance.getDefault()
+      .getTable(Vision.CHASSIS_LIMELIGHT_NAME)
+      .getEntry("throttle_set")
+      .setNumber(0);
+    NetworkTableInstance.getDefault()
+      .getTable(Vision.TURRET_LIMELIGHT_NAME)
+      .getEntry("throttle_set")
+      .setNumber(0);
+
     this.m_autonomousCommand = this.m_robotContainer.getAutonomousCommand();
-    NetworkTableInstance.getDefault().getTable("limelight-chassis").getEntry("throttle_set").setNumber(0);
     if (this.m_autonomousCommand != null) {
       CommandScheduler.getInstance().schedule(this.m_autonomousCommand);
     }
@@ -116,7 +133,15 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    NetworkTableInstance.getDefault().getTable("limelight-chassis").getEntry("throttle_set").setNumber(0);
+    NetworkTableInstance.getDefault()
+      .getTable(Vision.CHASSIS_LIMELIGHT_NAME)
+      .getEntry("throttle_set")
+      .setNumber(0);
+    NetworkTableInstance.getDefault()
+      .getTable(Vision.TURRET_LIMELIGHT_NAME)
+      .getEntry("throttle_set")
+      .setNumber(0);
+
     m_robotContainer.enable();
     if (this.m_autonomousCommand != null) {
       CommandScheduler.getInstance().cancel(this.m_autonomousCommand);
