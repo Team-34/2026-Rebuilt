@@ -167,26 +167,26 @@ public class RobotContainer {
     // joystick.povLeft().whileTrue(climber.extendCommand());
     // joystick.povRight().whileTrue(climber.retractCommand());
 
-    primaryDriverjoystick.a().onTrue(intake.runIn()).onFalse(intake.stop());
-    primaryDriverjoystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
-    primaryDriverjoystick.x().onTrue(intake.cycleDeployment());
+    primaryDriverjoystick.rightTrigger().onTrue(intake.runIn()).onFalse(intake.stop());
+    primaryDriverjoystick.rightBumper().onTrue(intake.runOut()).onFalse(intake.stop());
+    primaryDriverjoystick.leftTrigger().onTrue(intake.cycleDeployment());
 
     //joystick.y().whileTrue(Commands.parallel(shooter.shootCommand(), turret.pointAtHubCommand()));
     // joystick.y().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
     //joystick.y().onTrue(shooter.runFiringMotorByRPSCommand(RevolutionsPerSecond.of(47)));
-    primaryDriverjoystick.y().whileTrue(Commands.parallel(shooter.moveAndShootCommand(), turret.pointAtHubCommand()));
+    copilotDriverjoystick.rightTrigger().whileTrue(Commands.parallel(shooter.moveAndShootCommand(), turret.pointAtHubCommand()));
 
     // PrimaryDriverjoystick.povUp().onTrue(shooter.increaseByRPSCommand()).onFalse(shooter.stop());
     // PrimaryDriverjoystick.povDown().onTrue(shooter.decreaseByRPSCommand()).onFalse(shooter.stop());
 
-    primaryDriverjoystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
-    primaryDriverjoystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+    copilotDriverjoystick.x().onTrue(shooter.cycleSpeedCommand());
+    copilotDriverjoystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
     
-    primaryDriverjoystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.1)).onFalse(turret.stop());
-    primaryDriverjoystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.1)).onFalse(turret.stop());
+    copilotDriverjoystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.1)).onFalse(turret.stop());
+    copilotDriverjoystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.1)).onFalse(turret.stop());
     
     
-    primaryDriverjoystick.povRight().onTrue(turret.swivelToCommand(Degree.of(90))); 
+    copilotDriverjoystick.povRight().onTrue(turret.swivelToCommand(Degree.of(90))); 
     // joystick.povLeft().onTrue(turret.findZeroCommand(0.1));
 
     //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
