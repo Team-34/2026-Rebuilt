@@ -1,17 +1,28 @@
 package frc.robot.subsystems;
 
-import java.util.Collections;
+import static edu.wpi.first.units.Units.Inches;
+
 import java.util.List;
 import java.util.Optional;
 
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
  * Game information.
  */
 public interface Game {
-  static final List<Integer> redHubTagIDs = List.of(2, 5, 10);
-  static final List<Integer> blueHubTagIDs = List.of(26, 21, 18);
+  public static record Hub(Translation2d position, Translation2d forward, List<Integer> tagIDs) {
+    public static final Hub blue = new Hub(
+        new Translation2d(Inches.of(182.11), Inches.of(158.84)),
+        new Translation2d(1.0, 0.0),
+        List.of(26, 21, 18));
+
+    public static final Hub red = new Hub(
+        new Translation2d(Inches.of(469.11),Inches.of(158.84)),
+        new Translation2d(-1.0, 0.0),
+        List.of(2, 5, 10));
+  }
 
   /**
    * Our alliance.
@@ -28,19 +39,20 @@ public interface Game {
   public Optional<Alliance> getAutoWinner();
 
   /**
-   * The current shift. Only valid for teleop period; empty if in autonomous period.
+   * The current shift. Only valid for teleop period; empty if in autonomous
+   * period.
    * 
    * @return The current shift, or empty if not in teleop period.
    */
   public Optional<Shift> getShift();
 
   /**
-   * @return
+   * Our hub (according to our alliance).
+   * 
+   * @return Our hub, or empty if unknown.
    */
-  public default List<Integer> getHubTagIDs() {
-    return getAlliance()
-      .map(alliance -> alliance == Alliance.Blue ? blueHubTagIDs : redHubTagIDs)
-      .orElse(Collections.emptyList());
+  public default Optional<Hub> getHub() {
+    return getAlliance().map(alliance -> alliance == Alliance.Blue ? Hub.blue : Hub.red);
   }
 
   /**
@@ -49,9 +61,9 @@ public interface Game {
   public static enum Shift {
     TRANSITION(140, 130),
     ONE(130, 105),
-    TWO(105, 80), 
-    THREE(80, 55), 
-    FOUR(55, 30), 
+    TWO(105, 80),
+    THREE(80, 55),
+    FOUR(55, 30),
     END(30, 0);
 
     private final double start;
@@ -67,8 +79,8 @@ public interface Game {
      * 
      * @param time Current match time in seconds left in the current period
      *             (Autonomous or Teleop)
-     * @return {@code true} if {@code time} is within the start and end time of
-     *         this shift.
+     * @return {@code true} if {@code time} is within the start and end time of this
+     *         shift.
      */
     public boolean isActive(final double time) {
       return (time <= start && time >= end);

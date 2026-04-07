@@ -241,7 +241,7 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    var percentOutput = MathUtil.clamp(
+    final var percentOutput = MathUtil.clamp(
       hoodPID.calculate(hoodEncoder.getPosition().getValue().in(Rotations)),
       -1.0,
       1.0);

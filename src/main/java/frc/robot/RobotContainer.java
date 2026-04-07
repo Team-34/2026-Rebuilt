@@ -190,11 +190,13 @@ public class RobotContainer {
     //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
     //joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
 
-    vision.robotPoseUpdated().onTrue(
-      Commands.runOnce(() -> 
-        drivetrain.addVisionMeasurement(vision.getRobotPose(), vision.getRobotPoseTimestamp())
-      )
-    );
+    // vision.robotPoseUpdated().onTrue(
+    //   Commands.runOnce(() -> {
+    //     vision.getRobotPose().ifPresent(pose -> {
+    //       drivetrain.addVisionMeasurement(pose, vision.getRobotPoseTimestamp());
+    //     });
+    //   })
+    // );
   }
     
 

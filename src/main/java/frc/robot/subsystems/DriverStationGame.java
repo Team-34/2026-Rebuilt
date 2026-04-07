@@ -1,13 +1,7 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Inches;
-
-import java.util.List;
 import java.util.Optional;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,14 +13,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 public class DriverStationGame extends SubsystemBase implements Game {
   private static final boolean DEBUG = false;
 
-  private static final Pose2d redHubPos = new Pose2d(Inches.of(469.11), Inches.of(158.84), Rotation2d.kZero);
-  private static final Pose2d blueHubPos = new Pose2d(Inches.of(182.11), Inches.of(158.84), Rotation2d.kZero);
-
-  public static record Hub(Translation2d position, Translation2d forward) {}
-
   private Optional<Alliance> alliance = Optional.empty();
   private Optional<Alliance> autoWinner = Optional.empty();
-  private List<Integer> hubTagIDs = List.of();
+  private Optional<Hub> hub = Optional.empty();
 
   /**
    * The alliance given by the Driver Station.
@@ -43,13 +32,11 @@ public class DriverStationGame extends SubsystemBase implements Game {
   }
 
   @Override
-  public List<Integer> getHubTagIDs() {
-    if (hubTagIDs.isEmpty()) {
-      alliance.ifPresent(a -> {
-        hubTagIDs = a == Alliance.Blue ? blueHubTagIDs : redHubTagIDs;
-      });
+  public Optional<Hub> getHub() {
+    if (hub.isEmpty()) {
+      hub = getAlliance().map(a -> a == Alliance.Blue ? Hub.blue : Hub.red);
     }
-    return hubTagIDs;
+    return hub;
   }
 
   /**
@@ -100,7 +87,7 @@ public class DriverStationGame extends SubsystemBase implements Game {
     if (DEBUG) {
       SmartDashboard.putString("Game: My Alliance", alliance.toString());
       SmartDashboard.putString("Game: Auto Winner", autoWinner.toString());
-      SmartDashboard.putString("Game: Hub IDs", hubTagIDs.toString());
+      SmartDashboard.putString("Game: Hub", hub.toString());
     }
   }
 }
