@@ -47,18 +47,20 @@ public class Intake extends SubsystemBase {
     rollerConfig.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     rollerConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     rollerMotor.getConfigurator().apply(rollerConfig);
-    
+
     deployEncoder.setPosition(Rotations.zero());
 
     final TalonFXSConfiguration deployConfig = new TalonFXSConfiguration();
     deployConfig.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     deployConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    //// removed because it prevented the Minion from drawing enough current.
     deployConfig.CurrentLimits
-      .withStatorCurrentLimit(Amps.of(70))
-      .withStatorCurrentLimitEnable(true);
-    deployConfig.ExternalFeedback
-      .withExternalFeedbackSensorSource(ExternalFeedbackSensorSourceValue.RemoteCANcoder)
-      .withFeedbackRemoteSensorID(62);
+      .withStatorCurrentLimit(Amps.of(90))
+      .withStatorCurrentLimitEnable(true)
+      .withSupplyCurrentLimit(Amps.of(80))
+      .withSupplyCurrentLimitEnable(true);
+    deployConfig.ExternalFeedback.withExternalFeedbackSensorSource(ExternalFeedbackSensorSourceValue.RemoteCANcoder)
+        .withFeedbackRemoteSensorID(62);
     deployConfig.Slot0.withKP(10).withKI(0.0).withKD(0.2);
     deployMotor.getConfigurator().apply(deployConfig);
   }
@@ -90,6 +92,11 @@ public class Intake extends SubsystemBase {
         default -> DeploymentState.RETRACTED;
       };
       rotateDeployMotorTo(this.deploymentState.rotations);
+      if (deploymentState == DeploymentState.DEPLOYED) {
+        runRollerMotorAt(0.5);
+      } else {
+        rollerMotor.stopMotor();
+      }
     });
   }
 
