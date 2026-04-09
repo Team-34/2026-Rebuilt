@@ -81,7 +81,7 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     lastRobotPoseTimestampSeconds = currentRobotPoseTimestampSeconds;
 
-    final var estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(TURRET_LIMELIGHT_NAME);
+    final var estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(CHASSIS_LIMELIGHT_NAME);
     robotPose = estimate.pose.equals(Pose2d.kZero) ?
         Optional.empty() : 
         Optional.of(estimate.pose);
