@@ -1,11 +1,13 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 
 import java.util.List;
 import java.util.Optional;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 
 /**
@@ -23,6 +25,19 @@ public interface Game {
         new Translation2d(-1.0, 0.0),
         List.of(2, 5, 10));
   }
+
+  public static final Distance FIELD_WIDTH = Inches.of(317.69);
+  public static final Distance FIELD_LENGTH = Inches.of(651.22);
+  public static final Distance FERRY_TARGET_OFFSET = Feet.of(6);
+
+  public static List<Translation2d> blueFerryTargets = List.of(
+    new Translation2d(FERRY_TARGET_OFFSET, FERRY_TARGET_OFFSET), 
+    new Translation2d(FERRY_TARGET_OFFSET, FIELD_WIDTH.minus(FERRY_TARGET_OFFSET))
+  );
+  public static List<Translation2d> redFerryTargets = List.of(
+    new Translation2d(FIELD_LENGTH.minus(FERRY_TARGET_OFFSET), FERRY_TARGET_OFFSET), 
+    new Translation2d(FIELD_LENGTH.minus(FERRY_TARGET_OFFSET), FIELD_WIDTH.minus(FERRY_TARGET_OFFSET))
+  );
 
   /**
    * Our alliance.
@@ -53,6 +68,12 @@ public interface Game {
    */
   public default Optional<Hub> getHub() {
     return getAlliance().map(alliance -> alliance == Alliance.Blue ? Hub.blue : Hub.red);
+  }
+
+  public default List<Translation2d> getFerryTargets() {
+    return getAlliance()
+    .map(alliance -> alliance == Alliance.Blue ? blueFerryTargets : redFerryTargets)
+    .orElse(List.of());
   }
 
   /**

@@ -29,6 +29,7 @@ import frc.robot.generated.TunerConstants;
 //import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.DriverStationGame;
+import frc.robot.subsystems.FireControl;
 import frc.robot.subsystems.Game;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.LEDs;
@@ -49,9 +50,10 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Spindexer spindexer = new Spindexer();
   private final Vision vision = new Vision(game);
-  private final Turret turret = new Turret(game, vision);
+  private final Turret turret;
   private final LEDs leds = new LEDs(game);
-  private final Shooter shooter = new Shooter(vision);
+  private final Shooter shooter;
+  private final FireControl fireControl;
 
   private final DriveCoefficient driveCoefficient = DriveCoefficient.FARIS;
 
@@ -99,6 +101,10 @@ public class RobotContainer {
   // @formatter:on
 
   public RobotContainer() {
+    fireControl = new FireControl(drivetrain, vision, game);
+    shooter =  new Shooter(fireControl);
+    turret = new Turret(game, fireControl);
+
     NamedCommands.registerCommand("Toggle Intake", intake.cycleDeployment());
     NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
     NamedCommands.registerCommand("Run Intake", intake.runIn());
@@ -186,13 +192,13 @@ public class RobotContainer {
     //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
     //joystick.povDown().onTrue(shooter.setHoodPosition(0.0));
 
-    // vision.robotPoseUpdated().onTrue(
-    //   Commands.runOnce(() -> {
-    //     vision.getRobotPose().ifPresent(pose -> {
-    //       drivetrain.addVisionMeasurement(pose, vision.getRobotPoseTimestamp());
-    //     });
-    //   })
-    // );
+    vision.robotPoseUpdated().onTrue(
+      Commands.runOnce(() -> {
+        vision.getRobotPose().ifPresent(pose -> {
+          drivetrain.addVisionMeasurement(pose, vision.getRobotPoseTimestamp());
+        });
+      })
+    );
   }
     
 

@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Maths;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 
@@ -31,12 +32,12 @@ public class Turret extends SubsystemBase {
   private final PositionVoltage positionControl = new PositionVoltage(0);
   private final DigitalInput limitSwitch = new DigitalInput(9);
 
-  private final Vision vision;
+  private final FireControl fireControl;
 
   /**
    * Creates a new {@code Turret} instance.
    */
-  public Turret(final Game game, final Vision vision) {
+  public Turret(final Game game, final FireControl fireControl) {
     final var config = new TalonFXSConfiguration();
     config.Commutation.MotorArrangement = MotorArrangementValue.Minion_JST;
     config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
@@ -52,12 +53,12 @@ public class Turret extends SubsystemBase {
     
     motor.getConfigurator().apply(config);
 
-    this.vision = vision;
+    this.fireControl = fireControl;
   }
 
   public Command pointAtHubCommand() {
     return runEnd(() -> {
-      vision.getAzimuthToHub().ifPresentOrElse(az -> {
+      fireControl.getAzimuthToHub().ifPresentOrElse(az -> {
         final var turretAngle = motorAngleToTurretAngle(motor.getPosition().getValue());
         final var newTurretAngle = Maths.clamp(turretAngle.minus(az), SWIVEL_LOWER_LIMIT, SWIVEL_UPPER_LIMIT);
         final var newMotorAngle = turretAngleToMotorAngle(newTurretAngle);

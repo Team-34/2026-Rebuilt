@@ -1,7 +1,10 @@
 package frc.robot.subsystems;
 
+import java.util.List;
 import java.util.Optional;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -59,9 +62,43 @@ public class DriverStationGame extends SubsystemBase implements Game {
     return this.autoWinner;
   }
 
+  public Boolean inAllianceZone(Pose2d robotPose) {
+    return getAlliance().map(a -> {
+      final var isBlue = a == Alliance.Blue;
+      var botX = robotPose.getTranslation().getMeasureX();
+      Boolean alliance = getAlliance().map(a -> a == Alliance.Blue).orElse(false);
+      var hubTranslation = getHub().get().position();
+      var hubX = hubTranslation.getMeasureX();
+      var hubY = hubTranslation.getMeasureY();
+
+    }).orElse(false);
+
+    var robotTranslation = robotPose.getTranslation();
+    var robotX = robotTranslation.getMeasureX();
+    var robotY = robotTranslation.getMeasureY();
+    Boolean alliance = getAlliance().map(a -> a == Alliance.Blue).orElse(false);
+    var hubTranslation = getHub().get().position();
+    var hubX = hubTranslation.getMeasureX();
+    var hubY = hubTranslation.getMeasureY();
+
+    if (alliance) {
+      if (robotX.lt(hubX)) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      if (robotX.gt(hubX)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  }
+
   /**
-   * Determines which shift we're in. Only valid for teleop period, you will get an
-   * Optional.empty() in autonomous.
+   * Determines which shift we're in. Only valid for teleop period, you will get
+   * an Optional.empty() in autonomous.
    * 
    * @return Current shift.
    */
@@ -76,6 +113,11 @@ public class DriverStationGame extends SubsystemBase implements Game {
     }
 
     return Optional.empty();
+  }
+
+  public List<Translation2d> getFerryTargets() {
+    return getAlliance().map(alliance -> alliance == Alliance.Blue ? blueFerryTargets : redFerryTargets)
+        .orElse(List.of());
   }
 
   private double getTime() {

@@ -38,7 +38,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class Shooter extends SubsystemBase {
-  private static final boolean DEBUG = false;
+  private static final boolean DEBUG = true;
 
   enum Speed {
     STOP(0.0), HALF(0.5), FULL(0.85); // enum for flywheel speeds
@@ -67,13 +67,15 @@ public class Shooter extends SubsystemBase {
   private final Trigger hoodAtHome = new Trigger(this::isHoodAtHome);
   private final PIDController hoodPID = new PIDController(2.5, 0.0, 0.0); // PID for hood
 
-  private final Vision vision;
+  private final FireControl fireControl;
 
   private final VelocityVoltage velocityControl = new VelocityVoltage(0).withSlot(0);
 
   private Optional<Distance> cachedHubDistance = Optional.empty();
 
-  public Shooter(final Vision vision) {
+  public Shooter(final FireControl fireControl) {
+    this.fireControl = fireControl;
+
     final TalonFXConfiguration masterConfig = new TalonFXConfiguration();
     masterConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     masterConfig.Slot0.kV = 0.12;
@@ -91,8 +93,6 @@ public class Shooter extends SubsystemBase {
     hoodMotor.configSelectedFeedbackSensor(FeedbackDevice.RemoteSensor0, 0, 10);
 
     hoodPID.setSetpoint(hoodEncoder.getPosition().getValueAsDouble());
-
-    this.vision = vision;
 
     hoodAtHome.onTrue(runOnce(this::zeroHoodEncoder));
   }
@@ -186,7 +186,7 @@ public class Shooter extends SubsystemBase {
 
   public Command shootBySpeedCommand() {
     return runEnd(() -> {
-      final var newDistanceToHub = vision.getDistanceToHub();
+      final var newDistanceToHub = fireControl.getDistanceToHub();
       if (newDistanceToHub.isPresent()) {
         cachedHubDistance = newDistanceToHub;
       }
@@ -208,12 +208,12 @@ public class Shooter extends SubsystemBase {
 
   public Command shootByRPSCommand() {
     return runEnd(() -> {
-      final var newDistanceToHub = vision.getDistanceToHub();
-      if (newDistanceToHub.isPresent()) {
-        cachedHubDistance = newDistanceToHub;
-      }
+      // final var newDistanceToHub = fireControl.getDistanceToHub();
+      // if (newDistanceToHub.isPresent()) {
+      //   cachedHubDistance = newDistanceToHub;
+      // }
 
-      cachedHubDistance.ifPresentOrElse(distance -> {
+      fireControl.getDistanceToHub().ifPresentOrElse(distance -> {
         final AngularVelocity rps = distanceToRPS(distance);
         runFiringMotorByRPS(rps);
 
@@ -223,7 +223,7 @@ public class Shooter extends SubsystemBase {
         }
       }, this::runAtIdle);
     }, () -> {
-      cachedHubDistance = Optional.empty();
+      // cachedHubDistance = Optional.empty();
       runAtIdle();
     });
   }
