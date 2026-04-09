@@ -55,8 +55,8 @@ public class RobotContainer {
 
   private final DriveCoefficient driveCoefficient = DriveCoefficient.FULL;
 
-  private final SlewRateLimiter forwardFilter = new SlewRateLimiter(3.0);
-  private final SlewRateLimiter turnFilter = new SlewRateLimiter(3.5);
+  private final SlewRateLimiter forwardFilter = new SlewRateLimiter(8.0);
+  private final SlewRateLimiter turnFilter = new SlewRateLimiter(8.0);
   private final SlewRateLimiter rotateFilter = new SlewRateLimiter(1.8);
 
   enum DriveCoefficient {
@@ -99,9 +99,9 @@ public class RobotContainer {
   // @formatter:on
 
   public RobotContainer() {
-    // NamedCommands.registerCommand("Toggle Intake", intake.toggle());
-    // NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
-    //NamedCommands.registerCommand("RunIntake", Commands.parallel(intake.runIn(), intake.cycleDeploymentCommand()));
+    NamedCommands.registerCommand("Toggle Intake", intake.cycleDeployment());
+    NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
+    NamedCommands.registerCommand("RunIntake", intake.runIn());
     NamedCommands.registerCommand("shooterAtIdle", shooter.runAtIdleCommand());
     NamedCommands.registerCommand("Run Spindexer", spindexer.spin());
     NamedCommands.registerCommand(
@@ -130,8 +130,8 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive
-          .withVelocityX(joystick.getLeftY() * MaxSpeed ) // Drive forward with negative Y (forward)
-          .withVelocityY(joystick.getLeftX() * MaxSpeed ) // Drive left with negative X (left)
+          .withVelocityX(forwardFilter.calculate(joystick.getLeftY() * MaxSpeed) ) // Drive forward with negative Y (forward)
+          .withVelocityY(turnFilter.calculate(joystick.getLeftX() * MaxSpeed) ) // Drive left with negative X (left)
           .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         )
     );
@@ -165,7 +165,8 @@ public class RobotContainer {
     // joystick.povRight().whileTrue(climber.retractCommand());
 
     joystick.a().onTrue(intake.runIn()).onFalse(intake.stop());
-    joystick.b().onTrue(intake.runOut()).onFalse(intake.stop());
+    joystick.b().whileTrue(Commands.parallel(intake.runOut(), spindexer.spinReverse()));
+
     joystick.x().onTrue(intake.cycleDeployment());
     // joystick.x().onTrue(intake.deployByPower(0.1)).onFalse(intake.haltDeployment());
     // joystick.y().onTrue(intake.deployByPower(-0.2)).onFalse(intake.haltDeployment());

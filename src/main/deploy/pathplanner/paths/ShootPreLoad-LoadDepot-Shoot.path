@@ -63,15 +63,15 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 0.7164179104477622,
-      "rotationDegrees": 44.27881706814156
+      "rotationDegrees": -25.0
     },
     {
       "waypointRelativePos": 1.4520255863539477,
-      "rotationDegrees": 178.4837572237214
+      "rotationDegrees": 0.0
     },
     {
       "waypointRelativePos": 2.4690831556503126,
-      "rotationDegrees": -179.67207079397448
+      "rotationDegrees": 0.0
     }
   ],
   "constraintZones": [
@@ -105,50 +105,26 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "",
-      "waypointRelativePos": 0.15395003376097274,
+      "name": "aimAndShoot",
+      "waypointRelativePos": 0.2237288135593221,
+      "endWaypointRelativePos": 0.5898305084745765,
+      "command": null
+    },
+    {
+      "name": "Toggle Intake",
+      "waypointRelativePos": 1.4237288135593227,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
-      "name": "",
-      "waypointRelativePos": 0.3160027008778101,
-      "endWaypointRelativePos": 1.0695476029709698,
+      "name": "runIntake",
+      "waypointRelativePos": 1.5966101694915245,
+      "endWaypointRelativePos": 2.4101694915254126,
       "command": null
     },
     {
-      "name": "",
-      "waypointRelativePos": 0.37272113436866716,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "",
-      "waypointRelativePos": 0.45374746792709514,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "",
-      "waypointRelativePos": 1.7015530047265337,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "",
-      "waypointRelativePos": 1.8392977717758598,
-      "endWaypointRelativePos": 2.2039162727886605,
-      "command": null
-    },
-    {
-      "name": "",
-      "waypointRelativePos": 2.3659689399054753,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "",
-      "waypointRelativePos": 2.7954085077650235,
+      "name": "aimAndShoot",
+      "waypointRelativePos": 2.5627118644067712,
       "endWaypointRelativePos": 3.0,
       "command": null
     }
