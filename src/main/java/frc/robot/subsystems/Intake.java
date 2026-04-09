@@ -22,9 +22,7 @@ public class Intake extends SubsystemBase {
   private static final boolean DEBUG = false;
 
   enum DeploymentState {
-    DEPLOYED(Rotations.of(2.65)), 
-    RETRACTED(DEPLOY_MIN_ROTATIONS), 
-    BUMPER(Rotations.of(0.914));
+    DEPLOYED(Rotations.of(2.65)), RETRACTED(DEPLOY_MIN_ROTATIONS), BUMPER(Rotations.of(0.914));
 
     public final Angle rotations;
 

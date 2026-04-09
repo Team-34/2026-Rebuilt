@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.Maths;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import static edu.wpi.first.units.Units.Amps;
 import static edu.wpi.first.units.Units.Degrees;
 
 import static edu.wpi.first.units.Units.Volts;
@@ -43,6 +44,12 @@ public class Turret extends SubsystemBase {
     config.Slot0.kI = 0;
     config.Slot0.kD = 0.1;
     config.MotorOutput.withNeutralMode(NeutralModeValue.Brake);
+    config.CurrentLimits
+      .withStatorCurrentLimit(Amps.of(120))
+      .withStatorCurrentLimitEnable(true)
+      .withSupplyCurrentLimit(Amps.of(80))
+      .withSupplyCurrentLimitEnable(true);
+    
     motor.getConfigurator().apply(config);
 
     this.vision = vision;

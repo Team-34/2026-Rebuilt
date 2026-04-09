@@ -81,7 +81,7 @@ public class Shooter extends SubsystemBase {
     masterConfig.Slot0.kI = 0.0;
     masterConfig.Slot0.kD = 0.0;
     masterConfig.Slot0.kS = 0.1;
-    
+    masterConfig.CurrentLimits.SupplyCurrentLimit = 60;
     masterConfig.Voltage.withPeakForwardVoltage(Volts.of(8)).withPeakReverseVoltage(Volts.of(-8));
     masterFiringMotor.getConfigurator().apply(masterConfig);
     padawanFiringMotor.setControl(new Follower(masterFiringMotor.getDeviceID(), MotorAlignmentValue.Opposed));
