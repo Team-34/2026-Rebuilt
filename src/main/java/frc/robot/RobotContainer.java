@@ -53,7 +53,7 @@ public class RobotContainer {
   private final LEDs leds = new LEDs(game);
   private final Shooter shooter = new Shooter(vision);
 
-  private final DriveCoefficient driveCoefficient = DriveCoefficient.FULL;
+  private final DriveCoefficient driveCoefficient = DriveCoefficient.FARIS;
 
   private final SlewRateLimiter forwardFilter = new SlewRateLimiter(8.0);
   private final SlewRateLimiter turnFilter = new SlewRateLimiter(8.0);
@@ -101,19 +101,14 @@ public class RobotContainer {
   public RobotContainer() {
     NamedCommands.registerCommand("Toggle Intake", intake.cycleDeployment());
     NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
-    NamedCommands.registerCommand("RunIntake", intake.runIn());
+    NamedCommands.registerCommand("Run Intake", intake.runIn());
     NamedCommands.registerCommand("shooterAtIdle", shooter.runAtIdleCommand());
     NamedCommands.registerCommand("Run Spindexer", spindexer.spin());
-    NamedCommands.registerCommand(
-      "aimAndShoot", 
-      Commands.parallel(
-        Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()).repeatedly(),
-        Commands.waitSeconds(0.5).andThen(spindexer.spin())
-      ).withTimeout(Seconds.of(5))
-    );
+    NamedCommands.registerCommand("aimAndShoot", 
+    Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()).repeatedly());
     NamedCommands.registerCommand("Stop All", Commands.parallel(shooter.stop(), spindexer.stop(), turret.stop()));
-    // NamedCommands.registerCommand("Aim At A.T", turret.pointAtHubCommand(0));
-    // NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)));
+    NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)));
+
 
     this.configureBindings();
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -130,8 +125,8 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive
-          .withVelocityX(forwardFilter.calculate(joystick.getLeftY() * MaxSpeed) ) // Drive forward with negative Y (forward)
-          .withVelocityY(turnFilter.calculate(joystick.getLeftX() * MaxSpeed) ) // Drive left with negative X (left)
+          .withVelocityX(forwardFilter.calculate(joystick.getLeftY() * MaxSpeed * driveCoefficient.value) ) // Drive forward with negative Y (forward)
+          .withVelocityY(turnFilter.calculate(joystick.getLeftX() * MaxSpeed * driveCoefficient.value) ) // Drive left with negative X (left)
           .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         )
     );
