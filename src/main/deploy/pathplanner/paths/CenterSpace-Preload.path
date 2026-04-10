@@ -16,41 +16,82 @@
     },
     {
       "anchor": {
-        "x": 2.1059978070175442,
-        "y": 4.188859649122807
+        "x": 1.8463596491228071,
+        "y": 4.025383771929824
       },
       "prevControl": {
-        "x": 2.5483442982456146,
-        "y": 4.150394736842105
+        "x": 2.2887061403508775,
+        "y": 3.986918859649122
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.36792452830188677,
+      "rotationDegrees": 90.0
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 1.0,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 0.5,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "shooterAtIdle",
-      "waypointRelativePos": 0,
+      "name": "Turret to 90",
+      "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "shooterAtIdle"
+          "name": "Turret to 90"
+        }
+      }
+    },
+    {
+      "name": "Run Spindexer",
+      "waypointRelativePos": 0.1795332136445241,
+      "endWaypointRelativePos": 1.0,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Run Spindexer"
         }
       }
     },
     {
       "name": "aimAndShoot",
-      "waypointRelativePos": 0.9102333931777373,
+      "waypointRelativePos": 0.24416517055655348,
       "endWaypointRelativePos": 1.0,
       "command": {
         "type": "named",
         "data": {
           "name": "aimAndShoot"
+        }
+      }
+    },
+    {
+      "name": "Stop Spindexer",
+      "waypointRelativePos": 1.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Stop Spindexer"
         }
       }
     }
@@ -65,7 +106,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 143.34389158403314
+    "rotation": 88.80651057601796
   },
   "reversed": false,
   "folder": "Rocket City - Paths",

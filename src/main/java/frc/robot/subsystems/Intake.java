@@ -22,7 +22,7 @@ public class Intake extends SubsystemBase {
   private static final boolean DEBUG = false;
 
   enum DeploymentState {
-    DEPLOYED(Rotations.of(2.65)), RETRACTED(DEPLOY_MIN_ROTATIONS), BUMPER(Rotations.of(0.914));
+    DEPLOYED(Rotations.of(2.65)), RETRACTED(DEPLOY_MIN_ROTATIONS), BUMPER(Rotations.of(0.5)); //original val: 0.914
 
     public final Angle rotations;
 
@@ -55,9 +55,9 @@ public class Intake extends SubsystemBase {
     deployConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     //// removed because it prevented the Minion from drawing enough current.
     deployConfig.CurrentLimits
-      .withStatorCurrentLimit(Amps.of(90))
+      .withStatorCurrentLimit(Amps.of(100))
       .withStatorCurrentLimitEnable(true)
-      .withSupplyCurrentLimit(Amps.of(80))
+      .withSupplyCurrentLimit(Amps.of(90))
       .withSupplyCurrentLimitEnable(true);
     deployConfig.ExternalFeedback.withExternalFeedbackSensorSource(ExternalFeedbackSensorSourceValue.RemoteCANcoder)
         .withFeedbackRemoteSensorID(62);

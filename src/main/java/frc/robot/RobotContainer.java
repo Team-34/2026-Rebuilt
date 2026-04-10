@@ -62,7 +62,7 @@ public class RobotContainer {
   private final SlewRateLimiter rotateFilter = new SlewRateLimiter(1.8);
 
   enum DriveCoefficient {
-    FULL(1.0), FARIS(0.5);
+    FULL(1.0), FARIS(0.8);
 
     public final double value;
 
@@ -108,10 +108,11 @@ public class RobotContainer {
     NamedCommands.registerCommand("Run Intake", intake.runIn().repeatedly());
     NamedCommands.registerCommand("shooterAtIdle", shooter.runAtIdleCommand());
     NamedCommands.registerCommand("Run Spindexer", spindexer.spin());
+    NamedCommands.registerCommand("Stop Spindexer", spindexer.stop());
     NamedCommands.registerCommand("aimAndShoot", 
     Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
     NamedCommands.registerCommand("Stop All", Commands.parallel(shooter.stop(), spindexer.stop(), turret.stop()));
-    NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)));
+    NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)).repeatedly().withTimeout(Seconds.of(0.5)));
 
     
     this.configureBindings();
@@ -163,6 +164,7 @@ public class RobotContainer {
     // joystick.povLeft().whileTrue(climber.extendCommand());
     // joystick.povRight().whileTrue(climber.retractCommand());
 
+    primaryDriverjoystick.povRight().onTrue(turret.swivelToCommand(Degree.of(90)));
     primaryDriverjoystick.rightTrigger().onTrue(intake.runIn()).onFalse(intake.stop());
     primaryDriverjoystick.rightBumper().whileTrue(Commands.parallel(intake.runOut(), spindexer.spinReverse()));
 
@@ -179,6 +181,7 @@ public class RobotContainer {
 
     copilotDriverjoystick.x().onTrue(shooter.cycleSpeedCommand());
     copilotDriverjoystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+    copilotDriverjoystick.b().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
     
     copilotDriverjoystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.1)).onFalse(turret.stop());
     copilotDriverjoystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.1)).onFalse(turret.stop());

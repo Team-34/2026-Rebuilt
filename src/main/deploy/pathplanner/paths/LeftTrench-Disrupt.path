@@ -1,0 +1,102 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.211951754385965,
+        "y": 7.371831140350877
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.337225877192983,
+        "y": 8.285372807017543
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.452620614035088,
+        "y": 4.294638157894736
+      },
+      "prevControl": {
+        "x": 7.479072445993886,
+        "y": 5.440884209442609
+      },
+      "nextControl": {
+        "x": 7.423771929824561,
+        "y": 3.04452850877193
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.452620614035088,
+        "y": 1.9482785087719297
+      },
+      "prevControl": {
+        "x": 7.95266447368421,
+        "y": 2.0252083333333335
+      },
+      "nextControl": {
+        "x": 6.0071692481544785,
+        "y": 1.725901375559527
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.739888303584246,
+        "y": 4.623542511448857
+      },
+      "prevControl": {
+        "x": 6.647784493644554,
+        "y": 3.1319603883857074
+      },
+      "nextControl": {
+        "x": 6.933344298245614,
+        "y": 7.756480263157895
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.0003070175438595,
+        "y": 7.371831140350877
+      },
+      "prevControl": {
+        "x": 8.058442982456139,
+        "y": 7.496842105263157
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -179.559271927239
+  },
+  "reversed": false,
+  "folder": "Rocket City - Paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 178.13232116056588
+  },
+  "useDefaultConstraints": true
+}
