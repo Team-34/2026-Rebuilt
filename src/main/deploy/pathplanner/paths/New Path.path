@@ -20,12 +20,12 @@
         "y": 4.246557017543859
       },
       "prevControl": {
-        "x": 2.226184210526316,
-        "y": 3.7897861842105254
+        "x": 2.2924078004199204,
+        "y": 3.8229768195700524
       },
       "nextControl": {
-        "x": 1.8511842105263159,
-        "y": 4.7033278508771925
+        "x": 0.8387656529516991,
+        "y": 6.249767441860465
       },
       "isLocked": false,
       "linkedName": null
@@ -123,7 +123,7 @@
     },
     {
       "waypointRelativePos": 4.6509433962264275,
-      "rotationDegrees": -88.26059145323083
+      "rotationDegrees": -88.26059145323084
     },
     {
       "waypointRelativePos": 5.000000000000016,
@@ -133,7 +133,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.8761220825852779,
+      "minWaypointRelativePos": 1.0779661016949151,
       "maxWaypointRelativePos": 1.1579892280071817,
       "constraints": {
         "maxVelocity": 0.1,
@@ -177,13 +177,13 @@
       "name": "shooterAtIdle",
       "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": shooterAtIdle()
     },
     {
       "name": "aimAndShoot",
       "waypointRelativePos": 0.5062836624775582,
       "endWaypointRelativePos": 1.1849192100538586,
-      "command": null
+      "command": 
     },
     {
       "name": "Run Spindexer",
@@ -244,7 +244,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 2.7927023659081556
+    "rotation": 1.0842478264605822
   },
   "reversed": false,
   "folder": "Rocket City - Paths",
