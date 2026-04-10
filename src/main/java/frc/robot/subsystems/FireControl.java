@@ -19,7 +19,7 @@ public class FireControl extends SubsystemBase {
   private final Vision vision;
   private final Game game;
 
-  public FireControl(CommandSwerveDrivetrain drivetrain, Vision vision, Game game) {
+  public FireControl(final CommandSwerveDrivetrain drivetrain, final Vision vision, final Game game) {
     this.drivetrain = drivetrain;
     this.vision = vision;
     this.game = game;
@@ -33,9 +33,9 @@ public class FireControl extends SubsystemBase {
     return vision.getAzimuthToHub();
   }
 
-  public Translation2d getClosestTarget() {
-    game.getFerryTargets();
-  }
+  // public Translation2d getClosestTarget() {
+  //   game.getFerryTargets();
+  // }
 
   private static final Translation2d turretOffset = new Translation2d(Inches.of(3.5), Inches.of(-6));
 
@@ -51,7 +51,7 @@ public class FireControl extends SubsystemBase {
     if(DEBUG){
       SmartDashboard.putString("Fire Ctrl: Hub Position", game.getHub().map(Game.Hub::position).toString());
       SmartDashboard.putString("Fire Ctrl: Robot Position", getRobotPose().toString());
-      SmartDashboard.putString("Fire Ctrl: Hub Aimuth", getAzimuthToHub().map(x -> x.toLongString()).toString());
+      SmartDashboard.putString("Fire Ctrl: Hub Aimuth", getAzimuthToHub().map(Angle::toLongString).toString());
     }
   }
 }
