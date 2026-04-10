@@ -6,16 +6,23 @@ import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Grams;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Newtons;
+import static edu.wpi.first.units.Units.Radians;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.stream.Stream;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.units.measure.Angle;
 
 public class MathsTest {
   static Stream<Arguments> clamp_testCases() {
@@ -112,5 +119,43 @@ public class MathsTest {
     final double expected
   ) {
     assertEquals(expected, Maths.normalizeAngleNeg180To180(degrees), 0.01);
+  }
+
+  static Stream<Arguments> azimuth_testCases() {
+    return Stream.of(
+      Arguments.of(
+        new Pose2d(
+          new Translation2d(Meters.of(16), Meters.of(16)),
+          new Rotation2d(Degrees.of(-45))
+        ),
+        new Translation2d(Meters.of(6), Meters.of(6)),
+        Degrees.of(-90)
+      ),
+      Arguments.of(
+        new Pose2d(
+          new Translation2d(Feet.of(12), Feet.of(7)),
+          new Rotation2d(Degrees.of(-60))
+        ),
+        new Translation2d(Feet.of(6), Feet.of(13)),
+        Degrees.of(-165)
+      )
+    );
+  }
+
+  @ParameterizedTest
+  @MethodSource("azimuth_testCases")
+  public void azimuth_calculatesTheAzimuthAngleBetweenAPoseAndATargetPoint(
+    final Pose2d from,
+    final Translation2d to,
+    final Angle expected
+  ) {
+    final var actual = Maths.azimuth(from, to);
+    assertTrue(
+      actual.isNear(expected, 0.1),
+      String.format(
+        "Expected azimuth from %s to %s to be %f deg but was %f deg",
+        from, to, expected.in(Degrees), actual.in(Degrees)
+      )
+    );
   }
 }
