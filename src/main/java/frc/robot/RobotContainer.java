@@ -53,7 +53,6 @@ public class RobotContainer {
   private final Spindexer spindexer = new Spindexer();
   private final Vision vision = new Vision(game);
   private final Turret turret;
-  private final LEDs leds = new LEDs(game);
   private final Shooter shooter;
   private final FireControl fireControl;
 
@@ -116,7 +115,7 @@ public class RobotContainer {
     Commands.parallel(shooter.shootByRPSCommand().repeatedly(), turret.pointAtHubCommand()).repeatedly());
     NamedCommands.registerCommand("Stop All", Commands.parallel(shooter.stop(), spindexer.stop(), turret.stop()));
     NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)));
-
+    NamedCommands.registerCommand("ShootAndScore", Commands.none());
     
     this.configureBindings();
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -217,11 +216,9 @@ public class RobotContainer {
    * Used by subsystems to disable what they need turned off when the robot is disabled.
    */
   public void disable() {
-    leds.turnOff();
     CommandScheduler.getInstance().schedule(shooter.stop(), turret.stop(), spindexer.stop());
   }
 
   public void enable() {
-    leds.allianceColor();
   }
 }

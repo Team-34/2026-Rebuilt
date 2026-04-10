@@ -39,7 +39,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 public class Shooter extends SubsystemBase {
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = false;
 
   enum Speed {
     STOP(0.0), HALF(0.5), FULL(0.85); // enum for flywheel speeds

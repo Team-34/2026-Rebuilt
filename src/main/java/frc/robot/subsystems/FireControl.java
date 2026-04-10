@@ -18,7 +18,7 @@ import frc.robot.subsystems.Game.Hub;
 import frc.robot.util.Maths;
 
 public class FireControl extends SubsystemBase {
-  private static final boolean DEBUG = true;
+  private static final boolean DEBUG = false;
 
   private final CommandSwerveDrivetrain drivetrain;
   private final Vision vision;
