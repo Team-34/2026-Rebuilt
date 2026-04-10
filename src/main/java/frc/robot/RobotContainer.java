@@ -15,6 +15,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.FollowPathCommand;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -107,15 +109,15 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Toggle Intake", intake.cycleDeployment());
     NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
-    NamedCommands.registerCommand("Run Intake", intake.runIn());
+    NamedCommands.registerCommand("Run Intake", intake.runIn().repeatedly());
     NamedCommands.registerCommand("shooterAtIdle", shooter.runAtIdleCommand());
-    NamedCommands.registerCommand("Run Spindexer", spindexer.spin());
+    NamedCommands.registerCommand("Run Spindexer", spindexer.spin().repeatedly());
     NamedCommands.registerCommand("aimAndShoot", 
-    Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()).repeatedly());
+    Commands.parallel(shooter.shootByRPSCommand().repeatedly(), turret.pointAtHubCommand()).repeatedly());
     NamedCommands.registerCommand("Stop All", Commands.parallel(shooter.stop(), spindexer.stop(), turret.stop()));
     NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)));
 
-
+    
     this.configureBindings();
     autoChooser = AutoBuilder.buildAutoChooser();
     SmartDashboard.putData("Auto Chooser", autoChooser);
