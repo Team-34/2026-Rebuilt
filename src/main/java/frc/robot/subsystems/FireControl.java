@@ -2,10 +2,12 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 
 import java.util.Optional;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
@@ -41,9 +43,11 @@ public class FireControl extends SubsystemBase {
       return getClosestTarget().map(target -> {
         var distanceToTarget = distanceTo(target);
         var deltaX = target.getMeasureX().minus(getRobotPose().getMeasureX());
+        var thetaRad = Math.acos(deltaX.in(Inches) / distanceToTarget.in(Inches));
+        var phiRad = getRobotPose().getRotation().getRadians();
+        return Radians.of(thetaRad + phiRad);
       });
     }
-
   }
 
   public Optional<Translation2d> getClosestTarget() {

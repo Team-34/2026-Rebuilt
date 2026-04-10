@@ -65,9 +65,26 @@ public class Turret extends SubsystemBase {
         motor.setControl(positionControl.withPosition(newMotorAngle));
 
         if (DEBUG) {
-          SmartDashboard.putString("Turret: Current Turret Angle", turretAngle.toLongString());
-          SmartDashboard.putString("Turret: New Turret Angle", newTurretAngle.toLongString());
-          SmartDashboard.putString("Turret: New Motor Angle", newMotorAngle.toLongString());
+          SmartDashboard.putString("Turret/PointAtHubCommand(): Current Turret Angle", turretAngle.toLongString());
+          SmartDashboard.putString("Turret/PointAtHubCommand(): New Turret Angle", newTurretAngle.toLongString());
+          SmartDashboard.putString("Turret/PointAtHubCommand(): New Motor Angle", newMotorAngle.toLongString());
+        }
+      }, motor::stopMotor);
+    }, motor::stopMotor);
+  }
+
+  public Command pointAtTargetCommand() {
+    return runEnd(() -> {
+      fireControl.getAzimuthToTarget().ifPresentOrElse(az -> {
+        final var turretAngle = motorAngleToTurretAngle(motor.getPosition().getValue());
+        final var newTurretAngle = Maths.clamp(turretAngle.minus(az), SWIVEL_LOWER_LIMIT, SWIVEL_UPPER_LIMIT);
+        final var newMotorAngle = turretAngleToMotorAngle(newTurretAngle);
+        motor.setControl(positionControl.withPosition(newMotorAngle));
+
+        if (DEBUG) {
+          SmartDashboard.putString("Turret/PointAtTargetCommand(): Current Turret Angle", turretAngle.toLongString());
+          SmartDashboard.putString("Turret/PointAtTargetCommand(): New Turret Angle", newTurretAngle.toLongString());
+          SmartDashboard.putString("Turret/PointAtTargetCommand(): New Motor Angle", newMotorAngle.toLongString());
         }
       }, motor::stopMotor);
     }, motor::stopMotor);
