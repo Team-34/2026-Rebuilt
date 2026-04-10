@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
@@ -11,6 +12,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.Game.Hub;
 import frc.robot.util.Maths;
 
 public class FireControl extends SubsystemBase {
@@ -35,23 +37,15 @@ public class FireControl extends SubsystemBase {
   }
 
   public Optional<Angle> getAzimuthToTarget() {
-    if(game.isInAllianceZone(getRobotPose())){
-      return vision.getAzimuthToHub();
-    } else {
-      return getClosestTarget().map(target -> {
-        var distanceToTarget = distanceTo(target);
-        var deltaX = target.getMeasureX().minus(getRobotPose().getMeasureX());
-      });
-    }
-
+    return getClosestTarget().map(target -> Maths.azimuth(getRobotPose(), target));
   }
 
   public Optional<Translation2d> getClosestTarget() {
-    var botPose = getRobotPose();
+    final var botPose = getRobotPose();
     if (game.isInAllianceZone(botPose)) {
-      return game.getHub().map(hub -> hub.position());
+      return game.getHub().map(Hub::position);
     } else {
-      var targets = game.getFerryTargets();
+      final var targets = game.getFerryTargets();
       return targets.isEmpty() ? Optional.empty() : Optional.of(botPose.getTranslation().nearest(targets));
     }
   }
@@ -69,7 +63,7 @@ public class FireControl extends SubsystemBase {
     return getClosestTarget().map(this::distanceTo);
   }
 
-  private Distance distanceTo(Translation2d target) {
+  private Distance distanceTo(final Translation2d target) {
     final var meters = getRobotPose().getTranslation().plus(turretOffset).getDistance(target);
     return Meters.of(meters);
   }
