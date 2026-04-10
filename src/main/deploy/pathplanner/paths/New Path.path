@@ -177,61 +177,61 @@
       "name": "shooterAtIdle",
       "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
-      "command": shooterAtIdle()
+      "command": shooter.runAtIdleCommand()
     },
     {
       "name": "aimAndShoot",
       "waypointRelativePos": 0.5062836624775582,
       "endWaypointRelativePos": 1.1849192100538586,
-      "command": 
+      "command": Commands.parallel(shooter.shootByRPSCommand().repeatedly(), turret.pointAtHubCommand()).repeatedly()
     },
     {
       "name": "Run Spindexer",
       "waypointRelativePos": 0.9479353680430886,
       "endWaypointRelativePos": 1.2603231597845603,
-      "command": null
+      "command": spindexer.spin().repeatedly()
     },
     {
       "name": "Toggle Intake",
       "waypointRelativePos": 2.2621184919210027,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": intake.cycleDeployment()
     },
     {
       "name": "Toggle Intake",
       "waypointRelativePos": 2.326750448833034,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": intake.cycleDeployment()
     },
     {
       "name": "Run Intake",
       "waypointRelativePos": 2.6391382405745025,
       "endWaypointRelativePos": 4.707360861759419,
-      "command": null
+      "command": intake.runIn().repeatedly()
     },
     {
       "name": "Cycle Shooter Speed",
       "waypointRelativePos": 4.373429084380612,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": shooter.cycleSpeedCommand()
     },
     {
       "name": "Cycle Shooter Speed",
       "waypointRelativePos": 4.405745062836626,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": shooter.cycleSpeedCommand()
     },
     {
       "name": "Turret to 90",
       "waypointRelativePos": 4.502692998204659,
       "endWaypointRelativePos": null,
-      "command": null
+      "command": turret.swivelToCommand(Degree.of(90))
     },
     {
       "name": "Run Spindexer",
       "waypointRelativePos": 4.5457809694793525,
       "endWaypointRelativePos": 4.91202872531418,
-      "command": null
+      "command": spindexer.spin().repeatedly()
     }
   ],
   "globalConstraints": {
