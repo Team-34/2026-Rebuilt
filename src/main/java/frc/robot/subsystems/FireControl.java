@@ -11,6 +11,7 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.util.Maths;
 
 public class FireControl extends SubsystemBase {
   private static final boolean DEBUG = true;
@@ -24,7 +25,7 @@ public class FireControl extends SubsystemBase {
     this.vision = vision;
     this.game = game;
   }
-  
+
   public Pose2d getRobotPose() {
     return drivetrain.getState().Pose;
   }
@@ -33,9 +34,27 @@ public class FireControl extends SubsystemBase {
     return vision.getAzimuthToHub();
   }
 
-  // public Translation2d getClosestTarget() {
-  //   game.getFerryTargets();
-  // }
+  public Optional<Angle> getAzimuthToTarget() {
+    if(game.isInAllianceZone(getRobotPose())){
+      return vision.getAzimuthToHub();
+    } else {
+      return getClosestTarget().map(target -> {
+        var distanceToTarget = distanceTo(target);
+        var deltaX = target.getMeasureX().minus(getRobotPose().getMeasureX());
+      });
+    }
+
+  }
+
+  public Optional<Translation2d> getClosestTarget() {
+    var botPose = getRobotPose();
+    if (game.isInAllianceZone(botPose)) {
+      return game.getHub().map(hub -> hub.position());
+    } else {
+      var targets = game.getFerryTargets();
+      return targets.isEmpty() ? Optional.empty() : Optional.of(botPose.getTranslation().nearest(targets));
+    }
+  }
 
   private static final Translation2d turretOffset = new Translation2d(Inches.of(3.5), Inches.of(-6));
 
@@ -46,9 +65,18 @@ public class FireControl extends SubsystemBase {
     });
   }
 
+  public Optional<Distance> getDistanceToTarget() {
+    return getClosestTarget().map(this::distanceTo);
+  }
+
+  private Distance distanceTo(Translation2d target) {
+    final var meters = getRobotPose().getTranslation().plus(turretOffset).getDistance(target);
+    return Meters.of(meters);
+  }
+
   @Override
   public void periodic() {
-    if(DEBUG){
+    if (DEBUG) {
       SmartDashboard.putString("Fire Ctrl: Hub Position", game.getHub().map(Game.Hub::position).toString());
       SmartDashboard.putString("Fire Ctrl: Robot Position", getRobotPose().toString());
       SmartDashboard.putString("Fire Ctrl: Hub Aimuth", getAzimuthToHub().map(Angle::toLongString).toString());
