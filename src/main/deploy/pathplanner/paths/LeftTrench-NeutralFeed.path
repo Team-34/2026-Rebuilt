@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 2.038684210526316,
-        "y": 4.246557017543859
+        "x": 2.0963815789473683,
+        "y": 3.8234429824561396
       },
       "prevControl": {
-        "x": 2.2924078004199204,
-        "y": 3.8229768195700524
+        "x": 2.350105168840973,
+        "y": 3.399862784482333
       },
       "nextControl": {
-        "x": 0.8387656529516991,
-        "y": 6.249767441860465
+        "x": 0.8964630213727516,
+        "y": 5.826653406772746
       },
       "isLocked": false,
       "linkedName": null
@@ -111,7 +111,7 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1.15,
-      "rotationDegrees": 120.88134123506892
+      "rotationDegrees": 75.4491912896245
     },
     {
       "waypointRelativePos": 2.1037735849056602,
@@ -183,6 +183,12 @@
           "name": "shooterAtIdle"
         }
       }
+    },
+    {
+      "name": "Turret to 90",
+      "waypointRelativePos": 0.3770197486535011,
+      "endWaypointRelativePos": null,
+      "command": null
     },
     {
       "name": "aimAndShoot",
