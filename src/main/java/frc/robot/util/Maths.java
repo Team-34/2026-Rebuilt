@@ -1,7 +1,11 @@
 package frc.robot.util;
 
 import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Meters;
+import static edu.wpi.first.units.Units.Radians;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 
 /**
@@ -9,6 +13,16 @@ import edu.wpi.first.units.measure.Angle;
  */
 public final class Maths {
   private Maths() {}
+
+  public static Angle azimuth(final Pose2d observer, final Translation2d target) {
+    final var delta = target.minus(observer.getTranslation());
+    final var deltaXMeters = delta.getMeasureX().in(Meters);
+    final var deltaYMeters = delta.getMeasureY().in(Meters);
+    final var bearingFromNorthRad = Math.atan2(deltaYMeters, deltaXMeters);
+
+    final var observerYawRad = observer.getRotation().getRadians();
+    return Radians.of(normalizeAngleNegPiToPi(bearingFromNorthRad - observerYawRad));
+  }
 
   /**
    * Returns the greater of two values.
@@ -61,6 +75,22 @@ public final class Maths {
       return  degrees -= 360;
     } else {
       return degrees;
+    }
+  }
+
+  /**
+   * Normalizes an angle to the range [-π, π].
+   *
+   * @param radians Angle to normalize
+   * @return angle normalized to the range [-π, π]
+   */
+  public static double normalizeAngleNegPiToPi(double radians) {
+    if (radians < -Math.PI) {
+      return  radians += (2 * Math.PI);
+    } else if (radians > Math.PI) {
+      return  radians -= (2 * Math.PI);
+    } else {
+      return radians;
     }
   }
 
