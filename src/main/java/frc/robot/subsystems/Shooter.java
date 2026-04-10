@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.RevolutionsPerSecond;
 import static edu.wpi.first.units.Units.Rotations;
@@ -213,15 +214,14 @@ public class Shooter extends SubsystemBase {
         cachedHubDistance = newDistanceToHub;
       }
 
-      cachedHubDistance.ifPresentOrElse(distance -> {
-        final AngularVelocity rps = distanceToRPS(distance);
-        runFiringMotorByRPS(rps);
+      final var distance = cachedHubDistance.orElse(Feet.of(5));
+      final AngularVelocity rps = distanceToRPS(distance);
+      runFiringMotorByRPS(rps);
 
-        if (DEBUG) {
-          SmartDashboard.putString("Shooter: Distance to Hub ", distance.toString());
-          SmartDashboard.putString("Shooter: Calculated Shooter RPS", rps.toString());
-        }
-      }, this::runAtIdle);
+      if (DEBUG) {
+        SmartDashboard.putString("Shooter: Distance to Hub ", distance.toString());
+        SmartDashboard.putString("Shooter: Calculated Shooter RPS", rps.toString());
+      }
     }, () -> {
       cachedHubDistance = Optional.empty();
       runAtIdle();
@@ -244,10 +244,8 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    final var percentOutput = MathUtil.clamp(
-      hoodPID.calculate(hoodEncoder.getPosition().getValue().in(Rotations)),
-      -1.0,
-      1.0);
+    final var percentOutput = MathUtil.clamp(hoodPID.calculate(hoodEncoder.getPosition().getValue().in(Rotations)),
+        -1.0, 1.0);
     this.hoodMotor.set(TalonSRXControlMode.PercentOutput, percentOutput);
 
     if (DEBUG) {
