@@ -185,36 +185,9 @@ public class Shooter extends SubsystemBase {
     return RotationsPerSecond.of(rps);
   }
 
-  public Command shootBySpeedCommand() {
-    return runEnd(() -> {
-      final var newDistanceToHub = fireControl.getDistanceToHub();
-      if (newDistanceToHub.isPresent()) {
-        cachedHubDistance = newDistanceToHub;
-      }
-
-      cachedHubDistance.ifPresentOrElse(distance -> {
-        final var speed = distanceToFiringSpeed(distance);
-        runFiringMotor(speed);
-
-        if (DEBUG) {
-          SmartDashboard.putString("Shooter: Distance to Hub", distance.toLongString());
-          SmartDashboard.putNumber("Shooter: Calculated Shooter Speed", speed);
-        }
-      }, this::runAtIdle);
-    }, () -> {
-      cachedHubDistance = Optional.empty();
-      runAtIdle();
-    });
-  }
-
   public Command shootByRPSCommand() {
     return runEnd(() -> {
-      // final var newDistanceToHub = fireControl.getDistanceToHub();
-      // if (newDistanceToHub.isPresent()) {
-      //   cachedHubDistance = newDistanceToHub;
-      // }
-
-      final var distance = cachedHubDistance.orElse(Feet.of(5));
+      final var distance = fireControl.getDistanceToTarget().orElse(Feet.of(5));
       final AngularVelocity rps = distanceToRPS(distance);
       runFiringMotorByRPS(rps);
 
@@ -223,7 +196,6 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putString("Shooter: Calculated Shooter RPS", rps.toString());
       }
     }, () -> {
-      // cachedHubDistance = Optional.empty();
       runAtIdle();
     });
   }
