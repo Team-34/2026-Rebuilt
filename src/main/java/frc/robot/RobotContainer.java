@@ -93,7 +93,8 @@ public class RobotContainer {
 
   private final Telemetry logger = new Telemetry(MaxSpeed);
   public final LimelightHelpers limelightHelpers = new LimelightHelpers();
-  private final CommandXboxController joystick = new CommandXboxController(0);
+  private final CommandXboxController primaryDriverjoystick = new CommandXboxController(0);
+  private final CommandXboxController copilotDriverjoystick = new CommandXboxController(1);
   private final SendableChooser<Command> autoChooser;
   public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
   /* Path follower */
@@ -128,9 +129,9 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         // Drivetrain will execute this command periodically
         drivetrain.applyRequest(() -> drive
-          .withVelocityX(forwardFilter.calculate(joystick.getLeftY() * MaxSpeed * driveCoefficient.value) ) // Drive forward with negative Y (forward)
-          .withVelocityY(turnFilter.calculate(joystick.getLeftX() * MaxSpeed * driveCoefficient.value) ) // Drive left with negative X (left)
-          .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+          .withVelocityX(forwardFilter.calculate(primaryDriverjoystick.getLeftY() * MaxSpeed * driveCoefficient.value) ) // Drive forward with negative Y (forward)
+          .withVelocityY(turnFilter.calculate(primaryDriverjoystick.getLeftX() * MaxSpeed * driveCoefficient.value) ) // Drive left with negative X (left)
+          .withRotationalRate(-primaryDriverjoystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
         )
     );
 
@@ -140,17 +141,17 @@ public class RobotContainer {
     RobotModeTriggers.disabled().whileTrue(drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
     // Initiate shieldwall while both sticks are pressed.
-    joystick.leftStick().and(joystick.rightStick()).whileTrue(drivetrain.applyRequest(() -> shieldwall));        
+    primaryDriverjoystick.leftStick().and(primaryDriverjoystick.rightStick()).whileTrue(drivetrain.applyRequest(() -> shieldwall));        
         
     // Run SysId routines when holding back/start and X/Y.
     // Note that each routine should be run exactly once in a single log.
-    joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-    joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-    joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-    joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+    primaryDriverjoystick.back().and(primaryDriverjoystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+    primaryDriverjoystick.back().and(primaryDriverjoystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+    primaryDriverjoystick.start().and(primaryDriverjoystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+    primaryDriverjoystick.start().and(primaryDriverjoystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
     // Reset the field-centric heading on back button press.
-    joystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
+    primaryDriverjoystick.start().onTrue(drivetrain.runOnce(drivetrain::seedFieldCentric));
 
     drivetrain.registerTelemetry(logger::telemeterize);
 
@@ -162,28 +163,28 @@ public class RobotContainer {
     // joystick.povLeft().whileTrue(climber.extendCommand());
     // joystick.povRight().whileTrue(climber.retractCommand());
 
-    joystick.a().onTrue(intake.runIn()).onFalse(intake.stop());
-    joystick.b().whileTrue(Commands.parallel(intake.runOut(), spindexer.spinReverse()));
+    primaryDriverjoystick.rightTrigger().onTrue(intake.runIn()).onFalse(intake.stop());
+    primaryDriverjoystick.rightBumper().whileTrue(Commands.parallel(intake.runOut(), spindexer.spinReverse()));
 
-    joystick.x().onTrue(intake.cycleDeployment());
+    primaryDriverjoystick.leftTrigger().onTrue(intake.cycleDeployment());
     // joystick.x().onTrue(intake.deployByPower(0.1)).onFalse(intake.haltDeployment());
     // joystick.y().onTrue(intake.deployByPower(-0.2)).onFalse(intake.haltDeployment());
 
     //joystick.y().whileTrue(Commands.parallel(shooter.shootCommand(), turret.pointAtHubCommand()));
-    joystick.y().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
+    copilotDriverjoystick.rightTrigger().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
     //joystick.y().onTrue(shooter.runFiringMotorByRPSCommand(RevolutionsPerSecond.of(47)));
 
     // joystick.povUp().onTrue(shooter.increaseByRPSCommand()).onFalse(shooter.stop());
     // joystick.povDown().onTrue(shooter.decreaseByRPSCommand()).onFalse(shooter.stop());
 
-    joystick.rightTrigger().onTrue(shooter.cycleSpeedCommand());
-    joystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
+    copilotDriverjoystick.x().onTrue(shooter.cycleSpeedCommand());
+    copilotDriverjoystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
     
-    joystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.1)).onFalse(turret.stop());
-    joystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.1)).onFalse(turret.stop());
+    copilotDriverjoystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.1)).onFalse(turret.stop());
+    copilotDriverjoystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.1)).onFalse(turret.stop());
     
     
-    joystick.povRight().onTrue(turret.swivelToCommand(Degree.of(90))); 
+    copilotDriverjoystick.povRight().onTrue(turret.swivelToCommand(Degree.of(90))); 
     // joystick.povLeft().onTrue(turret.findZeroCommand(0.1));
 
     //joystick.povUp().onTrue(shooter.setHoodPosition(1.0));
