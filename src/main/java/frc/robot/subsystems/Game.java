@@ -6,6 +6,7 @@ import static edu.wpi.first.units.Units.Inches;
 import java.util.List;
 import java.util.Optional;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -70,10 +71,20 @@ public interface Game {
     return getAlliance().map(alliance -> alliance == Alliance.Blue ? Hub.blue : Hub.red);
   }
 
+  public default boolean isInAllianceZone(final Pose2d robotPose) {
+    return getAlliance().flatMap(alliance -> getHub().map(hub -> {
+      final var weAreBlueAlliance = alliance == Alliance.Blue;
+      final var botX = robotPose.getTranslation().getMeasureX();
+      final var hubX = hub.position().getMeasureX();
+
+      return weAreBlueAlliance ? botX.lt(hubX) : botX.gt(hubX);
+    })).orElse(false);
+  }
+
   public default List<Translation2d> getFerryTargets() {
     return getAlliance()
-    .map(alliance -> alliance == Alliance.Blue ? blueFerryTargets : redFerryTargets)
-    .orElse(List.of());
+      .map(a -> a == Alliance.Blue ? blueFerryTargets : redFerryTargets)
+      .orElse(List.of());
   }
 
   /**
