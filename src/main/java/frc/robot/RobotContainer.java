@@ -183,8 +183,8 @@ public class RobotContainer {
     copilotDriverjoystick.leftTrigger().onTrue(spindexer.spin()).onFalse(spindexer.stop());
     copilotDriverjoystick.b().onTrue(spindexer.spinReverse()).onFalse(spindexer.stop());
     
-    copilotDriverjoystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.1)).onFalse(turret.stop());
-    copilotDriverjoystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.1)).onFalse(turret.stop());
+    copilotDriverjoystick.leftBumper().onTrue(turret.swivelByPowerCommand(0.2)).onFalse(turret.stop());
+    copilotDriverjoystick.rightBumper().onTrue(turret.swivelByPowerCommand(-0.2)).onFalse(turret.stop());
     
     
     copilotDriverjoystick.povRight().onTrue(turret.swivelToCommand(Degree.of(90))); 

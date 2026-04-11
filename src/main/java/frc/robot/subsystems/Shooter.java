@@ -42,7 +42,7 @@ public class Shooter extends SubsystemBase {
   private static final boolean DEBUG = false;
 
   enum Speed {
-    STOP(0.0), HALF(0.5), FULL(0.85); // enum for flywheel speeds
+    STOP(0.0), HALF(0.5), FULL(0.75); // enum for flywheel speeds
 
     public final double value;
 
