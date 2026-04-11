@@ -164,7 +164,7 @@ public class RobotContainer {
     // joystick.povLeft().whileTrue(climber.extendCommand());
     // joystick.povRight().whileTrue(climber.retractCommand());
 
-    primaryDriverjoystick.povRight().onTrue(turret.swivelToCommand(Degree.of(90)));
+    copilotDriverjoystick.povRight().onTrue(turret.swivelToCommand(Degree.of(90)));
     primaryDriverjoystick.rightTrigger().onTrue(intake.runIn()).onFalse(intake.stop());
     primaryDriverjoystick.rightBumper().whileTrue(Commands.parallel(intake.runOut(), spindexer.spinReverse()));
 
