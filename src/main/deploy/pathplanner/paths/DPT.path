@@ -1,0 +1,146 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.1957245080483476,
+        "y": 5.973935599282161
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": -0.32946332737204576,
+        "y": 6.071288014308993
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.9583184257585446,
+        "y": 5.649427549192715
+      },
+      "prevControl": {
+        "x": 1.7312649977280476,
+        "y": 6.2170611192689575
+      },
+      "nextControl": {
+        "x": 2.088121645794323,
+        "y": 5.3249194991032684
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.2990518783524623,
+        "y": 5.065313059031713
+      },
+      "prevControl": {
+        "x": 2.039445438280906,
+        "y": 5.714329159210604
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.1978609625668477,
+      "rotationDegrees": -177.1082789612336
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0,
+      "maxWaypointRelativePos": 0.46779661016949176,
+      "constraints": {
+        "maxVelocity": 0.3,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Toggle Intake",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Toggle Intake"
+        }
+      }
+    },
+    {
+      "name": "Turret to 90",
+      "waypointRelativePos": 0.04067796610169491,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Turret to 90"
+        }
+      }
+    },
+    {
+      "name": "Toggle Intake",
+      "waypointRelativePos": 0.1491525423728814,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Toggle Intake"
+        }
+      }
+    },
+    {
+      "name": "Run Intake",
+      "waypointRelativePos": 0.20338983050847464,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Run Intake"
+        }
+      }
+    },
+    {
+      "name": "aimAndShoot",
+      "waypointRelativePos": 1.125423728813562,
+      "endWaypointRelativePos": 2.0,
+      "command": null
+    },
+    {
+      "name": "Run Spindexer",
+      "waypointRelativePos": 1.8101694915254125,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 119.47588900324577
+  },
+  "reversed": false,
+  "folder": "Rocket City - Paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -179.19307054489764
+  },
+  "useDefaultConstraints": true
+}

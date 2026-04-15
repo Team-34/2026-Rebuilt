@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Primary"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Stop All"
+            "pathName": "LT-PL-NF"
           }
         }
       ]

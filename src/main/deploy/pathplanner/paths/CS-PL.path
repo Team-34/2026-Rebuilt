@@ -63,35 +63,39 @@
       }
     },
     {
-      "name": "Run Spindexer",
-      "waypointRelativePos": 0.1795332136445241,
-      "endWaypointRelativePos": 1.0,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "Run Spindexer"
-        }
-      }
-    },
-    {
       "name": "aimAndShoot",
-      "waypointRelativePos": 0.24416517055655348,
-      "endWaypointRelativePos": 1.0,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "aimAndShoot"
-        }
-      }
-    },
-    {
-      "name": "Stop Spindexer",
       "waypointRelativePos": 1.0,
       "endWaypointRelativePos": null,
       "command": {
-        "type": "named",
+        "type": "parallel",
         "data": {
-          "name": "Stop Spindexer"
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "aimAndShoot"
+              }
+            },
+            {
+              "type": "sequential",
+              "data": {
+                "commands": [
+                  {
+                    "type": "wait",
+                    "data": {
+                      "waitTime": 1.0
+                    }
+                  },
+                  {
+                    "type": "named",
+                    "data": {
+                      "name": "Run Spindexer"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
         }
       }
     }
@@ -106,7 +110,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 88.80651057601796
+    "rotation": 88.57123692374476
   },
   "reversed": false,
   "folder": "Rocket City - Paths",

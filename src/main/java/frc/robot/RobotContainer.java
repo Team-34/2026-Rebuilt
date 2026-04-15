@@ -104,14 +104,20 @@ public class RobotContainer {
   public RobotContainer() {
 
     NamedCommands.registerCommand("Toggle Intake", intake.cycleDeployment());
+    NamedCommands.registerCommand("Run Intake", intake.runIn());
+    NamedCommands.registerCommand("Stop Intake", intake.stop());
+
     NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
-    NamedCommands.registerCommand("Run Intake", intake.runIn().repeatedly());
     NamedCommands.registerCommand("shooterAtIdle", shooter.runAtIdleCommand());
+
     NamedCommands.registerCommand("Run Spindexer", spindexer.spin());
     NamedCommands.registerCommand("Stop Spindexer", spindexer.stop());
+
     NamedCommands.registerCommand("aimAndShoot", 
     Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
+
     NamedCommands.registerCommand("Stop All", Commands.parallel(shooter.stop(), spindexer.stop(), turret.stop()));
+
     NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)).repeatedly().withTimeout(Seconds.of(0.5)));
 
     

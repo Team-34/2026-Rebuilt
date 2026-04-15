@@ -1,0 +1,118 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 4.211951754385965,
+        "y": 7.371831140350877
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.815688729874777,
+        "y": 7.531574239713775
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.085545617173524,
+        "y": 6.655402504472272
+      },
+      "prevControl": {
+        "x": 6.39991154804714,
+        "y": 6.733512714879075
+      },
+      "nextControl": {
+        "x": 8.367352415026835,
+        "y": 6.509373881932023
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.474955277280859,
+        "y": 5.0004114490161
+      },
+      "prevControl": {
+        "x": 6.939516994633274,
+        "y": 5.519624329159212
+      },
+      "nextControl": {
+        "x": 8.059589736449187,
+        "y": 4.433493185580145
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 7.085545617173524,
+        "y": 4.5298747763864045
+      },
+      "prevControl": {
+        "x": 7.556956893447074,
+        "y": 4.3462080453707355
+      },
+      "nextControl": {
+        "x": 5.836189624329158,
+        "y": 5.016636851520572
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 6.209373881932022,
+        "y": 5.811681574239714
+      },
+      "prevControl": {
+        "x": 6.55010733452594,
+        "y": 4.935509838998211
+      },
+      "nextControl": {
+        "x": 5.897467709426505,
+        "y": 6.613726017825328
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.0003070175438595,
+        "y": 7.371831140350877
+      },
+      "prevControl": {
+        "x": 8.058442982456139,
+        "y": 7.496842105263157
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -179.559271927239
+  },
+  "reversed": false,
+  "folder": "Rocket City - Paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 178.13232116056588
+  },
+  "useDefaultConstraints": true
+}

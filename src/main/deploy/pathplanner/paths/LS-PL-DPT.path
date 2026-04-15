@@ -1,0 +1,232 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.5484078711985685,
+        "y": 7.450447227191413
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.191449016100179,
+        "y": 7.304418604651163
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.7473881932021467,
+        "y": 5.113989266547406
+      },
+      "prevControl": {
+        "x": 1.8771914132379246,
+        "y": 6.136189624329159
+      },
+      "nextControl": {
+        "x": 1.7020330812887552,
+        "y": 4.756817760229447
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.7089624329159208,
+        "y": 5.909033989266548
+      },
+      "prevControl": {
+        "x": 1.9096422182468693,
+        "y": 6.330894454382826
+      },
+      "nextControl": {
+        "x": 0.3429419873373527,
+        "y": 5.780432211090294
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.7473881932021467,
+        "y": 5.113989266547406
+      },
+      "prevControl": {
+        "x": 1.763613595706619,
+        "y": 6.736529516994632
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1.2192513368983962,
+      "rotationDegrees": 89.97789881137169
+    },
+    {
+      "waypointRelativePos": 1.9491978609625693,
+      "rotationDegrees": 178.50121701739693
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.9559322033898305,
+      "maxWaypointRelativePos": 1.3728813559322033,
+      "constraints": {
+        "maxVelocity": 0.1,
+        "maxAcceleration": 3.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    },
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.7491525423728778,
+      "maxWaypointRelativePos": 3.0,
+      "constraints": {
+        "maxVelocity": 0.5,
+        "maxAcceleration": 1.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "Turret to 90",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Turret to 90"
+        }
+      }
+    },
+    {
+      "name": "aimAndShoot",
+      "waypointRelativePos": 0.9355932203389833,
+      "endWaypointRelativePos": 1.5559322033898297,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "aimAndShoot"
+        }
+      }
+    },
+    {
+      "name": "Run Spindexer",
+      "waypointRelativePos": 1.2915254237288136,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Run Spindexer"
+        }
+      }
+    },
+    {
+      "name": "Stop Spindexer",
+      "waypointRelativePos": 1.3423728813559328,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Stop Spindexer"
+        }
+      }
+    },
+    {
+      "name": "Toggle Intake",
+      "waypointRelativePos": 1.57,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Toggle Intake"
+        }
+      }
+    },
+    {
+      "name": "Toggle Intake",
+      "waypointRelativePos": 1.7999999999999956,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "Toggle Intake"
+        }
+      }
+    },
+    {
+      "name": "Run Intake",
+      "waypointRelativePos": 1.983050847457624,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "aimAndShoot",
+      "waypointRelativePos": 2.7254237288135448,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "parallel",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "aimAndShoot"
+              }
+            },
+            {
+              "type": "sequential",
+              "data": {
+                "commands": [
+                  {
+                    "type": "wait",
+                    "data": {
+                      "waitTime": 1.0
+                    }
+                  },
+                  {
+                    "type": "named",
+                    "data": {
+                      "name": "Run Spindexer"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 91.46880071438584
+  },
+  "reversed": false,
+  "folder": "Rocket City - Paths",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}
