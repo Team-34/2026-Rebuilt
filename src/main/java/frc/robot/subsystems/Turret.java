@@ -74,16 +74,16 @@ public class Turret extends SubsystemBase {
   }
 
   public Command pointAtTargetCommand() {
+    final var deg90 = Degrees.of(90);
     return runEnd(() -> {
       fireControl.getAzimuthToTarget().ifPresentOrElse(az -> {
-        final var turretAngle = motorAngleToTurretAngle(motor.getPosition().getValue());
-        final var newTurretAngle = Maths.clamp(turretAngle.minus(az), SWIVEL_LOWER_LIMIT, SWIVEL_UPPER_LIMIT);
+        final var normalizedAz = Maths.normalizeNeg180To180(az);
+        final var newTurretAngle = Maths.clamp(normalizedAz, SWIVEL_LOWER_LIMIT, SWIVEL_UPPER_LIMIT);
         final var newMotorAngle = turretAngleToMotorAngle(newTurretAngle);
         motor.setControl(positionControl.withPosition(newMotorAngle));
 
-        if (DEBUG) {
-          SmartDashboard.putString("Turret/PointAtTargetCommand(): Current Turret Angle", turretAngle.toLongString());
-          SmartDashboard.putString("Turret/PointAtTargetCommand(): New Turret Angle", newTurretAngle.toLongString());
+        if (true) {
+          SmartDashboard.putNumber("Turret/PointAtTargetCommand(): New Turret Angle", newTurretAngle.in(Degrees));
           SmartDashboard.putString("Turret/PointAtTargetCommand(): New Motor Angle", newMotorAngle.toLongString());
         }
       }, motor::stopMotor);

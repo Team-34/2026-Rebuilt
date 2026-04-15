@@ -20,8 +20,6 @@ public class Vision extends SubsystemBase {
   public static final String CHASSIS_LIMELIGHT_NAME = "limelight-chassis";
   public static final String TURRET_LIMELIGHT_NAME  = "limelight-turret";
 
-  private final Trigger robotPoseUpdatedTrigger = new Trigger(this::hasNewRobotPose);
-
   private final Game game;
 
   private Optional<Pose2d> robotPose = Optional.empty();
@@ -35,7 +33,8 @@ public class Vision extends SubsystemBase {
   }
 
   public Trigger robotPoseUpdated() {
-    return robotPoseUpdatedTrigger;
+    SmartDashboard.putBoolean("Vision/robotPoseUpdated() ?", true);
+    return new Trigger(this::hasNewRobotPose);
   }
   
   /**
@@ -74,7 +73,11 @@ public class Vision extends SubsystemBase {
   }
 
   private boolean hasNewRobotPose() {
-    return currentRobotPoseTimestampSeconds != lastRobotPoseTimestampSeconds;
+    var result = currentRobotPoseTimestampSeconds != lastRobotPoseTimestampSeconds;
+    if(result){
+      SmartDashboard.putNumber("Vision/hasNewRobotPose() current robot pose timestamp", currentRobotPoseTimestampSeconds);
+    }
+    return result;
   }
 
   @Override

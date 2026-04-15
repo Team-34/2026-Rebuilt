@@ -44,9 +44,12 @@ public class FireControl extends SubsystemBase {
 
   public Optional<Translation2d> getClosestTarget() {
     final var botPose = getRobotPose();
+    SmartDashboard.putString("FireControl/GetClosestTarget(): BOT POSE", botPose.toString());
     if (game.isInAllianceZone(botPose)) {
+      SmartDashboard.putString("FireControl/GetClosestTarget()", "HUB");
       return game.getHub().map(Hub::position);
     } else {
+      SmartDashboard.putString("FireControl/GetClosestTarget()", "TARGET");
       final var targets = game.getFerryTargets();
       return targets.isEmpty() ? Optional.empty() : Optional.of(botPose.getTranslation().nearest(targets));
     }

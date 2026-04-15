@@ -10,6 +10,8 @@ import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import static edu.wpi.first.units.Units.Seconds;
 
+import java.util.jar.Attributes.Name;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -109,6 +111,8 @@ public class RobotContainer {
 
     NamedCommands.registerCommand("Toggle Intake", intake.cycleDeployment());
     NamedCommands.registerCommand("Cycle Shooter Speed", shooter.cycleSpeedCommand());
+    NamedCommands.registerCommand("RunIntake", intake.runIn().repeatedly());
+    NamedCommands.registerCommand("runIntake", intake.runIn().repeatedly());
     NamedCommands.registerCommand("Run Intake", intake.runIn().repeatedly());
     NamedCommands.registerCommand("shooterAtIdle", shooter.runAtIdleCommand());
     NamedCommands.registerCommand("Run Spindexer", spindexer.spin().repeatedly());
@@ -117,6 +121,9 @@ public class RobotContainer {
     NamedCommands.registerCommand("Stop All", Commands.parallel(shooter.stop(), spindexer.stop(), turret.stop()));
     NamedCommands.registerCommand("Turret to 90", turret.swivelToCommand(Degree.of(90)));
     NamedCommands.registerCommand("ShootAndScore", Commands.none());
+    NamedCommands.registerCommand("null", Commands.none());
+    NamedCommands.registerCommand("runAtIdleCommand", Commands.none());
+    NamedCommands.registerCommand("Shoot", Commands.none());
     
     this.configureBindings();
     autoChooser = AutoBuilder.buildAutoChooser();
@@ -175,7 +182,7 @@ public class RobotContainer {
     // joystick.y().onTrue(intake.deployByPower(-0.2)).onFalse(intake.haltDeployment());
 
     //joystick.y().whileTrue(Commands.parallel(shooter.shootCommand(), turret.pointAtHubCommand()));
-    copilotDriverjoystick.rightTrigger().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
+    copilotDriverjoystick.rightTrigger().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtTargetCommand()));
     //joystick.y().onTrue(shooter.runFiringMotorByRPSCommand(RevolutionsPerSecond.of(47)));
 
     // joystick.povUp().onTrue(shooter.increaseByRPSCommand()).onFalse(shooter.stop());
@@ -196,14 +203,15 @@ public class RobotContainer {
 
     vision.robotPoseUpdated().onTrue(
       Commands.runOnce(() -> {
+        SmartDashboard.putBoolean("RobotContainer/robotPoseUpdated().onTrue() Did Pose Update Trigger?", true);
         vision.getRobotPose().ifPresent(pose -> {
+          SmartDashboard.putBoolean("RobotContainer/robotPoseUpdated().onTrue() Did Pose Update?", true);
           drivetrain.addVisionMeasurement(pose, vision.getRobotPoseTimestamp());
         });
       })
     );
   }
     
-
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
   }
