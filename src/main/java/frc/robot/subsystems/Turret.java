@@ -21,7 +21,7 @@ import com.ctre.phoenix6.signals.MotorArrangementValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 public class Turret extends SubsystemBase {
-  private static final boolean DEBUG = false;
+  private static final boolean DEBUG = true;
 
   private static final double GEAR_RATIO = 99.0 / 18.0; // turret : motor
 

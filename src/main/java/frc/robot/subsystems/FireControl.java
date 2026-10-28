@@ -31,7 +31,7 @@ public class FireControl extends SubsystemBase {
   }
 
   public Pose2d getRobotPose() {
-    return drivetrain.getState().Pose;
+    return vision.getRobotPose().get();
   }
 
   public Optional<Angle> getAzimuthToHub() {

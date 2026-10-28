@@ -182,7 +182,7 @@ public class RobotContainer {
     // joystick.y().onTrue(intake.deployByPower(-0.2)).onFalse(intake.haltDeployment());
 
     //joystick.y().whileTrue(Commands.parallel(shooter.shootCommand(), turret.pointAtHubCommand()));
-    copilotDriverjoystick.rightTrigger().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtTargetCommand()));
+    copilotDriverjoystick.rightTrigger().whileTrue(Commands.parallel(shooter.shootByRPSCommand(), turret.pointAtHubCommand()));
     //joystick.y().onTrue(shooter.runFiringMotorByRPSCommand(RevolutionsPerSecond.of(47)));
 
     // joystick.povUp().onTrue(shooter.increaseByRPSCommand()).onFalse(shooter.stop());

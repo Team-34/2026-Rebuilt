@@ -7,12 +7,15 @@ import static edu.wpi.first.units.Units.Meters;
 import java.util.Optional;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.LimelightHelpers;
+import frc.robot.subsystems.Game.Hub;
 
 public class Vision extends SubsystemBase {
   private static final boolean DEBUG = false;
@@ -21,6 +24,8 @@ public class Vision extends SubsystemBase {
   public static final String TURRET_LIMELIGHT_NAME  = "limelight-turret";
 
   private final Game game;
+
+  public String error;
 
   private Optional<Pose2d> robotPose = Optional.empty();
 
@@ -45,6 +50,14 @@ public class Vision extends SubsystemBase {
     return robotPose;
   }
 
+  public Optional<Angle> getHubPose() {
+    return getAzimuthToHub();
+  }
+
+  public Optional<Distance> getHubDistance() {
+    return getDistanceToHub();
+  }
+
   /**
    * Gets timestamp of the latest robot pose.
    * @return timestamp of the latest robot pose from the chassis camera
@@ -54,15 +67,28 @@ public class Vision extends SubsystemBase {
   }
 
   public Optional<Angle> getAzimuthToHub() {
-    return game.getHub().flatMap(hub -> {;
-      final var fiducials = LimelightHelpers.getRawFiducials(TURRET_LIMELIGHT_NAME);
-      for (final var fiducial : fiducials) {
-        if (hub.tagIDs().contains(fiducial.id)) {
-          return Optional.of(Degrees.of(fiducial.txnc));
-        }
-      }
+    Translation2d delta = robotPose.get().getTranslation();
+    if (delta == null) {
+          error = "delta";
+          return Optional.empty();
+    }
+
+    Rotation2d absoluteAngle = delta.getAngle();
+    if (absoluteAngle == null) {
+      error = "absolute Angle";
       return Optional.empty();
-    });
+    }
+    Rotation2d relativeAngle = absoluteAngle.minus(robotPose.get().getRotation());
+    if (relativeAngle == null) {
+      error = "relative Angle";
+      return Optional.empty();
+    }
+    Angle angle = relativeAngle.getMeasure();
+    if (angle == null) {
+      error = "angle";
+      return Optional.empty();
+    }
+    return Optional.of(angle);
   }
 
   public Optional<Distance> getDistanceToHub() {
@@ -84,7 +110,7 @@ public class Vision extends SubsystemBase {
   public void periodic() {
     lastRobotPoseTimestampSeconds = currentRobotPoseTimestampSeconds;
 
-    final var estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(CHASSIS_LIMELIGHT_NAME);
+    final var estimate = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2(CHASSIS_LIMELIGHT_NAME);
     robotPose = estimate.pose.equals(Pose2d.kZero) ?
         Optional.empty() : 
         Optional.of(estimate.pose);
@@ -94,6 +120,9 @@ public class Vision extends SubsystemBase {
       SmartDashboard.putString("Vision: Robot Pose", robotPose.toString());
       SmartDashboard.putNumber("Vision: Timestamp of Robot Pose (seconds)", currentRobotPoseTimestampSeconds);
       SmartDashboard.putString("Vision: Distance to Hub (in)", getDistanceToHub().map(distance -> distance.in(Inches)).toString());
+      SmartDashboard.putString("Vision: getHubPose", getHubPose().toString());
+      SmartDashboard.putString("Vision: getHubDistance", getHubDistance().toString());
+      SmartDashboard.putString("Vision: error", error);
     }
   }
 }
