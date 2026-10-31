@@ -64,6 +64,10 @@ public class RobotContainer {
   private final SlewRateLimiter turnFilter = new SlewRateLimiter(8.0);
   private final SlewRateLimiter rotateFilter = new SlewRateLimiter(1.8);
 
+  public Vision getVision() {
+    return vision;
+  }
+
   enum DriveCoefficient {
     FULL(1.0), FARIS(0.5);
 

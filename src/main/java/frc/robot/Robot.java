@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.FireControl;
 
 /**
  * The methods in this class are called automatically corresponding to each
@@ -150,6 +151,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    m_robotContainer.getVision().getRobotPose().ifPresent(pose -> {
+      var timestamp = m_robotContainer.getVision().getRobotPoseTimestamp();
+      m_robotContainer.drivetrain.addVisionMeasurement(pose, timestamp);
+    });
   }
 
   @Override

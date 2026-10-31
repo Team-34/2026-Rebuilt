@@ -67,28 +67,37 @@ public class Vision extends SubsystemBase {
   }
 
   public Optional<Angle> getAzimuthToHub() {
-    Translation2d delta = robotPose.get().getTranslation();
-    if (delta == null) {
-          error = "delta";
-          return Optional.empty();
-    }
+    if(robotPose.isPresent()) {
 
-    Rotation2d absoluteAngle = delta.getAngle();
-    if (absoluteAngle == null) {
-      error = "absolute Angle";
-      return Optional.empty();
-    }
-    Rotation2d relativeAngle = absoluteAngle.minus(robotPose.get().getRotation());
-    if (relativeAngle == null) {
-      error = "relative Angle";
-      return Optional.empty();
-    }
-    Angle angle = relativeAngle.getMeasure();
-    if (angle == null) {
-      error = "angle";
-      return Optional.empty();
-    }
-    return Optional.of(angle);
+    
+      Translation2d delta = robotPose.get().getTranslation();
+      if (delta == null) {
+            error = "delta";
+            return Optional.empty();
+      }
+
+      Rotation2d absoluteAngle = delta.getAngle();
+      if (absoluteAngle == null) {
+        error = "absolute Angle";
+        return Optional.empty();
+      }
+      Rotation2d relativeAngle = absoluteAngle.minus(robotPose.get().getRotation());
+      if (relativeAngle == null) {
+        error = "relative Angle";
+        return Optional.empty();
+      }
+      Angle angle = relativeAngle.getMeasure();
+      if (angle == null) {
+        error = "angle";
+        return Optional.empty();
+      }
+      return Optional.of(angle);
+  }
+  
+  else {
+    return Optional.empty();
+  }
+
   }
 
   public Optional<Distance> getDistanceToHub() {

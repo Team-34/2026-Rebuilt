@@ -31,7 +31,10 @@ public class FireControl extends SubsystemBase {
   }
 
   public Pose2d getRobotPose() {
+    if (vision.getRobotPose().isPresent()) {
     return vision.getRobotPose().get();
+  } else {return new Pose2d(0, 0 , Rotation2d.kZero);
+    }
   }
 
   public Optional<Angle> getAzimuthToHub() {
